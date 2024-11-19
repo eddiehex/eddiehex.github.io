@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Shark Blog</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/prism-code.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <link rel="icon" href="https://od.009100.xyz/api/raw/?path=/picture/Icon/shark.png" type="image/x-icon">
+<meta name="generator" content="Hexo 6.3.0"></head>
+<body>
+  <header>
+    <nav>
+      <div class="logo"><a href="/">Shark Blog</a></div>
+      <div class="search-container">
+        <input type="text" id="search-input" placeholder="Search...">
+        <div id="search-results"></div>
+      </div>
+      <ul class="nav-links">
+        <li><a href="/">Posts</a></li>
+        <li><a href="/services">Services</a></li>
+        <li><a href="/archives">Archive</a></li>
+        <li><a href="/categories">Categories</a></li>
+        <li><a href="/about">About</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <div class="page-container">
+  <article class="page-content">
+    <h1 class="page-title">oracle_centos引导卷扩增</h1>
+    <div class="page-body">
+      <h3 id="1-调整引导卷大小"><a href="#1-调整引导卷大小" class="headerlink" title="1 调整引导卷大小"></a>1 调整引导卷大小</h3><p>路径：存储-引导卷-选择编辑引导卷-调整大小</p>
+<h3 id="2-运行重新扫描命令"><a href="#2-运行重新扫描命令" class="headerlink" title="2 运行重新扫描命令"></a>2 运行重新扫描命令</h3><pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token function">sudo</span> <span class="token function">dd</span> <span class="token assign-left variable">iflag</span><span class="token operator">=</span>direct <span class="token assign-left variable">if</span><span class="token operator">=</span>/dev/sda <span class="token assign-left variable">of</span><span class="token operator">=</span>/dev/null <span class="token assign-left variable">count</span><span class="token operator">=</span><span class="token number">1</span>
+<span class="token builtin class-name">echo</span> <span class="token string">"1"</span> <span class="token operator">|</span> <span class="token function">sudo</span> <span class="token function">tee</span> /sys/class/block/sda/device/rescan
+<span class="token builtin class-name">echo</span> <span class="token string">"y"</span> <span class="token operator">|</span> <span class="token function">sudo</span> /usr/libexec/oci-growfs<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+
+
+
+<p>因为centos中没有 <code> /usr/libexec/oci-growfs</code></p>
+<p>所以通过以下命令进行分区扩展</p>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token function">sudo</span> yum <span class="token parameter variable">-y</span> <span class="token function">install</span> cloud-utils-growpart
+growpart /dev/sda <span class="token number">3</span> <span class="token punctuation">(</span>需要扩展的 partition<span class="token punctuation">)</span>
+xfs_growfs /
+lsblk <span class="token punctuation">(</span>查看情况<span class="token punctuation">)</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
+
+
+
+<h3 id="3-调整逻辑分区centosvolum-root"><a href="#3-调整逻辑分区centosvolum-root" class="headerlink" title="3 调整逻辑分区centosvolum-root"></a>3 调整逻辑分区<code>centosvolum-root</code></h3><pre class="line-numbers language-none"><code class="language-none">sda                     8:0    0   100G  0 disk
+├─sda1                  8:1    0   100M  0 part &#x2F;boot&#x2F;efi
+├─sda2                  8:2    0     1G  0 part &#x2F;boot
+└─sda3                  8:3    0  98.9G  0 part
+  └─centosvolume-root 253:0    0  39.1G  0 lvm  &#x2F;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<ul>
+<li><strong>将 <code>sda3</code> 的未使用空间添加到逻辑卷组</strong></li>
+</ul>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token function">sudo</span> pvresize /dev/sda3
+<span class="token comment"># Physical volume "/dev/sda3" changed</span>
+<span class="token comment">#  1 physical volume(s) resized or updated / 0 physical volume(s) not resized</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+
+<ul>
+<li><strong>将未使用的空间添加到逻辑卷</strong></li>
+</ul>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token function">sudo</span> lvextend <span class="token parameter variable">-l</span> +100%FREE /dev/mapper/centosvolume-root
+  <span class="token comment"># Size of logical volume centosvolume/root changed from &lt;39.06 GiB (9999 extents) to &lt;98.90 GiB (25318 extents).</span>
+  <span class="token comment"># Logical volume centosvolume/root successfully resized.</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+
+<ul>
+<li><strong>调整文件系统大小</strong></li>
+</ul>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token function">sudo</span> xfs_growfs /dev/mapper/centosvolume-root
+<span class="token comment"># data blocks changed from 10238976 to 25925632</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+
+
+    </div>
+  </article>
+</div>
+  </main>
+
+  <footer>
+    <p>&copy; 2024 Shark Blog</p>
+  </footer>
+
+  <script src="/js/search.js"></script>
+  <script src="/js/main.js"></script>
+  <script src="/js/copy-code.js"></script>
+  <script src="/js/prism.js"></script>
+</body>
+</html>

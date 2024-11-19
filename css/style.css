@@ -1,0 +1,468 @@
+:root {
+  --primary-color: #7fff00;
+  --bg-color: #000;
+  --text-color: #fff;
+  --card-bg: #111;
+  --hover-color: #6bdb00;
+  --meta-color: #666;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Courier New', monospace;
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  line-height: 1.6;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Header & Navigation */
+header {
+  background-color: var(--card-bg);
+  padding: 1rem 0;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+nav {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 1rem;
+}
+
+.logo {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: var(--primary-color);
+}
+
+.logo a {
+  color: var(--primary-color);
+  text-decoration: none;
+}
+
+.logo a:hover {
+  color: var(--text-color);
+}
+
+.nav-links {
+  display: flex;
+  list-style: none;
+  gap: 2rem;
+}
+
+.nav-links a {
+  color: var(--text-color);
+  text-decoration: none;
+  transition: color 0.3s;
+}
+
+.nav-links a:hover {
+  color: var(--primary-color);
+}
+
+/* Search */
+.search-container {
+  position: relative;
+}
+
+#search-input {
+  background-color: var(--card-bg);
+  border: 1px solid var(--primary-color);
+  color: var(--text-color);
+  padding: 0.5rem;
+  border-radius: 4px;
+  width: 200px;
+}
+
+#search-results {
+  position: absolute;
+  top: 100%;
+  background-color: var(--card-bg);
+  width: 100%;
+  border: 1px solid var(--primary-color);
+  border-top: none;
+  display: none;
+  z-index: 1000;
+}
+
+.search-result-item {
+  padding: 0.5rem;
+  border-bottom: 1px solid var(--primary-color);
+}
+
+.search-result-item:last-child {
+  border-bottom: none;
+}
+
+.search-result-item a {
+  color: var(--text-color);
+  text-decoration: none;
+}
+
+.search-result-item a:hover {
+  color: var(--primary-color);
+}
+
+/* Main Content */
+main {
+  flex: 1;
+}
+
+/* Posts */
+.posts-container {
+  max-width: 800px;
+  margin: 2rem auto;
+  padding: 0 1rem;
+}
+
+.post-card {
+  background-color: var(--card-bg);
+  padding: 2rem;
+  margin-bottom: 2rem;
+  border-radius: 8px;
+  border-left: 3px solid var(--primary-color);
+}
+
+.post-meta {
+  font-size: 0.9rem;
+  color: var(--meta-color);
+  margin-bottom: 1rem;
+  display: flex;
+  gap: 1rem;
+}
+
+.post-meta i {
+  color: var(--primary-color);
+  margin-right: 0.5rem;
+}
+
+.post-title {
+  margin-bottom: 1.5rem;
+}
+
+.post-title a {
+  color: var(--primary-color);
+  text-decoration: none;
+  font-size: 1.8rem;
+  transition: color 0.3s;
+}
+
+.post-title a:hover {
+  color: var(--hover-color);
+}
+
+.post-content {
+  color: var(--text-color);
+  margin-bottom: 1.5rem;
+  line-height: 1.8;
+}
+
+.post-content p {
+  margin-bottom: 1rem;
+}
+
+.post-categories a {
+  color: var(--meta-color);
+  text-decoration: none;
+}
+
+.post-categories a:hover {
+  color: var(--text-color);
+}
+
+.post-footer {
+  margin-top: 2rem;
+}
+
+.read-more {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--primary-color);
+  text-decoration: none;
+  font-weight: bold;
+  transition: color 0.3s;
+}
+
+.read-more:hover {
+  color: var(--hover-color);
+}
+
+.read-more i {
+  font-size: 0.8rem;
+  transition: transform 0.3s;
+}
+
+.read-more:hover i {
+  transform: translateX(4px);
+}
+
+/* Services */
+.services-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+}
+
+.services-header {
+  margin-bottom: 3rem;
+}
+
+.services-title {
+  color: var(--primary-color);
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+}
+
+.services-intro {
+  max-width: 800px;
+  color: var(--text-color);
+}
+
+.services-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 2rem;
+  padding: 0 1rem;
+}
+
+.service-card {
+  background-color: var(--card-bg);
+  padding: 2rem;
+  border-radius: 8px;
+  text-decoration: none;
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.service-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 5px 15px rgba(127, 255, 0, 0.2);
+}
+
+.service-icon {
+  font-size: 2.5rem;
+  color: var(--primary-color);
+  margin-bottom: 1rem;
+}
+
+.service-name {
+  color: var(--primary-color);
+  font-size: 1.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.service-description {
+  color: var(--text-color);
+  font-size: 0.9rem;
+}
+
+/* Page */
+.page-container {
+  max-width: 800px;
+  margin: 2rem auto;
+  padding: 0 1rem;
+}
+
+.page-content {
+  background-color: var(--card-bg);
+  padding: 2rem;
+  border-radius: 8px;
+}
+
+.page-title {
+  color: var(--primary-color);
+  font-size: 2.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.page-body {
+  color: var(--text-color);
+  line-height: 1.8;
+}
+
+.page-body h1,
+.page-body h2,
+.page-body h3 {
+  color: var(--primary-color);
+  margin: 1.5rem 0 1rem;
+}
+
+.page-body p {
+  margin-bottom: 1rem;
+}
+
+/* Archive */
+.archive-container {
+  max-width: 800px;
+  margin: 2rem auto;
+  padding: 0 1rem;
+}
+
+.archive-year {
+  color: var(--primary-color);
+  margin: 2rem 0 1rem;
+}
+
+.archive-item {
+  margin: 1rem 0;
+  display: flex;
+  gap: 1rem;
+}
+
+.archive-date {
+  color: var(--meta-color);
+}
+
+.archive-title {
+  color: var(--text-color);
+  text-decoration: none;
+}
+
+.archive-title:hover {
+  color: var(--primary-color);
+}
+
+/* Categories */
+.category-container {
+  max-width: 800px;
+  margin: 2rem auto;
+  padding: 0 1rem;
+}
+.category-title {
+  color: var(--primary-color);
+  margin: 2rem 0 1rem;
+}
+
+.category-item a {
+  color: var(--text-color);
+  text-decoration: none;
+}
+
+.category-item a:hover {
+  color: var(--primary-color);
+}
+.post-date {
+  color: var(--meta-color);
+}
+
+/* Pagination */
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 2rem 0;
+}
+
+.pagination .page-number,
+.pagination .extend {
+  color: var(--text-color);
+  text-decoration: none;
+  padding: 0.5rem 1rem;
+  background-color: var(--card-bg);
+  border-radius: 4px;
+  min-width: 2.5rem;
+  text-align: center;
+}
+
+.pagination .current {
+  background-color: var(--primary-color);
+  color: var(--bg-color);
+}
+
+.pagination a:hover {
+  background-color: var(--hover-color);
+  color: var(--bg-color);
+}
+
+/* Footer */
+footer {
+  background-color: var(--card-bg);
+  padding: 1rem;
+  text-align: center;
+  margin-top: auto;
+}
+
+footer p {
+  color: var(--text-color);
+  font-size: 0.9rem;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  nav {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .nav-links {
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .services-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .post-card {
+    padding: 1.5rem;
+  }
+
+  .post-title a {
+    font-size: 1.5rem;
+  }
+}
+
+/* 在文件末尾添加以下样式 */
+.copy-button {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  padding: 4px 8px;
+  font-size: 12px;
+  color: #000000;
+  background-color: var(--primary-color);
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  opacity: 1;
+  transition: background-color 0.3s;
+}
+
+.copy-button:hover {
+  background-color: var(--hover-color);
+}
+
+pre {
+  position: relative !important;
+  margin: 1em 0;
+}
+
+/* 为行内代码添加样式 */
+code {
+  background-color: #df7614;
+  padding: 2px 4px;
+  border-radius: 3px;
+  font-family: 'Courier New', monospace;
+  font-size: 0.9em;
+}
+
+/* 确保代码块中的代码不受上面样式影响 */
+pre code {
+  background-color: transparent;
+  padding: 0;
+  border-radius: 0;
+}
