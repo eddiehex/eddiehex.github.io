@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Shark Blog</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/prism-code.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <link rel="icon" href="https://od.009100.xyz/api/raw/?path=/picture/Icon/shark.png" type="image/x-icon">
+<meta name="generator" content="Hexo 6.3.0"></head>
+<body>
+  <header>
+    <nav>
+      <div class="logo"><a href="/">Shark Blog</a></div>
+      <div class="search-container">
+        <input type="text" id="search-input" placeholder="Search...">
+        <div id="search-results"></div>
+      </div>
+      <ul class="nav-links">
+        <li><a href="/">Posts</a></li>
+        <li><a href="/services">Services</a></li>
+        <li><a href="/archives">Archive</a></li>
+        <li><a href="/categories">Categories</a></li>
+        <li><a href="/about">About</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <div class="page-container">
+  <article class="page-content">
+    <h1 class="page-title">git 知识</h1>
+    <div class="page-body">
+      <h2 id="git环境配置"><a href="#git环境配置" class="headerlink" title="git环境配置"></a>git环境配置</h2><pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token function">ssh</span> <span class="token parameter variable">-T</span> git@github.com
+--首先配置config
+<span class="token function">git</span> config <span class="token parameter variable">--global</span> user.name <span class="token string">"your name"</span>
+<span class="token function">git</span> config <span class="token parameter variable">--global</span> user.email <span class="token string">"your_email@youremail.com"</span>
+
+<span class="token function">git</span> config <span class="token parameter variable">--global</span> credential.helper store
+<span class="token function">git</span> pull /git push <span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<blockquote>
+<p><strong>caution</strong> git 密码目前不能使用只能使用口令</p>
+</blockquote>
+<h2 id="推送文件"><a href="#推送文件" class="headerlink" title="推送文件"></a>推送文件</h2><pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token comment"># 推文件</span>
+<span class="token function">git</span> init
+<span class="token function">git</span> <span class="token function">add</span> <span class="token builtin class-name">.</span> / 任意文件/文件夹（但必须非空）
+<span class="token function">git</span> commit <span class="token parameter variable">-m</span> <span class="token string">"    "</span>
+<span class="token function">git</span> remote <span class="token function">add</span> origin git@github.com:yourName/yourRepo.git
+<span class="token function">git</span> push origin master<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<h2 id="删除文件"><a href="#删除文件" class="headerlink" title="删除文件"></a>删除文件</h2><pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">-- 删文件
+<span class="token function">rm</span> <span class="token function">file</span> --先将文件删除
+<span class="token function">git</span> status --查看状态
+<span class="token comment"># 如果文件是误删 可以通过版本进行恢复</span>
+<span class="token function">git</span> checkout
+<span class="token comment"># 如果需要将远程删除</span>
+<span class="token function">git</span> <span class="token function">rm</span> file.name
+<span class="token function">git</span> commit <span class="token parameter variable">-m</span> <span class="token string">""</span>
+<span class="token function">git</span> push origin master<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+
+
+<h2 id="拉文件"><a href="#拉文件" class="headerlink" title="拉文件"></a>拉文件</h2><pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token function">git</span> clone repo.addr
+<span class="token function">git</span> pull repo.addr<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+
+
+    </div>
+  </article>
+</div>
+  </main>
+
+  <footer>
+    <p>&copy; 2024 Shark Blog</p>
+  </footer>
+
+  <script src="/js/search.js"></script>
+  <script src="/js/main.js"></script>
+  <script src="/js/copy-code.js"></script>
+  <script src="/js/prism.js"></script>
+</body>
+</html>
