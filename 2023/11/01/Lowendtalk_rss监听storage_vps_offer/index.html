@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Shark Blog</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/prism-code.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <link rel="icon" href="https://od.009100.xyz/api/raw/?path=/picture/Icon/shark.png" type="image/x-icon">
+  <link rel="stylesheet" href="/css/toc.css">
+  
+  <!-- MathJax Configuration -->
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']],
+        processEscapes: true,
+        processEnvironments: true,
+        packages: ['base', 'ams', 'noerrors', 'noundefined']
+      },
+      options: {
+        ignoreHtmlClass: 'tex2jax_ignore',
+        processHtmlClass: 'tex2jax_process'
+      },
+      startup: {
+        ready() {
+          MathJax.startup.defaultReady();
+          // Re-render math when content changes
+          document.addEventListener('DOMContentLoaded', function() {
+            if (window.MathJax && window.MathJax.typesetPromise) {
+              window.MathJax.typesetPromise();
+            }
+          });
+        }
+      }
+    };
+  </script>
+  <script async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.min.js"></script>
+<meta name="generator" content="Hexo 6.3.0"></head>
+<body>
+  <header>
+    <nav>
+      <div class="nav-container">
+        <div class="logo"><a href="/">Shark Blog</a></div>
+        <div class="search-container">
+          <input type="text" id="search-input" placeholder="Search...">
+          <div id="search-results"></div>
+        </div>
+        <div class="menu-toggle">
+          <i class="fas fa-bars"></i>
+        </div>
+      </div>
+      <ul class="nav-links">
+        <li><a href="/">Posts</a></li>
+        <li><a href="/services">Services</a></li>
+        <li><a href="/archives">Archive</a></li>
+        <li><a href="/categories">Categories</a></li>
+        <li><a href="/about">About</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <div class="page-container">
+  
+    <div class="toc-card">
+      <div class="toc-content">
+        <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%83%8C%E6%99%AF"><span class="toc-text">背景</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%84%9A%E6%9C%AC"><span class="toc-text">脚本</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#feedparser-%E7%9A%84%E7%94%A8%E6%B3%95"><span class="toc-text">feedparser 的用法</span></a></li></ol>
+      </div>
+    </div>
+  
+  
+  <article class="page-content">
+    <h1 class="page-title">Lowendtalk_rss监听storage_vps_offer</h1>
+    <div class="page-body">
+      <h3 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h3><p>最近开始玩pt，想要看看有没有合适又便宜的storage vps，所以通过chat-gpt写了个python脚本实现对于Lowendtalk offer板块的监听。逻辑大致是通过<code>feedparser</code> 获取rss内容找到大于最晚时间的文章标题查询是否包含storage，将rss中的最晚文章的时间进行保存，如果有则通过telegram api 实现消息推送。</p>
+<h3 id="脚本"><a href="#脚本" class="headerlink" title="脚本"></a>脚本</h3><pre class="line-numbers language-python" data-language="python"><code class="language-python"><span class="token keyword">import</span> feedparser
+<span class="token keyword">import</span> requests
+<span class="token keyword">from</span> datetime <span class="token keyword">import</span> datetime<span class="token punctuation">,</span> timezone
+
+<span class="token keyword">def</span> <span class="token function">notice</span><span class="token punctuation">(</span>text<span class="token punctuation">)</span><span class="token punctuation">:</span>
+    api_url <span class="token operator">=</span> <span class="token string">"api_url"</span>
+    data <span class="token operator">=</span> <span class="token punctuation">&#123;</span>
+        <span class="token string">"chat_id"</span><span class="token punctuation">:</span> <span class="token string">"-chat_id"</span><span class="token punctuation">,</span>
+        <span class="token string">"text"</span><span class="token punctuation">:</span> text
+    <span class="token punctuation">&#125;</span>
+    response <span class="token operator">=</span> requests<span class="token punctuation">.</span>post<span class="token punctuation">(</span>api_url<span class="token punctuation">,</span> json<span class="token operator">=</span>data<span class="token punctuation">)</span>
+    <span class="token keyword">return</span> response
+
+<span class="token keyword">def</span> <span class="token function">fetch_and_notify</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
+    <span class="token keyword">try</span><span class="token punctuation">:</span>
+        <span class="token comment"># URL of the RSS feed</span>
+        rss_url <span class="token operator">=</span> <span class="token string">"https://lowendtalk.com/categories/offers/feed.rss"</span>
+
+        <span class="token comment"># Parse the RSS feed</span>
+        feed <span class="token operator">=</span> feedparser<span class="token punctuation">.</span>parse<span class="token punctuation">(</span>rss_url<span class="token punctuation">)</span>
+
+        <span class="token comment"># Read the last published date from file</span>
+        <span class="token keyword">with</span> <span class="token builtin">open</span><span class="token punctuation">(</span><span class="token string">"/root/script/let_monitor/last_date.txt"</span><span class="token punctuation">,</span> <span class="token string">"r"</span><span class="token punctuation">)</span> <span class="token keyword">as</span> <span class="token builtin">file</span><span class="token punctuation">:</span>
+            last_date_str <span class="token operator">=</span> <span class="token builtin">file</span><span class="token punctuation">.</span>read<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span>strip<span class="token punctuation">(</span><span class="token punctuation">)</span>
+            last_date <span class="token operator">=</span> datetime<span class="token punctuation">.</span>strptime<span class="token punctuation">(</span>last_date_str<span class="token punctuation">,</span> <span class="token string">'%a, %d %b %Y %H:%M:%S %z'</span><span class="token punctuation">)</span> <span class="token keyword">if</span> last_date_str <span class="token keyword">else</span> datetime<span class="token punctuation">.</span><span class="token builtin">min</span><span class="token punctuation">.</span>replace<span class="token punctuation">(</span>tzinfo<span class="token operator">=</span>timezone<span class="token punctuation">.</span>utc<span class="token punctuation">)</span>
+
+        <span class="token comment"># Initialize the latest date variable</span>
+        latest_date <span class="token operator">=</span> last_date
+
+        <span class="token comment"># Sort entries by publication date</span>
+        entries <span class="token operator">=</span> <span class="token builtin">sorted</span><span class="token punctuation">(</span>feed<span class="token punctuation">.</span>entries<span class="token punctuation">,</span> key<span class="token operator">=</span><span class="token keyword">lambda</span> e<span class="token punctuation">:</span> datetime<span class="token punctuation">.</span>strptime<span class="token punctuation">(</span>e<span class="token punctuation">.</span>published<span class="token punctuation">,</span> <span class="token string">'%a, %d %b %Y %H:%M:%S %z'</span><span class="token punctuation">)</span><span class="token punctuation">,</span> reverse<span class="token operator">=</span><span class="token boolean">True</span><span class="token punctuation">)</span>
+
+        <span class="token comment"># Iterate over sorted entries and send notifications for new entries</span>
+        <span class="token keyword">for</span> entry <span class="token keyword">in</span> entries<span class="token punctuation">:</span>
+            entry_date <span class="token operator">=</span> datetime<span class="token punctuation">.</span>strptime<span class="token punctuation">(</span>entry<span class="token punctuation">.</span>published<span class="token punctuation">,</span> <span class="token string">'%a, %d %b %Y %H:%M:%S %z'</span><span class="token punctuation">)</span>
+            <span class="token keyword">if</span> entry_date <span class="token operator">></span> last_date <span class="token keyword">and</span> <span class="token string">'storage'</span> <span class="token keyword">in</span> entry<span class="token punctuation">.</span>title<span class="token punctuation">.</span>lower<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
+                title <span class="token operator">=</span> entry<span class="token punctuation">.</span>title
+                link <span class="token operator">=</span> entry<span class="token punctuation">.</span>link
+                pub_date <span class="token operator">=</span> entry<span class="token punctuation">.</span>published
+
+                <span class="token comment"># Format the message to send</span>
+                message <span class="token operator">=</span> <span class="token string-interpolation"><span class="token string">f"#VPSOFFER👋👋\nNew Post: </span><span class="token interpolation"><span class="token punctuation">&#123;</span>title<span class="token punctuation">&#125;</span></span><span class="token string">\nLink: </span><span class="token interpolation"><span class="token punctuation">&#123;</span>link<span class="token punctuation">&#125;</span></span><span class="token string">\nPublished on: </span><span class="token interpolation"><span class="token punctuation">&#123;</span>pub_date<span class="token punctuation">&#125;</span></span><span class="token string">"</span></span>
+
+                <span class="token comment"># Send the notification</span>
+                response <span class="token operator">=</span> notice<span class="token punctuation">(</span>message<span class="token punctuation">)</span>
+                <span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string-interpolation"><span class="token string">f"Notification sent for </span><span class="token interpolation"><span class="token punctuation">&#123;</span>title<span class="token punctuation">&#125;</span></span><span class="token string">, status code: </span><span class="token interpolation"><span class="token punctuation">&#123;</span>response<span class="token punctuation">.</span>status_code<span class="token punctuation">&#125;</span></span><span class="token string">"</span></span><span class="token punctuation">)</span>
+
+                <span class="token comment"># Update the latest date</span>
+                <span class="token keyword">if</span> entry_date <span class="token operator">></span> latest_date<span class="token punctuation">:</span>
+                    latest_date <span class="token operator">=</span> entry_date
+
+        <span class="token comment"># Save the latest date to file</span>
+        <span class="token keyword">with</span> <span class="token builtin">open</span><span class="token punctuation">(</span><span class="token string">"/root/script/let_monitor/last_date.txt"</span><span class="token punctuation">,</span> <span class="token string">"w"</span><span class="token punctuation">)</span> <span class="token keyword">as</span> <span class="token builtin">file</span><span class="token punctuation">:</span>
+            <span class="token builtin">file</span><span class="token punctuation">.</span>write<span class="token punctuation">(</span>latest_date<span class="token punctuation">.</span>strftime<span class="token punctuation">(</span><span class="token string">'%a, %d %b %Y %H:%M:%S %z'</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+
+    <span class="token keyword">except</span> Exception <span class="token keyword">as</span> e<span class="token punctuation">:</span>
+        error_message <span class="token operator">=</span> <span class="token string-interpolation"><span class="token string">f"Error in fetch_and_notify: </span><span class="token interpolation"><span class="token punctuation">&#123;</span><span class="token builtin">str</span><span class="token punctuation">(</span>e<span class="token punctuation">)</span><span class="token punctuation">&#125;</span></span><span class="token string">"</span></span>
+        notice<span class="token punctuation">(</span>error_message<span class="token punctuation">)</span>
+        <span class="token keyword">print</span><span class="token punctuation">(</span>error_message<span class="token punctuation">)</span>
+
+<span class="token comment"># Call the function to start the process</span>
+fetch_and_notify<span class="token punctuation">(</span><span class="token punctuation">)</span>
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<h3 id="feedparser-的用法"><a href="#feedparser-的用法" class="headerlink" title="feedparser 的用法"></a>feedparser 的用法</h3><pre class="line-numbers language-python" data-language="python"><code class="language-python"><span class="token keyword">import</span> feedparser
+
+<span class="token comment"># 1. 从 URL 获取 RSS/Atom 订阅内容</span>
+feed_url <span class="token operator">=</span> <span class="token string">"https://www.example.com/feed.xml"</span>  <span class="token comment"># 替换成实际的 RSS/Atom 订阅链接</span>
+feed <span class="token operator">=</span> feedparser<span class="token punctuation">.</span>parse<span class="token punctuation">(</span>feed_url<span class="token punctuation">)</span>
+
+<span class="token comment"># 2. 访问订阅内容信息</span>
+<span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string">"订阅名称:"</span><span class="token punctuation">,</span> feed<span class="token punctuation">.</span>feed<span class="token punctuation">.</span>title<span class="token punctuation">)</span>
+<span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string">"订阅链接:"</span><span class="token punctuation">,</span> feed<span class="token punctuation">.</span>feed<span class="token punctuation">.</span>link<span class="token punctuation">)</span>
+<span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string">"订阅描述:"</span><span class="token punctuation">,</span> feed<span class="token punctuation">.</span>feed<span class="token punctuation">.</span>description<span class="token punctuation">)</span>
+
+<span class="token comment"># 3. 访问订阅内容中的条目</span>
+<span class="token keyword">for</span> entry <span class="token keyword">in</span> feed<span class="token punctuation">.</span>entries<span class="token punctuation">:</span>
+    <span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string">"条目标题:"</span><span class="token punctuation">,</span> entry<span class="token punctuation">.</span>title<span class="token punctuation">)</span>
+    <span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string">"条目链接:"</span><span class="token punctuation">,</span> entry<span class="token punctuation">.</span>link<span class="token punctuation">)</span>
+    <span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string">"条目发布时间:"</span><span class="token punctuation">,</span> entry<span class="token punctuation">.</span>published<span class="token punctuation">)</span>
+    <span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string">"条目摘要:"</span><span class="token punctuation">,</span> entry<span class="token punctuation">.</span>summary<span class="token punctuation">)</span>
+    <span class="token comment"># 访问其他条目信息，例如作者，标签，内容，等</span>
+    <span class="token comment"># ...</span>
+
+<span class="token comment"># 4. 访问条目内容</span>
+<span class="token keyword">for</span> entry <span class="token keyword">in</span> feed<span class="token punctuation">.</span>entries<span class="token punctuation">:</span>
+    <span class="token comment"># 访问完整的内容，如果可用</span>
+    <span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string">"条目完整内容:"</span><span class="token punctuation">,</span> entry<span class="token punctuation">.</span>content<span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span><span class="token punctuation">.</span>value<span class="token punctuation">)</span>
+
+<span class="token comment"># 5. 处理错误</span>
+<span class="token keyword">if</span> feed<span class="token punctuation">.</span>status <span class="token operator">!=</span> <span class="token number">200</span><span class="token punctuation">:</span>
+    <span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string">"错误:"</span><span class="token punctuation">,</span> feed<span class="token punctuation">.</span>bozo_exception<span class="token punctuation">)</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p><strong>示例解释:</strong></p>
+<ol>
+<li><strong>获取订阅内容:</strong> 使用 <code>feedparser.parse(feed_url)</code> 函数解析 RSS&#x2F;Atom 订阅内容。</li>
+<li><strong>访问订阅信息:</strong>  可以使用 <code>feed.feed.title</code>、<code>feed.feed.link</code> 和 <code>feed.feed.description</code> 访问订阅的标题、链接和描述信息。</li>
+<li><strong>访问条目:</strong> <code>feed.entries</code> 包含订阅中的所有条目，你可以遍历它们并访问每个条目的信息。</li>
+<li><strong>访问条目内容:</strong> 每个条目都包含 <code>title</code>、<code>link</code>、<code>published</code> 和 <code>summary</code> 属性，你可以根据需要访问其他属性。</li>
+<li><strong>处理错误:</strong>  <code>feed.status</code> 表示 HTTP 状态码，<code>feed.bozo_exception</code> 表示解析错误信息。</li>
+</ol>
+<p><strong>其他常用用法:</strong></p>
+<ul>
+<li><strong>指定解析器:</strong>  可以使用 <code>feedparser.parse(feed_url, handlers=&#123;&#125;)</code>, 其中 <code>handlers</code> 是一个字典，用于指定自定义解析器。</li>
+<li><strong>使用缓存:</strong> 使用 <code>feedparser.parse(feed_url, cache=True)</code> 可以将订阅内容缓存起来，避免重复解析。</li>
+<li><strong>处理图片:</strong>  某些 RSS&#x2F;Atom 订阅包含图片信息，可以使用 <code>entry.media_content</code> 访问它们。</li>
+<li><strong>处理自定义字段:</strong> 不同订阅可能有不同的自定义字段，可以使用 <code>entry.keys()</code> 查看可用字段，并根据需要访问它们。</li>
+</ul>
+<p><strong>示例代码中的注释部分包含更多示例用法，你可以根据需要进行修改。</strong></p>
+
+    </div>
+  </article>
+</div>
+  </main>
+
+  <footer>
+    <p>
+      &copy; 2025 Shark Blog 
+      <a href="https://github.com/eddiehex/hexo-geek-source" target="_blank">
+        <i class="fab fa-github"></i>
+      </a>
+    </p>
+  </footer>
+
+  <script src="/js/search.js"></script>
+  <script src="/js/main.js"></script>
+  <script src="/js/copy-code.js"></script>
+  <script src="/js/prism.js"></script>
+  <script src="/js/toc-highlight.js"></script>
+  <script src="/js/mobile-menu.js"></script>
+</body>
+</html>
