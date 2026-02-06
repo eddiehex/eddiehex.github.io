@@ -1,0 +1,1203 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Shark Blog</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/prism-code.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <link rel="icon" href="https://hexo.kygoho.win/upload/uploads/6e7cf36d-8cb2-40c6-831f-80ef7488cca4.png" type="image/x-icon">
+  <link rel="stylesheet" href="/css/toc.css">
+  
+  <!-- MathJax Configuration -->
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']],
+        processEscapes: true,
+        processEnvironments: true,
+        packages: ['base', 'ams', 'noerrors', 'noundefined']
+      },
+      options: {
+        ignoreHtmlClass: 'tex2jax_ignore',
+        processHtmlClass: 'tex2jax_process'
+      },
+      startup: {
+        ready() {
+          MathJax.startup.defaultReady();
+          // Re-render math when content changes
+          document.addEventListener('DOMContentLoaded', function() {
+            if (window.MathJax && window.MathJax.typesetPromise) {
+              window.MathJax.typesetPromise();
+            }
+          });
+        }
+      }
+    };
+  </script>
+  <script async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.min.js"></script>
+<meta name="generator" content="Hexo 6.3.0"></head>
+<body>
+  <header>
+    <nav>
+      <div class="nav-container">
+        <div class="logo"><a href="/">Shark Blog</a></div>
+        <div class="search-container">
+          <input type="text" id="search-input" placeholder="Search...">
+          <div id="search-results"></div>
+        </div>
+        <div class="menu-toggle">
+          <i class="fas fa-bars"></i>
+        </div>
+      </div>
+      <ul class="nav-links">
+        <li><a href="/">Posts</a></li>
+        <li><a href="/services">Services</a></li>
+        <li><a href="/archives">Archive</a></li>
+        <li><a href="/categories">Categories</a></li>
+        <li><a href="/about">About</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <div class="archive-container">
+  <div class="archive-header">
+    <h1 class="archive-title">Archive</h1>
+    <p class="archive-description">
+      Browse all articles organized by date
+    </p>
+  </div>
+  
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+
+  <div class="archive-years-tabs" role="tablist">
+    
+      <button 
+        class="year-tab active" 
+        data-year="2025"
+        role="tab"
+        aria-selected="true"
+        aria-controls="year-2025">
+        2025
+      </button>
+    
+      <button 
+        class="year-tab " 
+        data-year="2024"
+        role="tab"
+        aria-selected="false"
+        aria-controls="year-2024">
+        2024
+      </button>
+    
+      <button 
+        class="year-tab " 
+        data-year="2023"
+        role="tab"
+        aria-selected="false"
+        aria-controls="year-2023">
+        2023
+      </button>
+    
+  </div>
+
+  <div class="archive-content">
+    
+      <div 
+        id="year-2025"
+        class="year-section active" 
+        data-year="2025"
+        role="tabpanel"
+        aria-labelledby="tab-2025">
+        <div class="month-posts">
+          
+            <div class="post-item">
+              <span class="post-date">04-20</span>
+              <a href="/2025/04/20/distribution_and_mle/" class="post-title">
+                各类分布及其MLE推导
+              </a>
+              
+                <span class="post-tags">
+                  
+                    <span class="tag-item">Statistics</span>
+                  
+                    <span class="tag-item">MLE</span>
+                  
+                </span>
+              
+            </div>
+          
+            <div class="post-item">
+              <span class="post-date">04-18</span>
+              <a href="/2025/04/18/deeplearning/" class="post-title">
+                深度学习入门：从 MLP 到 RNN/LSTM，核心架构解析
+              </a>
+              
+                <span class="post-tags">
+                  
+                    <span class="tag-item">deeplearning</span>
+                  
+                </span>
+              
+            </div>
+          
+            <div class="post-item">
+              <span class="post-date">02-17</span>
+              <a href="/2025/02/17/stock_analysis_three_basic_agents_builds_method/" class="post-title">
+                Stock Analysis three basic agents builds method
+              </a>
+              
+                <span class="post-tags">
+                  
+                    <span class="tag-item">COT</span>
+                  
+                </span>
+              
+            </div>
+          
+            <div class="post-item">
+              <span class="post-date">02-05</span>
+              <a href="/2025/02/05/langchain_langgraph_llm/" class="post-title">
+                深入浅出 Langchain 与 LangGraph：LLM 应用开发的双剑客
+              </a>
+              
+                <span class="post-tags">
+                  
+                    <span class="tag-item">Agent</span>
+                  
+                    <span class="tag-item">LLMs</span>
+                  
+                    <span class="tag-item">LangChain</span>
+                  
+                    <span class="tag-item">LangGraph</span>
+                  
+                </span>
+              
+            </div>
+          
+            <div class="post-item">
+              <span class="post-date">01-24</span>
+              <a href="/2025/01/24/Feature_Engineering_by_Python_and_Pyspark/" class="post-title">
+                Feature Engineering by Python and Pyspark
+              </a>
+              
+                <span class="post-tags">
+                  
+                    <span class="tag-item">Python</span>
+                  
+                    <span class="tag-item">PySpark</span>
+                  
+                </span>
+              
+            </div>
+          
+            <div class="post-item">
+              <span class="post-date">01-24</span>
+              <a href="/2025/01/24/machine_leaning_lightgbm/" class="post-title">
+                Machine Leaning (lightGBM)
+              </a>
+              
+                <span class="post-tags">
+                  
+                    <span class="tag-item">lightGBM</span>
+                  
+                </span>
+              
+            </div>
+          
+            <div class="post-item">
+              <span class="post-date">01-23</span>
+              <a href="/2025/01/23/ML_XGboosting/" class="post-title">
+                Machine Leaning (XGBoost)
+              </a>
+              
+                <span class="post-tags">
+                  
+                    <span class="tag-item">xgboost</span>
+                  
+                </span>
+              
+            </div>
+          
+            <div class="post-item">
+              <span class="post-date">01-19</span>
+              <a href="/2025/01/19/data_warehouse_architecture/" class="post-title">
+                Data Warehouse Architecture Knowledge
+              </a>
+              
+                <span class="post-tags">
+                  
+                    <span class="tag-item">Architecture</span>
+                  
+                </span>
+              
+            </div>
+          
+        </div>
+      </div>
+    
+      <div 
+        id="year-2024"
+        class="year-section " 
+        data-year="2024"
+        role="tabpanel"
+        aria-labelledby="tab-2024">
+        <div class="month-posts">
+          
+            <div class="post-item">
+              <span class="post-date">12-13</span>
+              <a href="/2024/12/13/Null_Value_in_SQL/" class="post-title">
+                Null Value in SQL
+              </a>
+              
+                <span class="post-tags">
+                  
+                    <span class="tag-item">sql</span>
+                  
+                </span>
+              
+            </div>
+          
+            <div class="post-item">
+              <span class="post-date">12-13</span>
+              <a href="/2024/12/13/automate_to_create_a_new_post_template/" class="post-title">
+                Automate to Create a New Post Template
+              </a>
+              
+                <span class="post-tags">
+                  
+                    <span class="tag-item">Shell</span>
+                  
+                    <span class="tag-item">markdown</span>
+                  
+                </span>
+              
+            </div>
+          
+            <div class="post-item">
+              <span class="post-date">12-13</span>
+              <a href="/2024/12/13/sql_for_median/" class="post-title">
+                Sql for Median
+              </a>
+              
+                <span class="post-tags">
+                  
+                    <span class="tag-item">medain</span>
+                  
+                </span>
+              
+            </div>
+          
+            <div class="post-item">
+              <span class="post-date">12-08</span>
+              <a href="/2024/12/08/typora%E5%9B%BE%E7%89%87%E4%B8%8A%E4%BC%A0%E8%A7%A3%E5%86%B3%E5%8A%9E%E6%B3%95/" class="post-title">
+                typora图片上传解决办法
+              </a>
+              
+                <span class="post-tags">
+                  
+                    <span class="tag-item">api</span>
+                  
+                    <span class="tag-item">shell</span>
+                  
+                    <span class="tag-item">typora</span>
+                  
+                </span>
+              
+            </div>
+          
+            <div class="post-item">
+              <span class="post-date">11-20</span>
+              <a href="/2024/11/20/%E4%BF%AE%E6%94%B9hexo%E4%BB%A3%E7%A0%81%E6%A0%B7%E5%BC%8F/" class="post-title">
+                修改hexo代码块主题样式
+              </a>
+              
+                <span class="post-tags">
+                  
+                    <span class="tag-item">hexo</span>
+                  
+                    <span class="tag-item">js</span>
+                  
+                    <span class="tag-item">css</span>
+                  
+                </span>
+              
+            </div>
+          
+            <div class="post-item">
+              <span class="post-date">11-19</span>
+              <a href="/2024/11/19/the_usage_of_denote_env/" class="post-title">
+                Python 中环境变量的使用
+              </a>
+              
+                <span class="post-tags">
+                  
+                    <span class="tag-item">python</span>
+                  
+                    <span class="tag-item">env</span>
+                  
+                </span>
+              
+            </div>
+          
+            <div class="post-item">
+              <span class="post-date">11-19</span>
+              <a href="/2024/11/19/wireguard_%E5%AE%9E%E7%8E%B0_ipv4_ipv6_%E5%8F%8C%E5%90%91%E5%88%86%E6%B5%81_ipv6_only_dual_stack_%E5%AE%9E%E6%88%98/" class="post-title">
+                WireGuard 实现 IPv4 / IPv6 双向分流（IPv6-only × Dual-Stack 实战）
+              </a>
+              
+                <span class="post-tags">
+                  
+                    <span class="tag-item">WireGuard</span>
+                  
+                    <span class="tag-item">IPv6</span>
+                  
+                    <span class="tag-item">IPv4</span>
+                  
+                    <span class="tag-item">Networking</span>
+                  
+                    <span class="tag-item">VPN</span>
+                  
+                </span>
+              
+            </div>
+          
+            <div class="post-item">
+              <span class="post-date">01-03</span>
+              <a href="/2024/01/03/ssh_knowledge/" class="post-title">
+                ssh 密钥登陆服务器
+              </a>
+              
+                <span class="post-tags">
+                  
+                    <span class="tag-item">Linux</span>
+                  
+                    <span class="tag-item">SSH</span>
+                  
+                </span>
+              
+            </div>
+          
+            <div class="post-item">
+              <span class="post-date">01-01</span>
+              <a href="/2024/01/01/linux_knowledge/" class="post-title">
+                linux 知识
+              </a>
+              
+                <span class="post-tags">
+                  
+                    <span class="tag-item">linux</span>
+                  
+                </span>
+              
+            </div>
+          
+        </div>
+      </div>
+    
+      <div 
+        id="year-2023"
+        class="year-section " 
+        data-year="2023"
+        role="tabpanel"
+        aria-labelledby="tab-2023">
+        <div class="month-posts">
+          
+            <div class="post-item">
+              <span class="post-date">11-30</span>
+              <a href="/2023/11/30/Python%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95/" class="post-title">
+                python学习记录
+              </a>
+              
+                <span class="post-tags">
+                  
+                    <span class="tag-item">python</span>
+                  
+                </span>
+              
+            </div>
+          
+            <div class="post-item">
+              <span class="post-date">11-01</span>
+              <a href="/2023/11/01/Configuring%20Xray%20with%20VLESS,%20Reality,%20and%20gRPC/" class="post-title">
+                Configuring Xray with VLESS, Reality and gRPC
+              </a>
+              
+                <span class="post-tags">
+                  
+                    <span class="tag-item">xray</span>
+                  
+                    <span class="tag-item">vless</span>
+                  
+                    <span class="tag-item">grpc</span>
+                  
+                    <span class="tag-item">singbox</span>
+                  
+                </span>
+              
+            </div>
+          
+            <div class="post-item">
+              <span class="post-date">11-01</span>
+              <a href="/2023/11/01/DNS_Configuration/" class="post-title">
+                SingBox DNS Configuration
+              </a>
+              
+                <span class="post-tags">
+                  
+                    <span class="tag-item">singbox</span>
+                  
+                    <span class="tag-item">dns</span>
+                  
+                </span>
+              
+            </div>
+          
+            <div class="post-item">
+              <span class="post-date">11-01</span>
+              <a href="/2023/11/01/Lowendtalk_rss%E7%9B%91%E5%90%ACstorage_vps_offer/" class="post-title">
+                Lowendtalk_rss监听storage_vps_offer
+              </a>
+              
+                <span class="post-tags">
+                  
+                    <span class="tag-item">python</span>
+                  
+                    <span class="tag-item">rss</span>
+                  
+                    <span class="tag-item">vps</span>
+                  
+                </span>
+              
+            </div>
+          
+            <div class="post-item">
+              <span class="post-date">11-01</span>
+              <a href="/2023/11/01/Secure%20Your%20Socks5%20Proxy%20with%20Gost%20Authentication/" class="post-title">
+                Secure Your Socks5 Proxy with Gost Authentication
+              </a>
+              
+                <span class="post-tags">
+                  
+                    <span class="tag-item">socks5</span>
+                  
+                    <span class="tag-item">gost</span>
+                  
+                </span>
+              
+            </div>
+          
+            <div class="post-item">
+              <span class="post-date">11-01</span>
+              <a href="/2023/11/01/atom_cmd/" class="post-title">
+                Atom 常用命令
+              </a>
+              
+                <span class="post-tags">
+                  
+                    <span class="tag-item">atom</span>
+                  
+                    <span class="tag-item">commands</span>
+                  
+                </span>
+              
+            </div>
+          
+            <div class="post-item">
+              <span class="post-date">11-01</span>
+              <a href="/2023/11/01/docker%E6%95%99%E7%A8%8B/" class="post-title">
+                docker 知识
+              </a>
+              
+                <span class="post-tags">
+                  
+                    <span class="tag-item">docker</span>
+                  
+                    <span class="tag-item">tutorial</span>
+                  
+                </span>
+              
+            </div>
+          
+            <div class="post-item">
+              <span class="post-date">11-01</span>
+              <a href="/2023/11/01/hexo%E5%8D%9A%E5%AE%A2pure%E4%B8%BB%E9%A2%98%E5%AE%89%E8%A3%85%E8%AE%B0%E5%BD%95/" class="post-title">
+                hexo博客pure主题安装记录
+              </a>
+              
+                <span class="post-tags">
+                  
+                    <span class="tag-item">hexo</span>
+                  
+                    <span class="tag-item">theme</span>
+                  
+                </span>
+              
+            </div>
+          
+            <div class="post-item">
+              <span class="post-date">11-01</span>
+              <a href="/2023/11/01/git%E5%AD%A6%E4%B9%A0/" class="post-title">
+                git 知识
+              </a>
+              
+                <span class="post-tags">
+                  
+                    <span class="tag-item">tutorial</span>
+                  
+                    <span class="tag-item">git</span>
+                  
+                </span>
+              
+            </div>
+          
+            <div class="post-item">
+              <span class="post-date">11-01</span>
+              <a href="/2023/11/01/hexo%E5%AE%B9%E5%99%A8%E5%8C%96%E9%83%A8%E7%BD%B2/" class="post-title">
+                hexo 容器化部署
+              </a>
+              
+                <span class="post-tags">
+                  
+                    <span class="tag-item">docker</span>
+                  
+                    <span class="tag-item">hexo</span>
+                  
+                </span>
+              
+            </div>
+          
+            <div class="post-item">
+              <span class="post-date">11-01</span>
+              <a href="/2023/11/01/iPhone%E6%89%8B%E6%9C%BA%E5%BA%93%E5%AD%98%E7%9B%91%E5%90%AC/" class="post-title">
+                iphone手机库存监听
+              </a>
+              
+                <span class="post-tags">
+                  
+                    <span class="tag-item">python</span>
+                  
+                    <span class="tag-item">iphone</span>
+                  
+                    <span class="tag-item">stock monitoring</span>
+                  
+                </span>
+              
+            </div>
+          
+            <div class="post-item">
+              <span class="post-date">11-01</span>
+              <a href="/2023/11/01/install_zsh_login_shell/" class="post-title">
+                如何编写简易登陆脚本&amp;&amp;安装iterm2和oh-my-zsh&amp;&amp;配置oh-my-zsh
+              </a>
+              
+                <span class="post-tags">
+                  
+                    <span class="tag-item">iterm2</span>
+                  
+                    <span class="tag-item">oh-my-zsh</span>
+                  
+                    <span class="tag-item">zsh</span>
+                  
+                </span>
+              
+            </div>
+          
+            <div class="post-item">
+              <span class="post-date">11-01</span>
+              <a href="/2023/11/01/nginx%20ssl/" class="post-title">
+                nginx ssl 配置
+              </a>
+              
+                <span class="post-tags">
+                  
+                    <span class="tag-item">nginx</span>
+                  
+                    <span class="tag-item">ssl</span>
+                  
+                </span>
+              
+            </div>
+          
+            <div class="post-item">
+              <span class="post-date">11-01</span>
+              <a href="/2023/11/01/nginx/" class="post-title">
+                nginx 知识
+              </a>
+              
+                <span class="post-tags">
+                  
+                    <span class="tag-item">tutorial</span>
+                  
+                    <span class="tag-item">nginx</span>
+                  
+                </span>
+              
+            </div>
+          
+            <div class="post-item">
+              <span class="post-date">11-01</span>
+              <a href="/2023/11/01/oracle_centos%E5%BC%95%E5%AF%BC%E5%8D%B7%E6%89%A9%E5%A2%9E/" class="post-title">
+                oracle_centos引导卷扩增
+              </a>
+              
+                <span class="post-tags">
+                  
+                    <span class="tag-item">centos</span>
+                  
+                    <span class="tag-item">oracle</span>
+                  
+                </span>
+              
+            </div>
+          
+            <div class="post-item">
+              <span class="post-date">11-01</span>
+              <a href="/2023/11/01/python%20%E8%99%9A%E6%8B%9F%E7%8E%AF%E5%A2%83%E5%AE%89%E8%A3%85/" class="post-title">
+                python 虚拟环境安装
+              </a>
+              
+                <span class="post-tags">
+                  
+                    <span class="tag-item">python</span>
+                  
+                    <span class="tag-item">virtual environment</span>
+                  
+                </span>
+              
+            </div>
+          
+            <div class="post-item">
+              <span class="post-date">11-01</span>
+              <a href="/2023/11/01/python_note/" class="post-title">
+                python 学习笔记
+              </a>
+              
+                <span class="post-tags">
+                  
+                    <span class="tag-item">python</span>
+                  
+                </span>
+              
+            </div>
+          
+            <div class="post-item">
+              <span class="post-date">11-01</span>
+              <a href="/2023/11/01/python%E5%BC%82%E6%AD%A5%E5%87%BD%E6%95%B0%E5%88%9D%E6%AD%A5%E8%AE%A4%E8%AF%86/" class="post-title">
+                python异步函数初步认识
+              </a>
+              
+                <span class="post-tags">
+                  
+                    <span class="tag-item">python</span>
+                  
+                    <span class="tag-item">async</span>
+                  
+                </span>
+              
+            </div>
+          
+            <div class="post-item">
+              <span class="post-date">11-01</span>
+              <a href="/2023/11/01/python%E6%9E%84%E5%BB%BA%E9%80%9A%E7%9F%A5api%E6%9C%8D%E5%8A%A1/" class="post-title">
+                python构建通知api服务
+              </a>
+              
+                <span class="post-tags">
+                  
+                    <span class="tag-item">python</span>
+                  
+                    <span class="tag-item">nginx</span>
+                  
+                    <span class="tag-item">api</span>
+                  
+                    <span class="tag-item">flask</span>
+                  
+                </span>
+              
+            </div>
+          
+            <div class="post-item">
+              <span class="post-date">11-01</span>
+              <a href="/2023/11/01/python%E8%87%AA%E5%8A%A8%E7%AD%BE%E5%88%B0pt%E7%AB%99%E7%82%B9/" class="post-title">
+                python自动签到pt站点
+              </a>
+              
+                <span class="post-tags">
+                  
+                    <span class="tag-item">python</span>
+                  
+                    <span class="tag-item">pt</span>
+                  
+                </span>
+              
+            </div>
+          
+            <div class="post-item">
+              <span class="post-date">11-01</span>
+              <a href="/2023/11/01/qBittorrent%E4%B8%8B%E8%BD%BD%E5%AE%8C%E6%88%90%E5%90%8E%E8%87%AA%E5%8A%A8%E4%B8%8A%E4%BC%A0/" class="post-title">
+                qBittorrent下载完成后自动上传
+              </a>
+              
+                <span class="post-tags">
+                  
+                    <span class="tag-item">qBittorrent</span>
+                  
+                    <span class="tag-item">shell</span>
+                  
+                </span>
+              
+            </div>
+          
+            <div class="post-item">
+              <span class="post-date">11-01</span>
+              <a href="/2023/11/01/wordpress%E5%AE%B9%E5%99%A8%E5%8C%96%E9%83%A8%E7%BD%B2/" class="post-title">
+                wordpress容器化部署
+              </a>
+              
+                <span class="post-tags">
+                  
+                    <span class="tag-item">docker</span>
+                  
+                    <span class="tag-item">wordpress</span>
+                  
+                </span>
+              
+            </div>
+          
+            <div class="post-item">
+              <span class="post-date">11-01</span>
+              <a href="/2023/11/01/%E4%BD%BF%E7%94%A8-Cloudflare-Workers-%E5%92%8C-OneDrive-API-%E5%AE%9E%E7%8E%B0%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E5%8A%9F%E8%83%BD/" class="post-title">
+                使用 Cloudflare Workers 和 OneDrive API 实现文件上传功能
+              </a>
+              
+                <span class="post-tags">
+                  
+                    <span class="tag-item">api</span>
+                  
+                    <span class="tag-item">js</span>
+                  
+                    <span class="tag-item">cloudflare</span>
+                  
+                    <span class="tag-item">onedrive</span>
+                  
+                </span>
+              
+            </div>
+          
+            <div class="post-item">
+              <span class="post-date">11-01</span>
+              <a href="/2023/11/01/%E4%BD%BF%E7%94%A8docker%E5%88%9B%E5%BB%BAJupyter%E5%B9%B6%E9%85%8D%E7%BD%AENginx%E5%8F%8D%E5%90%91%E4%BB%A3%E7%90%86/" class="post-title">
+                使用docker创建Jupyter并配置Nginx反向代理
+              </a>
+              
+                <span class="post-tags">
+                  
+                    <span class="tag-item">docker</span>
+                  
+                    <span class="tag-item">nginx</span>
+                  
+                    <span class="tag-item">jupyter</span>
+                  
+                </span>
+              
+            </div>
+          
+            <div class="post-item">
+              <span class="post-date">11-01</span>
+              <a href="/2023/11/01/%E5%88%A9%E7%94%A8-API-%E8%87%AA%E5%8A%A8%E8%8E%B7%E5%8F%96%E6%B1%87%E7%8E%87%E5%B9%B6%E5%AE%9E%E6%97%B6%E9%80%9A%E7%9F%A5/" class="post-title">
+                利用 API 自动获取汇率并实时通知
+              </a>
+              
+                <span class="post-tags">
+                  
+                    <span class="tag-item">python</span>
+                  
+                    <span class="tag-item">api</span>
+                  
+                </span>
+              
+            </div>
+          
+            <div class="post-item">
+              <span class="post-date">11-01</span>
+              <a href="/2023/11/01/%E5%88%A9%E7%94%A8flaresolverr%E5%AE%9E%E7%8E%B0cloudflare%E8%AE%BF%E9%97%AE%E9%99%90%E5%88%B6%E7%AA%81%E7%A0%B4/" class="post-title">
+                利用flaresolverr 实现cloudflare访问限制突破
+              </a>
+              
+                <span class="post-tags">
+                  
+                    <span class="tag-item">python</span>
+                  
+                    <span class="tag-item">flaresolverr</span>
+                  
+                </span>
+              
+            </div>
+          
+            <div class="post-item">
+              <span class="post-date">11-01</span>
+              <a href="/2023/11/01/%E5%AE%B9%E5%99%A8%E5%8C%96%E9%83%A8%E7%BD%B2telegram%E8%87%AA%E5%BB%BAapi/" class="post-title">
+                容器化部署telegram自建api
+              </a>
+              
+                <span class="post-tags">
+                  
+                    <span class="tag-item">docker</span>
+                  
+                    <span class="tag-item">api</span>
+                  
+                    <span class="tag-item">telegram</span>
+                  
+                </span>
+              
+            </div>
+          
+            <div class="post-item">
+              <span class="post-date">11-01</span>
+              <a href="/2023/11/01/%E5%B0%9D%E8%AF%95%E8%B0%83%E7%94%A8E5-graph%20API%20%E5%AE%9E%E7%8E%B0%E9%82%AE%E7%AE%B1%E5%8F%91%E9%80%81/" class="post-title">
+                尝试调用E5-graph API 实现邮箱发送
+              </a>
+              
+                <span class="post-tags">
+                  
+                    <span class="tag-item">python</span>
+                  
+                    <span class="tag-item">API</span>
+                  
+                </span>
+              
+            </div>
+          
+            <div class="post-item">
+              <span class="post-date">11-01</span>
+              <a href="/2023/11/01/%E6%89%8B%E5%8A%A8%E9%80%9A%E8%BF%87acme%E5%AE%89%E8%A3%85%E8%AF%81%E4%B9%A6/" class="post-title">
+                acme安装证书
+              </a>
+              
+                <span class="post-tags">
+                  
+                    <span class="tag-item">ssl</span>
+                  
+                    <span class="tag-item">acme</span>
+                  
+                    <span class="tag-item">certificate</span>
+                  
+                </span>
+              
+            </div>
+          
+            <div class="post-item">
+              <span class="post-date">11-01</span>
+              <a href="/2023/11/01/%E6%9C%8D%E5%8A%A1%E5%99%A8%E5%BC%80%E5%90%AFBBR/" class="post-title">
+                服务器开启BBR
+              </a>
+              
+                <span class="post-tags">
+                  
+                    <span class="tag-item">BBR</span>
+                  
+                    <span class="tag-item">server</span>
+                  
+                </span>
+              
+            </div>
+          
+            <div class="post-item">
+              <span class="post-date">11-01</span>
+              <a href="/2023/11/01/%E7%94%B2%E9%AA%A8%E6%96%87%20MFA%20%E9%AA%8C%E8%AF%81%E8%AE%BE%E5%A4%87%E4%B8%A2%E5%A4%B1%E8%A7%A3%E5%86%B3%E5%8A%9E%E6%B3%95/" class="post-title">
+                甲骨文MFA验证设备丢失解决办法
+              </a>
+              
+                <span class="post-tags">
+                  
+                    <span class="tag-item">MFA</span>
+                  
+                    <span class="tag-item">Oracle</span>
+                  
+                </span>
+              
+            </div>
+          
+            <div class="post-item">
+              <span class="post-date">11-01</span>
+              <a href="/2023/11/01/%E8%A7%A3%E5%86%B3vim%E5%BC%80%E5%90%AF%E4%B8%AD%E6%96%87%E4%B9%B1%E7%A0%81%E9%97%AE%E9%A2%98/" class="post-title">
+                vim中文乱码问题解决
+              </a>
+              
+                <span class="post-tags">
+                  
+                    <span class="tag-item">vim</span>
+                  
+                    <span class="tag-item">encoding</span>
+                  
+                </span>
+              
+            </div>
+          
+            <div class="post-item">
+              <span class="post-date">10-15</span>
+              <a href="/2023/10/15/%E5%9F%BA%E4%BA%8Eddddocr%E5%AE%9E%E7%8E%B0%E9%AA%8C%E8%AF%81%E8%AF%86%E5%88%AB/" class="post-title">
+                基于ddddocr库的验证码识别
+              </a>
+              
+                <span class="post-tags">
+                  
+                    <span class="tag-item">python</span>
+                  
+                    <span class="tag-item">ddddocr</span>
+                  
+                </span>
+              
+            </div>
+          
+        </div>
+      </div>
+    
+  </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const tabs = document.querySelectorAll('.year-tab');
+  const sections = document.querySelectorAll('.year-section');
+
+  tabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      const year = tab.dataset.year;
+      
+      tabs.forEach(t => {
+        t.classList.remove('active');
+        t.setAttribute('aria-selected', 'false');
+      });
+      sections.forEach(s => s.classList.remove('active'));
+      
+      tab.classList.add('active');
+      tab.setAttribute('aria-selected', 'true');
+      document.querySelector(`.year-section[data-year="${year}"]`).classList.add('active');
+    });
+  });
+});
+</script>
+  </main>
+
+  <footer>
+    <p>
+      &copy; 2025 Shark Blog 
+      <a href="https://github.com/eddiehex/hexo-geek-source" target="_blank">
+        <i class="fab fa-github"></i>
+      </a>
+    </p>
+  </footer>
+
+  <script src="/js/search.js"></script>
+  <script src="/js/main.js"></script>
+  <script src="/js/copy-code.js"></script>
+  <script src="/js/prism.js"></script>
+  <script src="/js/toc-highlight.js"></script>
+  <script src="/js/mobile-menu.js"></script>
+</body>
+</html>

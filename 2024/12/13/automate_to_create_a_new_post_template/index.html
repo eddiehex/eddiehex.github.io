@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Shark Blog</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/prism-code.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <link rel="icon" href="https://hexo.kygoho.win/upload/uploads/6e7cf36d-8cb2-40c6-831f-80ef7488cca4.png" type="image/x-icon">
+  <link rel="stylesheet" href="/css/toc.css">
+  
+  <!-- MathJax Configuration -->
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']],
+        processEscapes: true,
+        processEnvironments: true,
+        packages: ['base', 'ams', 'noerrors', 'noundefined']
+      },
+      options: {
+        ignoreHtmlClass: 'tex2jax_ignore',
+        processHtmlClass: 'tex2jax_process'
+      },
+      startup: {
+        ready() {
+          MathJax.startup.defaultReady();
+          // Re-render math when content changes
+          document.addEventListener('DOMContentLoaded', function() {
+            if (window.MathJax && window.MathJax.typesetPromise) {
+              window.MathJax.typesetPromise();
+            }
+          });
+        }
+      }
+    };
+  </script>
+  <script async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.min.js"></script>
+<meta name="generator" content="Hexo 6.3.0"></head>
+<body>
+  <header>
+    <nav>
+      <div class="nav-container">
+        <div class="logo"><a href="/">Shark Blog</a></div>
+        <div class="search-container">
+          <input type="text" id="search-input" placeholder="Search...">
+          <div id="search-results"></div>
+        </div>
+        <div class="menu-toggle">
+          <i class="fas fa-bars"></i>
+        </div>
+      </div>
+      <ul class="nav-links">
+        <li><a href="/">Posts</a></li>
+        <li><a href="/services">Services</a></li>
+        <li><a href="/archives">Archive</a></li>
+        <li><a href="/categories">Categories</a></li>
+        <li><a href="/about">About</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <div class="page-container">
+  
+  
+  <article class="page-content">
+    <h1 class="page-title">Automate to Create a New Post Template</h1>
+    <div class="page-body">
+      <p>好的，这是一个可以创建 Markdown 文档模板的 Shell 脚本：</p>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token shebang important">#!/bin/bash</span>
+
+<span class="token comment"># 检查是否提供了文件名参数</span>
+<span class="token keyword">if</span> <span class="token punctuation">[</span> <span class="token parameter variable">-z</span> <span class="token string">"<span class="token variable">$1</span>"</span> <span class="token punctuation">]</span><span class="token punctuation">;</span> <span class="token keyword">then</span>
+  <span class="token builtin class-name">echo</span> <span class="token string">"用法: <span class="token variable">$0</span> &lt;文件名>"</span>
+  <span class="token builtin class-name">exit</span> <span class="token number">1</span>
+<span class="token keyword">fi</span>
+
+<span class="token assign-left variable">name</span><span class="token operator">=</span><span class="token string">"<span class="token variable">$1</span>"</span>
+<span class="token assign-left variable">current_date</span><span class="token operator">=</span><span class="token variable"><span class="token variable">$(</span><span class="token function">date</span> +%Y-%m-%d<span class="token variable">)</span></span>
+
+<span class="token function">cat</span> <span class="token operator">&lt;&lt;</span> <span class="token string">EOF<span class="token bash punctuation"> <span class="token operator">></span> <span class="token string">"<span class="token variable">$name</span>"</span>.md</span>
+---
+title: <span class="token variable">$name</span>
+date: <span class="token variable">$current_date</span>
+categories:
+  - &#123;optional&#125;
+tags: [&#123;optional&#125;]
+toc: true
+excerpt: "&#123;optional&#125;"
+---
+EOF</span>
+
+<span class="token builtin class-name">echo</span> <span class="token string">"已创建文件: <span class="token variable">$name</span>.md"</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p><strong>脚本解释:</strong></p>
+<ol>
+<li><code>#!/bin/bash</code>:  指定脚本使用 Bash 解释器执行。</li>
+<li><code>if [ -z &quot;$1&quot; ]; then ... fi</code>: 检查是否提供了文件名参数。 <code>$1</code> 代表脚本的第一个参数，<code>-z</code> 用于检查字符串是否为空。 如果没有参数，则输出用法信息并退出。</li>
+<li><code>name=&quot;$1&quot;</code>: 将第一个参数赋值给变量 <code>name</code>。</li>
+<li><code>current_date=$(date +%Y-%m-%d)</code>: 使用 <code>date</code> 命令获取当前日期，并格式化为 <code>YYYY-MM-dd</code>，然后赋值给变量 <code>current_date</code>。</li>
+<li><code>cat &lt;&lt; EOF &gt; &quot;$name&quot;.md ... EOF</code>:  使用 <code>cat</code> 命令和 Here 文档 (<code>&lt;&lt; EOF ... EOF</code>) 将多行文本输出到以 <code>name</code> 变量命名的 <code>.md</code> 文件中。</li>
+<li><code>echo &quot;已创建文件: $name.md&quot;</code>: 输出一个确认信息，告知用户文件已创建。</li>
+</ol>
+<p><strong>如何使用:</strong></p>
+<ol>
+<li><p><strong>保存脚本:</strong> 将上面的代码保存为一个文件，例如 <code>create_md.sh</code>。</p>
+</li>
+<li><p><strong>添加执行权限:</strong> 使用命令 <code>chmod +x create_md.sh</code> 为脚本添加执行权限。</p>
+</li>
+<li><p><strong>运行脚本:</strong> 在终端中，使用以下命令运行脚本，并将要创建的 Markdown 文件名作为参数：</p>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">./create_md.sh my-new-document<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<p>这将会创建一个名为 <code>my-new-document.md</code> 的文件，其中包含预定义的元数据。</p>
+</li>
+</ol>
+<p><strong>示例输出:</strong></p>
+<p>如果执行命令 <code>./create_md.sh my-blog-post</code>，将会生成一个名为 <code>my-blog-post.md</code> 的文件，内容如下：</p>
+<pre class="line-numbers language-markdown" data-language="markdown"><code class="language-markdown"><span class="token front-matter-block"><span class="token punctuation">---</span>
+<span class="token front-matter yaml language-yaml"><span class="token key atrule">title</span><span class="token punctuation">:</span> my<span class="token punctuation">-</span>blog<span class="token punctuation">-</span>post
+<span class="token key atrule">date</span><span class="token punctuation">:</span> <span class="token datetime number">2023-10-27</span>
+<span class="token key atrule">categories</span><span class="token punctuation">:</span>
+  <span class="token punctuation">-</span> <span class="token punctuation">&#123;</span>optional<span class="token punctuation">&#125;</span>
+<span class="token key atrule">tags</span><span class="token punctuation">:</span> <span class="token punctuation">[</span><span class="token punctuation">&#123;</span>optional<span class="token punctuation">&#125;</span><span class="token punctuation">]</span>
+<span class="token key atrule">toc</span><span class="token punctuation">:</span> <span class="token boolean important">true</span>
+<span class="token key atrule">excerpt</span><span class="token punctuation">:</span> <span class="token string">"&#123;optional&#125;"</span></span>
+<span class="token punctuation">---</span></span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p><strong>说明:</strong></p>
+<ul>
+<li><code>&#123;optional&#125;</code> 部分是占位符，你需要根据实际情况修改它们。</li>
+<li>这个脚本创建的文件名会自动添加 <code>.md</code> 后缀。</li>
+</ul>
+
+    </div>
+  </article>
+</div>
+  </main>
+
+  <footer>
+    <p>
+      &copy; 2025 Shark Blog 
+      <a href="https://github.com/eddiehex/hexo-geek-source" target="_blank">
+        <i class="fab fa-github"></i>
+      </a>
+    </p>
+  </footer>
+
+  <script src="/js/search.js"></script>
+  <script src="/js/main.js"></script>
+  <script src="/js/copy-code.js"></script>
+  <script src="/js/prism.js"></script>
+  <script src="/js/toc-highlight.js"></script>
+  <script src="/js/mobile-menu.js"></script>
+</body>
+</html>

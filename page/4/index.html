@@ -1,0 +1,906 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Shark Blog</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/prism-code.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <link rel="icon" href="https://hexo.kygoho.win/upload/uploads/6e7cf36d-8cb2-40c6-831f-80ef7488cca4.png" type="image/x-icon">
+  <link rel="stylesheet" href="/css/toc.css">
+  
+  <!-- MathJax Configuration -->
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']],
+        processEscapes: true,
+        processEnvironments: true,
+        packages: ['base', 'ams', 'noerrors', 'noundefined']
+      },
+      options: {
+        ignoreHtmlClass: 'tex2jax_ignore',
+        processHtmlClass: 'tex2jax_process'
+      },
+      startup: {
+        ready() {
+          MathJax.startup.defaultReady();
+          // Re-render math when content changes
+          document.addEventListener('DOMContentLoaded', function() {
+            if (window.MathJax && window.MathJax.typesetPromise) {
+              window.MathJax.typesetPromise();
+            }
+          });
+        }
+      }
+    };
+  </script>
+  <script async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.min.js"></script>
+<meta name="generator" content="Hexo 6.3.0"></head>
+<body>
+  <header>
+    <nav>
+      <div class="nav-container">
+        <div class="logo"><a href="/">Shark Blog</a></div>
+        <div class="search-container">
+          <input type="text" id="search-input" placeholder="Search...">
+          <div id="search-results"></div>
+        </div>
+        <div class="menu-toggle">
+          <i class="fas fa-bars"></i>
+        </div>
+      </div>
+      <ul class="nav-links">
+        <li><a href="/">Posts</a></li>
+        <li><a href="/services">Services</a></li>
+        <li><a href="/archives">Archive</a></li>
+        <li><a href="/categories">Categories</a></li>
+        <li><a href="/about">About</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <!-- Hero Section -->
+<section class="hero-section">
+  <div class="hero-content">
+    <h1 class="hero-title">Here is Shark Blog</h1>
+    <p class="hero-subtitle">Diving into the world of tech and beyond</p>
+    <div class="hero-stats">
+      <div class="stat-item">
+        <span class="stat-number">50</span>
+        <span class="stat-label">Posts</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-number">15</span>
+        <span class="stat-label">Categories</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-number">78</span>
+        <span class="stat-label">Tags</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="posts-container">
+  <!-- Featured Posts Section -->
+  
+    <section class="featured-posts">
+      <h2 class="section-title">Latest Posts</h2>
+      <div class="posts-grid">
+        
+          <article class="post-card featured-post">
+            <div class="post-header">
+              <div class="post-meta">
+                <span class="post-date">
+                  <i class="fas fa-calendar"></i> 
+                  2023-11-01
+                </span>
+                
+                  <span class="post-categories">
+                    <i class="fas fa-folder"></i>
+                    <a class="category-link" href="/categories/Linux/">Linux</a>
+                  </span>
+                
+                
+                  <span class="post-tags-preview">
+                    <i class="fas fa-tags"></i>
+                    
+                      
+                        <span class="tag">tutorial</span>
+                      
+                    
+                      
+                        <span class="tag">nginx</span>
+                      
+                    
+                    
+                  </span>
+                
+              </div>
+            </div>
+            
+            <div class="post-content-wrapper">
+              <h2 class="post-title">
+                <a href="/2023/11/01/nginx/">nginx 知识</a>
+              </h2>
+              
+              <div class="post-excerpt">
+                
+                  Explore the fundamentals of Nginx with this comprehensive guide. Learn how to set up, configure, and optimize Nginx for various web server tasks, enhancing your web application's performance and secur...
+                
+              </div>
+              
+              <div class="post-footer">
+                <div class="read-info">
+                  <span class="read-time">
+                    <i class="fas fa-clock"></i>
+                    
+                    
+                    3 min read
+                  </span>
+                </div>
+                <a href="/2023/11/01/nginx/" class="read-more">
+                  <span>Read More</span>
+                  <i class="fas fa-arrow-right"></i>
+                </a>
+              </div>
+            </div>
+          </article>
+        
+          <article class="post-card ">
+            <div class="post-header">
+              <div class="post-meta">
+                <span class="post-date">
+                  <i class="fas fa-calendar"></i> 
+                  2023-11-01
+                </span>
+                
+                  <span class="post-categories">
+                    <i class="fas fa-folder"></i>
+                    <a class="category-link" href="/categories/Linux/">Linux</a>
+                  </span>
+                
+                
+                  <span class="post-tags-preview">
+                    <i class="fas fa-tags"></i>
+                    
+                      
+                        <span class="tag">centos</span>
+                      
+                    
+                      
+                        <span class="tag">oracle</span>
+                      
+                    
+                    
+                  </span>
+                
+              </div>
+            </div>
+            
+            <div class="post-content-wrapper">
+              <h2 class="post-title">
+                <a href="/2023/11/01/oracle_centos%E5%BC%95%E5%AF%BC%E5%8D%B7%E6%89%A9%E5%A2%9E/">oracle_centos引导卷扩增</a>
+              </h2>
+              
+              <div class="post-excerpt">
+                
+                  Learn how to expand the boot volume on Oracle CentOS. This guide provides step-by-step instructions for increasing the boot volume size to ensure your system has enough space for optimal performance....
+                
+              </div>
+              
+              <div class="post-footer">
+                <div class="read-info">
+                  <span class="read-time">
+                    <i class="fas fa-clock"></i>
+                    
+                    
+                    2 min read
+                  </span>
+                </div>
+                <a href="/2023/11/01/oracle_centos%E5%BC%95%E5%AF%BC%E5%8D%B7%E6%89%A9%E5%A2%9E/" class="read-more">
+                  <span>Read More</span>
+                  <i class="fas fa-arrow-right"></i>
+                </a>
+              </div>
+            </div>
+          </article>
+        
+          <article class="post-card ">
+            <div class="post-header">
+              <div class="post-meta">
+                <span class="post-date">
+                  <i class="fas fa-calendar"></i> 
+                  2023-11-01
+                </span>
+                
+                  <span class="post-categories">
+                    <i class="fas fa-folder"></i>
+                    <a class="category-link" href="/categories/Python/">Python</a>
+                  </span>
+                
+                
+                  <span class="post-tags-preview">
+                    <i class="fas fa-tags"></i>
+                    
+                      
+                        <span class="tag">python</span>
+                      
+                    
+                      
+                        <span class="tag">virtual environment</span>
+                      
+                    
+                    
+                  </span>
+                
+              </div>
+            </div>
+            
+            <div class="post-content-wrapper">
+              <h2 class="post-title">
+                <a href="/2023/11/01/python%20%E8%99%9A%E6%8B%9F%E7%8E%AF%E5%A2%83%E5%AE%89%E8%A3%85/">python 虚拟环境安装</a>
+              </h2>
+              
+              <div class="post-excerpt">
+                
+                  Learn how to set up a Python virtual environment. This guide provides step-by-step instructions for creating and managing virtual environments to isolate your Python projects and dependencies....
+                
+              </div>
+              
+              <div class="post-footer">
+                <div class="read-info">
+                  <span class="read-time">
+                    <i class="fas fa-clock"></i>
+                    
+                    
+                    1 min read
+                  </span>
+                </div>
+                <a href="/2023/11/01/python%20%E8%99%9A%E6%8B%9F%E7%8E%AF%E5%A2%83%E5%AE%89%E8%A3%85/" class="read-more">
+                  <span>Read More</span>
+                  <i class="fas fa-arrow-right"></i>
+                </a>
+              </div>
+            </div>
+          </article>
+        
+          <article class="post-card ">
+            <div class="post-header">
+              <div class="post-meta">
+                <span class="post-date">
+                  <i class="fas fa-calendar"></i> 
+                  2023-11-01
+                </span>
+                
+                  <span class="post-categories">
+                    <i class="fas fa-folder"></i>
+                    <a class="category-link" href="/categories/Python/">Python</a>
+                  </span>
+                
+                
+                  <span class="post-tags-preview">
+                    <i class="fas fa-tags"></i>
+                    
+                      
+                        <span class="tag">python</span>
+                      
+                    
+                    
+                  </span>
+                
+              </div>
+            </div>
+            
+            <div class="post-content-wrapper">
+              <h2 class="post-title">
+                <a href="/2023/11/01/python_note/">python 学习笔记</a>
+              </h2>
+              
+              <div class="post-excerpt">
+                
+                  A comprehensive collection of Python learning notes. This guide covers various Python concepts, tips, and best practices to help you enhance your programming skills....
+                
+              </div>
+              
+              <div class="post-footer">
+                <div class="read-info">
+                  <span class="read-time">
+                    <i class="fas fa-clock"></i>
+                    
+                    
+                    5 min read
+                  </span>
+                </div>
+                <a href="/2023/11/01/python_note/" class="read-more">
+                  <span>Read More</span>
+                  <i class="fas fa-arrow-right"></i>
+                </a>
+              </div>
+            </div>
+          </article>
+        
+          <article class="post-card ">
+            <div class="post-header">
+              <div class="post-meta">
+                <span class="post-date">
+                  <i class="fas fa-calendar"></i> 
+                  2023-11-01
+                </span>
+                
+                  <span class="post-categories">
+                    <i class="fas fa-folder"></i>
+                    <a class="category-link" href="/categories/Python/">Python</a>
+                  </span>
+                
+                
+                  <span class="post-tags-preview">
+                    <i class="fas fa-tags"></i>
+                    
+                      
+                        <span class="tag">python</span>
+                      
+                    
+                      
+                        <span class="tag">async</span>
+                      
+                    
+                    
+                  </span>
+                
+              </div>
+            </div>
+            
+            <div class="post-content-wrapper">
+              <h2 class="post-title">
+                <a href="/2023/11/01/python%E5%BC%82%E6%AD%A5%E5%87%BD%E6%95%B0%E5%88%9D%E6%AD%A5%E8%AE%A4%E8%AF%86/">python异步函数初步认识</a>
+              </h2>
+              
+              <div class="post-excerpt">
+                
+                  Get an introduction to asynchronous functions in Python. This guide covers the basics of async programming, including how to write and use async functions to improve the performance of your Python app...
+                
+              </div>
+              
+              <div class="post-footer">
+                <div class="read-info">
+                  <span class="read-time">
+                    <i class="fas fa-clock"></i>
+                    
+                    
+                    5 min read
+                  </span>
+                </div>
+                <a href="/2023/11/01/python%E5%BC%82%E6%AD%A5%E5%87%BD%E6%95%B0%E5%88%9D%E6%AD%A5%E8%AE%A4%E8%AF%86/" class="read-more">
+                  <span>Read More</span>
+                  <i class="fas fa-arrow-right"></i>
+                </a>
+              </div>
+            </div>
+          </article>
+        
+          <article class="post-card ">
+            <div class="post-header">
+              <div class="post-meta">
+                <span class="post-date">
+                  <i class="fas fa-calendar"></i> 
+                  2023-11-01
+                </span>
+                
+                  <span class="post-categories">
+                    <i class="fas fa-folder"></i>
+                    <a class="category-link" href="/categories/Python/">Python</a>
+                  </span>
+                
+                
+                  <span class="post-tags-preview">
+                    <i class="fas fa-tags"></i>
+                    
+                      
+                        <span class="tag">python</span>
+                      
+                    
+                      
+                        <span class="tag">nginx</span>
+                      
+                    
+                      
+                    
+                      
+                    
+                    
+                      <span class="tag-more">+2</span>
+                    
+                  </span>
+                
+              </div>
+            </div>
+            
+            <div class="post-content-wrapper">
+              <h2 class="post-title">
+                <a href="/2023/11/01/python%E6%9E%84%E5%BB%BA%E9%80%9A%E7%9F%A5api%E6%9C%8D%E5%8A%A1/">python构建通知api服务</a>
+              </h2>
+              
+              <div class="post-excerpt">
+                
+                  Learn how to build a notification API service using Python. This guide provides step-by-step instructions for setting up and deploying a notification service with Flask and Nginx....
+                
+              </div>
+              
+              <div class="post-footer">
+                <div class="read-info">
+                  <span class="read-time">
+                    <i class="fas fa-clock"></i>
+                    
+                    
+                    2 min read
+                  </span>
+                </div>
+                <a href="/2023/11/01/python%E6%9E%84%E5%BB%BA%E9%80%9A%E7%9F%A5api%E6%9C%8D%E5%8A%A1/" class="read-more">
+                  <span>Read More</span>
+                  <i class="fas fa-arrow-right"></i>
+                </a>
+              </div>
+            </div>
+          </article>
+        
+          <article class="post-card ">
+            <div class="post-header">
+              <div class="post-meta">
+                <span class="post-date">
+                  <i class="fas fa-calendar"></i> 
+                  2023-11-01
+                </span>
+                
+                  <span class="post-categories">
+                    <i class="fas fa-folder"></i>
+                    <a class="category-link" href="/categories/Python/">Python</a>
+                  </span>
+                
+                
+                  <span class="post-tags-preview">
+                    <i class="fas fa-tags"></i>
+                    
+                      
+                        <span class="tag">python</span>
+                      
+                    
+                      
+                        <span class="tag">pt</span>
+                      
+                    
+                    
+                  </span>
+                
+              </div>
+            </div>
+            
+            <div class="post-content-wrapper">
+              <h2 class="post-title">
+                <a href="/2023/11/01/python%E8%87%AA%E5%8A%A8%E7%AD%BE%E5%88%B0pt%E7%AB%99%E7%82%B9/">python自动签到pt站点</a>
+              </h2>
+              
+              <div class="post-excerpt">
+                
+                  Learn how to automate the check-in process for PT sites using Python. This guide provides step-by-step instructions for setting up and running a script to automatically sign in to your PT accounts....
+                
+              </div>
+              
+              <div class="post-footer">
+                <div class="read-info">
+                  <span class="read-time">
+                    <i class="fas fa-clock"></i>
+                    
+                    
+                    2 min read
+                  </span>
+                </div>
+                <a href="/2023/11/01/python%E8%87%AA%E5%8A%A8%E7%AD%BE%E5%88%B0pt%E7%AB%99%E7%82%B9/" class="read-more">
+                  <span>Read More</span>
+                  <i class="fas fa-arrow-right"></i>
+                </a>
+              </div>
+            </div>
+          </article>
+        
+          <article class="post-card ">
+            <div class="post-header">
+              <div class="post-meta">
+                <span class="post-date">
+                  <i class="fas fa-calendar"></i> 
+                  2023-11-01
+                </span>
+                
+                  <span class="post-categories">
+                    <i class="fas fa-folder"></i>
+                    <a class="category-link" href="/categories/Python/">Python</a>
+                  </span>
+                
+                
+                  <span class="post-tags-preview">
+                    <i class="fas fa-tags"></i>
+                    
+                      
+                        <span class="tag">qBittorrent</span>
+                      
+                    
+                      
+                        <span class="tag">shell</span>
+                      
+                    
+                    
+                  </span>
+                
+              </div>
+            </div>
+            
+            <div class="post-content-wrapper">
+              <h2 class="post-title">
+                <a href="/2023/11/01/qBittorrent%E4%B8%8B%E8%BD%BD%E5%AE%8C%E6%88%90%E5%90%8E%E8%87%AA%E5%8A%A8%E4%B8%8A%E4%BC%A0/">qBittorrent下载完成后自动上传</a>
+              </h2>
+              
+              <div class="post-excerpt">
+                
+                  Learn how to automate the upload process after a download completes in qBittorrent. This guide provides step-by-step instructions for setting up a shell script to handle automatic uploads....
+                
+              </div>
+              
+              <div class="post-footer">
+                <div class="read-info">
+                  <span class="read-time">
+                    <i class="fas fa-clock"></i>
+                    
+                    
+                    5 min read
+                  </span>
+                </div>
+                <a href="/2023/11/01/qBittorrent%E4%B8%8B%E8%BD%BD%E5%AE%8C%E6%88%90%E5%90%8E%E8%87%AA%E5%8A%A8%E4%B8%8A%E4%BC%A0/" class="read-more">
+                  <span>Read More</span>
+                  <i class="fas fa-arrow-right"></i>
+                </a>
+              </div>
+            </div>
+          </article>
+        
+          <article class="post-card ">
+            <div class="post-header">
+              <div class="post-meta">
+                <span class="post-date">
+                  <i class="fas fa-calendar"></i> 
+                  2023-11-01
+                </span>
+                
+                  <span class="post-categories">
+                    <i class="fas fa-folder"></i>
+                    <a class="category-link" href="/categories/Docker/">Docker</a>
+                  </span>
+                
+                
+                  <span class="post-tags-preview">
+                    <i class="fas fa-tags"></i>
+                    
+                      
+                        <span class="tag">docker</span>
+                      
+                    
+                      
+                        <span class="tag">wordpress</span>
+                      
+                    
+                    
+                  </span>
+                
+              </div>
+            </div>
+            
+            <div class="post-content-wrapper">
+              <h2 class="post-title">
+                <a href="/2023/11/01/wordpress%E5%AE%B9%E5%99%A8%E5%8C%96%E9%83%A8%E7%BD%B2/">wordpress容器化部署</a>
+              </h2>
+              
+              <div class="post-excerpt">
+                
+                  Learn how to deploy WordPress using containerization. This guide provides step-by-step instructions for setting up and deploying WordPress with Docker, ensuring a scalable and efficient deployment pro...
+                
+              </div>
+              
+              <div class="post-footer">
+                <div class="read-info">
+                  <span class="read-time">
+                    <i class="fas fa-clock"></i>
+                    
+                    
+                    2 min read
+                  </span>
+                </div>
+                <a href="/2023/11/01/wordpress%E5%AE%B9%E5%99%A8%E5%8C%96%E9%83%A8%E7%BD%B2/" class="read-more">
+                  <span>Read More</span>
+                  <i class="fas fa-arrow-right"></i>
+                </a>
+              </div>
+            </div>
+          </article>
+        
+          <article class="post-card ">
+            <div class="post-header">
+              <div class="post-meta">
+                <span class="post-date">
+                  <i class="fas fa-calendar"></i> 
+                  2023-11-01
+                </span>
+                
+                  <span class="post-categories">
+                    <i class="fas fa-folder"></i>
+                    <a class="category-link" href="/categories/Javascript/">Javascript</a>
+                  </span>
+                
+                
+                  <span class="post-tags-preview">
+                    <i class="fas fa-tags"></i>
+                    
+                      
+                        <span class="tag">api</span>
+                      
+                    
+                      
+                        <span class="tag">js</span>
+                      
+                    
+                      
+                    
+                      
+                    
+                    
+                      <span class="tag-more">+2</span>
+                    
+                  </span>
+                
+              </div>
+            </div>
+            
+            <div class="post-content-wrapper">
+              <h2 class="post-title">
+                <a href="/2023/11/01/%E4%BD%BF%E7%94%A8-Cloudflare-Workers-%E5%92%8C-OneDrive-API-%E5%AE%9E%E7%8E%B0%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E5%8A%9F%E8%83%BD/">使用 Cloudflare Workers 和 OneDrive API 实现文件上传功能</a>
+              </h2>
+              
+              <div class="post-excerpt">
+                
+                  Learn how to implement file upload functionality using Cloudflare Workers and OneDrive API. This guide provides step-by-step instructions for setting up and integrating these services to enable effici...
+                
+              </div>
+              
+              <div class="post-footer">
+                <div class="read-info">
+                  <span class="read-time">
+                    <i class="fas fa-clock"></i>
+                    
+                    
+                    5 min read
+                  </span>
+                </div>
+                <a href="/2023/11/01/%E4%BD%BF%E7%94%A8-Cloudflare-Workers-%E5%92%8C-OneDrive-API-%E5%AE%9E%E7%8E%B0%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E5%8A%9F%E8%83%BD/" class="read-more">
+                  <span>Read More</span>
+                  <i class="fas fa-arrow-right"></i>
+                </a>
+              </div>
+            </div>
+          </article>
+        
+      </div>
+    </section>
+  
+  
+  <!-- Pagination -->
+  
+    <nav class="pagination">
+      <a class="extend prev" rel="prev" href="/page/3/"><i class="fas fa-chevron-left"></i> Previous</a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><span class="page-number current">4</span><a class="page-number" href="/page/5/">5</a><a class="extend next" rel="next" href="/page/5/">Next <i class="fas fa-chevron-right"></i></a>
+    </nav>
+  
+</div>
+
+<style>
+/* Hero Section Styles */
+.hero-section {
+  background: linear-gradient(135deg, var(--bg-color) 0%, #0d0d0d 100%);
+  padding: 4rem 0;
+  margin-bottom: 3rem;
+  text-align: center;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.hero-content {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+.hero-title {
+  font-size: 3.5rem;
+  font-weight: 700;
+  background: var(--primary-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 1rem;
+  line-height: 1.2;
+}
+
+.hero-subtitle {
+  font-size: 1.3rem;
+  color: var(--text-secondary);
+  margin-bottom: 3rem;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.hero-stats {
+  display: flex;
+  justify-content: center;
+  gap: 3rem;
+  margin-top: 2rem;
+}
+
+.stat-item {
+  text-align: center;
+}
+
+.stat-number {
+  display: block;
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: var(--primary-color);
+  line-height: 1;
+}
+
+.stat-label {
+  display: block;
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-top: 0.5rem;
+}
+
+.section-title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: var(--text-color);
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+.posts-grid {
+  display: grid;
+  gap: 2rem;
+}
+
+.featured-post {
+  grid-column: 1 / -1;
+}
+
+.post-tags-preview {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.post-tags-preview .tag {
+  background: rgba(127, 255, 0, 0.1);
+  color: var(--primary-color);
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.7rem;
+  font-weight: 500;
+}
+
+.tag-more {
+  color: var(--text-muted);
+  font-size: 0.7rem;
+}
+
+.post-excerpt {
+  color: var(--text-secondary);
+  line-height: 1.6;
+  margin: 1rem 0;
+}
+
+.post-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.read-info {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.read-time {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  color: var(--text-muted);
+  font-size: 0.8rem;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 4rem 2rem;
+}
+
+.empty-icon {
+  font-size: 4rem;
+  color: var(--text-muted);
+  margin-bottom: 1rem;
+}
+
+.empty-content h3 {
+  color: var(--text-color);
+  margin-bottom: 0.5rem;
+}
+
+.empty-content p {
+  color: var(--text-secondary);
+}
+
+@media (max-width: 768px) {
+  .hero-title {
+    font-size: 2.5rem;
+  }
+  
+  .hero-subtitle {
+    font-size: 1.1rem;
+  }
+  
+  .hero-stats {
+    gap: 2rem;
+  }
+  
+  .stat-number {
+    font-size: 2rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .hero-section {
+    padding: 2rem 0;
+  }
+  
+  .hero-stats {
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+  
+  .hero-stats {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    gap: 1rem;
+  }
+}
+</style>
+  </main>
+
+  <footer>
+    <p>
+      &copy; 2025 Shark Blog 
+      <a href="https://github.com/eddiehex/hexo-geek-source" target="_blank">
+        <i class="fab fa-github"></i>
+      </a>
+    </p>
+  </footer>
+
+  <script src="/js/search.js"></script>
+  <script src="/js/main.js"></script>
+  <script src="/js/copy-code.js"></script>
+  <script src="/js/prism.js"></script>
+  <script src="/js/toc-highlight.js"></script>
+  <script src="/js/mobile-menu.js"></script>
+</body>
+</html>

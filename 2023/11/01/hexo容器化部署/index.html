@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Shark Blog</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/prism-code.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <link rel="icon" href="https://hexo.kygoho.win/upload/uploads/6e7cf36d-8cb2-40c6-831f-80ef7488cca4.png" type="image/x-icon">
+  <link rel="stylesheet" href="/css/toc.css">
+  
+  <!-- MathJax Configuration -->
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']],
+        processEscapes: true,
+        processEnvironments: true,
+        packages: ['base', 'ams', 'noerrors', 'noundefined']
+      },
+      options: {
+        ignoreHtmlClass: 'tex2jax_ignore',
+        processHtmlClass: 'tex2jax_process'
+      },
+      startup: {
+        ready() {
+          MathJax.startup.defaultReady();
+          // Re-render math when content changes
+          document.addEventListener('DOMContentLoaded', function() {
+            if (window.MathJax && window.MathJax.typesetPromise) {
+              window.MathJax.typesetPromise();
+            }
+          });
+        }
+      }
+    };
+  </script>
+  <script async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.min.js"></script>
+<meta name="generator" content="Hexo 6.3.0"></head>
+<body>
+  <header>
+    <nav>
+      <div class="nav-container">
+        <div class="logo"><a href="/">Shark Blog</a></div>
+        <div class="search-container">
+          <input type="text" id="search-input" placeholder="Search...">
+          <div id="search-results"></div>
+        </div>
+        <div class="menu-toggle">
+          <i class="fas fa-bars"></i>
+        </div>
+      </div>
+      <ul class="nav-links">
+        <li><a href="/">Posts</a></li>
+        <li><a href="/services">Services</a></li>
+        <li><a href="/archives">Archive</a></li>
+        <li><a href="/categories">Categories</a></li>
+        <li><a href="/about">About</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <div class="page-container">
+  
+    <div class="toc-card">
+      <div class="toc-content">
+        <ol class="toc"><li class="toc-item toc-level-4"><a class="toc-link" href="#Dockerfile-%E6%9E%84%E5%BB%BAhexo%E9%95%9C%E5%83%8F"><span class="toc-text">Dockerfile 构建hexo镜像</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%BF%90%E8%A1%8C%E5%AE%B9%E5%99%A8"><span class="toc-text">运行容器</span></a></li></ol>
+      </div>
+    </div>
+  
+  
+  <article class="page-content">
+    <h1 class="page-title">hexo 容器化部署</h1>
+    <div class="page-body">
+      <h4 id="Dockerfile-构建hexo镜像"><a href="#Dockerfile-构建hexo镜像" class="headerlink" title="Dockerfile 构建hexo镜像"></a>Dockerfile 构建hexo镜像</h4><pre class="line-numbers language-FROM" data-language="FROM"><div class="caption"><span>node:latest</span></div><code class="language-FROM"># 维护者信息
+MAINTAINER eddie &lt;kygoho@live.com&gt;
+# 工作目录
+WORKDIR root&#x2F;blog
+# 安装Hexo
+RUN npm init -y\
+   &amp;&amp; npm install hexo-cli -g \
+   &amp;&amp; npm install hexo-server \
+   &amp;&amp; hexo init hexo &amp;&amp; cd hexo \
+   &amp;&amp; npm install \
+   &amp;&amp; npm install hexo-deployer-git \
+# 设置git
+   &amp;&amp; git config --global user.name &quot;eddiehex&quot; \
+   &amp;&amp; git config --global user.email &quot;kygoho@live.com&quot;\
+   &amp;&amp; npm i -S hexo-prism-plugin \
+   &amp;&amp; npm install hexo-generator-search --save \
+   &amp;&amp; npm i hexo-permalink-pinyin --save \
+   &amp;&amp; npm install hexo-generator-feed --save \
+   &amp;&amp; npm install hexo-deployer-git --saven
+# 映射端口
+EXPOSE 4000
+WORKDIR hexo
+# 运行命令
+CMD [&quot;&#x2F;usr&#x2F;bin&#x2F;env&quot;, &quot;hexo&quot;, &quot;server&quot;]<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<h4 id="运行容器"><a href="#运行容器" class="headerlink" title="运行容器"></a>运行容器</h4><pre class="line-numbers language-none"><code class="language-none">docker run -d -p 4000:4000 -v $PWD&#x2F;hexo:&#x2F;root&#x2F;blog&#x2F;hexo --name hexo hexo<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+<p>笔记：</p>
+<ul>
+<li>最新的npm需要先确定workdir 才能安装</li>
+<li>需要先进行npm init初始化才能生成package.json 才能npm install</li>
+<li>hexo init 需要在一个新的空文件</li>
+</ul>
+
+    </div>
+  </article>
+</div>
+  </main>
+
+  <footer>
+    <p>
+      &copy; 2025 Shark Blog 
+      <a href="https://github.com/eddiehex/hexo-geek-source" target="_blank">
+        <i class="fab fa-github"></i>
+      </a>
+    </p>
+  </footer>
+
+  <script src="/js/search.js"></script>
+  <script src="/js/main.js"></script>
+  <script src="/js/copy-code.js"></script>
+  <script src="/js/prism.js"></script>
+  <script src="/js/toc-highlight.js"></script>
+  <script src="/js/mobile-menu.js"></script>
+</body>
+</html>

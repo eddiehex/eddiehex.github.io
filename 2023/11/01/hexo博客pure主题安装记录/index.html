@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Shark Blog</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/prism-code.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <link rel="icon" href="https://hexo.kygoho.win/upload/uploads/6e7cf36d-8cb2-40c6-831f-80ef7488cca4.png" type="image/x-icon">
+  <link rel="stylesheet" href="/css/toc.css">
+  
+  <!-- MathJax Configuration -->
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']],
+        processEscapes: true,
+        processEnvironments: true,
+        packages: ['base', 'ams', 'noerrors', 'noundefined']
+      },
+      options: {
+        ignoreHtmlClass: 'tex2jax_ignore',
+        processHtmlClass: 'tex2jax_process'
+      },
+      startup: {
+        ready() {
+          MathJax.startup.defaultReady();
+          // Re-render math when content changes
+          document.addEventListener('DOMContentLoaded', function() {
+            if (window.MathJax && window.MathJax.typesetPromise) {
+              window.MathJax.typesetPromise();
+            }
+          });
+        }
+      }
+    };
+  </script>
+  <script async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.min.js"></script>
+<meta name="generator" content="Hexo 6.3.0"></head>
+<body>
+  <header>
+    <nav>
+      <div class="nav-container">
+        <div class="logo"><a href="/">Shark Blog</a></div>
+        <div class="search-container">
+          <input type="text" id="search-input" placeholder="Search...">
+          <div id="search-results"></div>
+        </div>
+        <div class="menu-toggle">
+          <i class="fas fa-bars"></i>
+        </div>
+      </div>
+      <ul class="nav-links">
+        <li><a href="/">Posts</a></li>
+        <li><a href="/services">Services</a></li>
+        <li><a href="/archives">Archive</a></li>
+        <li><a href="/categories">Categories</a></li>
+        <li><a href="/about">About</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <div class="page-container">
+  
+    <div class="toc-card">
+      <div class="toc-content">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#hexo%E6%8F%92%E4%BB%B6%E5%AE%89%E8%A3%85"><span class="toc-text">hexo插件安装</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BF%AE%E6%94%B9icon%E5%92%8Cavatar-%E5%9B%BE%E5%83%8F%E5%9C%B0%E5%9D%80"><span class="toc-text">修改icon和avatar 图像地址</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B0%86Links%EF%BC%88%E5%8F%8B%E9%93%BE%EF%BC%89%E6%94%B9%E4%B8%BAservice%EF%BC%88%E6%9C%8D%E5%8A%A1%EF%BC%89"><span class="toc-text">将Links（友链）改为service（服务）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%88%A0%E9%99%A4%E6%96%87%E7%AB%A0%E7%89%88%E6%9D%83%E4%BF%A1%E6%81%AF"><span class="toc-text">删除文章版权信息</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%B3%E9%97%AD%E8%AF%84%E8%AE%BA%E6%9D%BF%E5%9D%97"><span class="toc-text">关闭评论板块</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%96%87%E7%AB%A0%E7%9B%AE%E5%BD%95%E5%BC%80%E5%90%AF"><span class="toc-text">文章目录开启</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%B7%BB%E5%8A%A0%E6%9C%8D%E5%8A%A1"><span class="toc-text">添加服务</span></a></li></ol>
+      </div>
+    </div>
+  
+  
+  <article class="page-content">
+    <h1 class="page-title">hexo博客pure主题安装记录</h1>
+    <div class="page-body">
+      <h2 id="hexo插件安装"><a href="#hexo插件安装" class="headerlink" title="hexo插件安装"></a>hexo插件安装</h2><p>其实在dockerfile定制安装了一部分插件，但由于当时使用的教程和目前使用的主题不一致故导致部分插件未能安装。</p>
+<ul>
+<li>hexo-wordcount 文章数字计算</li>
+<li>hexo-generator-json-content 内部搜索</li>
+</ul>
+<p>安装代码：</p>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token function">npm</span> <span class="token function">install</span> hexo-wordcount <span class="token parameter variable">--save</span>
+<span class="token function">npm</span> <span class="token function">install</span> hexo-generator-json-content <span class="token parameter variable">--save</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+
+<blockquote>
+<p>需要注意的是安装路径需在博客文件根目录下即～&#x2F;blog&#x2F;hexo（这个坑一开始我没注意）</p>
+</blockquote>
+<h2 id="修改icon和avatar-图像地址"><a href="#修改icon和avatar-图像地址" class="headerlink" title="修改icon和avatar 图像地址"></a>修改icon和avatar 图像地址</h2><p>主题中图像都从本地路径加载。</p>
+<p>因上传麻烦且占用服务器资源故直接选择图传连接</p>
+<p><code>avatar: https://od.xxxx.cf/api/raw/?path=/picture/Icon/fish.png</code></p>
+<h2 id="将Links（友链）改为service（服务）"><a href="#将Links（友链）改为service（服务）" class="headerlink" title="将Links（友链）改为service（服务）"></a>将Links（友链）改为service（服务）</h2><ul>
+<li>处理主题文件夹下的_config.yml文件</li>
+</ul>
+<pre class="line-numbers language-yaml" data-language="yaml"><code class="language-yaml"><span class="token key atrule">menu</span><span class="token punctuation">:</span>
+  <span class="token key atrule">Home</span><span class="token punctuation">:</span> .
+  <span class="token comment">#Archives: archives  # 归档</span>
+  <span class="token key atrule">Categories</span><span class="token punctuation">:</span> categories  <span class="token comment"># 分类</span>
+  <span class="token comment">#Tags: tags  # 标签</span>
+  <span class="token comment">#Repository: repository  # github repositories</span>
+  <span class="token comment">#Books: books  # 豆瓣书单</span>
+  <span class="token key atrule">Services</span><span class="token punctuation">:</span> links  <span class="token comment"># Links 改成Service</span>
+  <span class="token key atrule">About</span><span class="token punctuation">:</span> about  <span class="token comment"># 关于</span>
+
+<span class="token comment"># Enable/Disable menu icons</span>
+<span class="token key atrule">menu_icons</span><span class="token punctuation">:</span>
+  <span class="token key atrule">enable</span><span class="token punctuation">:</span> <span class="token boolean important">true</span>  <span class="token comment"># 是否启用导航菜单图标</span>
+  <span class="token key atrule">home</span><span class="token punctuation">:</span> icon<span class="token punctuation">-</span>home<span class="token punctuation">-</span>fill
+  <span class="token key atrule">archives</span><span class="token punctuation">:</span> icon<span class="token punctuation">-</span>archives<span class="token punctuation">-</span>fill
+  <span class="token key atrule">categories</span><span class="token punctuation">:</span> icon<span class="token punctuation">-</span>folder
+  <span class="token key atrule">tags</span><span class="token punctuation">:</span> icon<span class="token punctuation">-</span>tags
+  <span class="token key atrule">repository</span><span class="token punctuation">:</span> icon<span class="token punctuation">-</span>project
+  <span class="token comment">#books: icon-book-fill</span>
+  <span class="token key atrule">services</span><span class="token punctuation">:</span> icon<span class="token punctuation">-</span>project
+  <span class="token key atrule">about</span><span class="token punctuation">:</span> icon<span class="token punctuation">-</span>book<span class="token punctuation">-</span>fill<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<ul>
+<li>修改links index.md 路径：～&#x2F;blog&#x2F;hexo&#x2F;source&#x2F;links&#x2F;index.md</li>
+</ul>
+<pre class="line-numbers language-markdown" data-language="markdown"><code class="language-markdown"><span class="token front-matter-block"><span class="token punctuation">---</span>
+<span class="token front-matter yaml language-yaml"><span class="token key atrule">title</span><span class="token punctuation">:</span> 服务
+<span class="token key atrule">layout</span><span class="token punctuation">:</span> links
+<span class="token key atrule">comments</span><span class="token punctuation">:</span> <span class="token boolean important">true</span>
+<span class="token key atrule">sidebar</span><span class="token punctuation">:</span> none</span>
+<span class="token punctuation">---</span></span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<ul>
+<li>修改语言文件</li>
+</ul>
+<pre class="line-numbers language-yaml" data-language="yaml"><code class="language-yaml"><span class="token key atrule">Services</span><span class="token punctuation">:</span> 服务
+<span class="token key atrule">links-desc</span><span class="token punctuation">:</span> 服务描述<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+
+<h2 id="删除文章版权信息"><a href="#删除文章版权信息" class="headerlink" title="删除文章版权信息"></a>删除文章版权信息</h2><p>修改layout&#x2F;_partial&#x2F;post&#x2F;copyright.ejs 文件</p>
+<ul>
+<li>添加 <code>style=&quot;display: none;&quot;</code></li>
+<li>修改条件判断<code>if(theme.profile &amp;&amp; theme.profile.articleSelfBlock)</code></li>
+</ul>
+<h2 id="关闭评论板块"><a href="#关闭评论板块" class="headerlink" title="关闭评论板块"></a>关闭评论板块</h2><p>修改_config.yml文件 将type 改成 false</p>
+<pre class="line-numbers language-yaml" data-language="yaml"><code class="language-yaml"><span class="token key atrule">comment</span><span class="token punctuation">:</span>
+  <span class="token key atrule">type</span><span class="token punctuation">:</span> <span class="token boolean important">false</span>  <span class="token comment"># 启用哪种评论系统</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+
+<h2 id="文章目录开启"><a href="#文章目录开启" class="headerlink" title="文章目录开启"></a>文章目录开启</h2><p>根据sidebar.ejs的判断语句:</p>
+<pre class="line-numbers language-ejs" data-language="ejs"><code class="language-ejs">if (!index &amp;&amp; theme.config.toc &amp;&amp; post.toc)<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<p>我们可以看出需要满足三个条件:</p>
+<ul>
+<li><p>不是index文件</p>
+</li>
+<li><p>主题config toc 需要开启为true</p>
+</li>
+<li><p>post toc 需为true 即需要在每篇文章开头</p>
+<pre class="line-numbers language-markdown" data-language="markdown"><code class="language-markdown"><span class="token front-matter-block"><span class="token punctuation">---</span>
+<span class="token front-matter yaml language-yaml"><span class="token key atrule">title</span><span class="token punctuation">:</span> hexo博客pure主题安装记录
+<span class="token key atrule">categories</span><span class="token punctuation">:</span> code
+<span class="token key atrule">tags</span><span class="token punctuation">:</span> hexo
+<span class="token key atrule">toc</span><span class="token punctuation">:</span> <span class="token boolean important">true</span> <span class="token comment">#这个</span></span>
+<span class="token punctuation">---</span></span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre></li>
+</ul>
+<h2 id="添加服务"><a href="#添加服务" class="headerlink" title="添加服务"></a>添加服务</h2><p>在source&#x2F;_data&#x2F;links.yml中按照格式添加即可</p>
+<pre class="line-numbers language-yaml" data-language="yaml"><code class="language-yaml"><span class="token key atrule">Jupyter</span><span class="token punctuation">:</span>
+  <span class="token key atrule">link</span><span class="token punctuation">:</span> https<span class="token punctuation">:</span>//hexo.kygoho.win/py
+  <span class="token key atrule">avatar</span><span class="token punctuation">:</span> /images/favatar/chuangzaoshi<span class="token punctuation">-</span>logo.png
+  <span class="token key atrule">desc</span><span class="token punctuation">:</span> jupyter<span class="token punctuation">-</span>notebook
+
+<span class="token key atrule">Monitor</span><span class="token punctuation">:</span>
+  <span class="token key atrule">link</span><span class="token punctuation">:</span> https<span class="token punctuation">:</span>//cloud.kygoho.win/
+  <span class="token key atrule">avatar</span><span class="token punctuation">:</span> https<span class="token punctuation">:</span>//od.wadaho.cf/api/raw/<span class="token punctuation">?</span>path=/picture/Icon/star.png
+  <span class="token key atrule">desc</span><span class="token punctuation">:</span> service monitor panel
+
+<span class="token key atrule">RSS</span><span class="token punctuation">:</span>
+  <span class="token key atrule">link</span><span class="token punctuation">:</span> https<span class="token punctuation">:</span>//rss.009100.xyz
+  <span class="token key atrule">avatar</span><span class="token punctuation">:</span> https<span class="token punctuation">:</span>//od.wadaho.cf/api/raw/<span class="token punctuation">?</span>path=/picture/Icon/read.png
+  <span class="token key atrule">desc</span><span class="token punctuation">:</span> RSS online reader<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+
+
+
+    </div>
+  </article>
+</div>
+  </main>
+
+  <footer>
+    <p>
+      &copy; 2025 Shark Blog 
+      <a href="https://github.com/eddiehex/hexo-geek-source" target="_blank">
+        <i class="fab fa-github"></i>
+      </a>
+    </p>
+  </footer>
+
+  <script src="/js/search.js"></script>
+  <script src="/js/main.js"></script>
+  <script src="/js/copy-code.js"></script>
+  <script src="/js/prism.js"></script>
+  <script src="/js/toc-highlight.js"></script>
+  <script src="/js/mobile-menu.js"></script>
+</body>
+</html>

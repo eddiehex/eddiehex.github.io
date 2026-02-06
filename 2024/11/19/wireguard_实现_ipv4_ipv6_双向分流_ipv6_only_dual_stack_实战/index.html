@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Shark Blog</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/prism-code.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <link rel="icon" href="https://hexo.kygoho.win/upload/uploads/6e7cf36d-8cb2-40c6-831f-80ef7488cca4.png" type="image/x-icon">
+  <link rel="stylesheet" href="/css/toc.css">
+  
+  <!-- MathJax Configuration -->
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']],
+        processEscapes: true,
+        processEnvironments: true,
+        packages: ['base', 'ams', 'noerrors', 'noundefined']
+      },
+      options: {
+        ignoreHtmlClass: 'tex2jax_ignore',
+        processHtmlClass: 'tex2jax_process'
+      },
+      startup: {
+        ready() {
+          MathJax.startup.defaultReady();
+          // Re-render math when content changes
+          document.addEventListener('DOMContentLoaded', function() {
+            if (window.MathJax && window.MathJax.typesetPromise) {
+              window.MathJax.typesetPromise();
+            }
+          });
+        }
+      }
+    };
+  </script>
+  <script async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.min.js"></script>
+<meta name="generator" content="Hexo 6.3.0"></head>
+<body>
+  <header>
+    <nav>
+      <div class="nav-container">
+        <div class="logo"><a href="/">Shark Blog</a></div>
+        <div class="search-container">
+          <input type="text" id="search-input" placeholder="Search...">
+          <div id="search-results"></div>
+        </div>
+        <div class="menu-toggle">
+          <i class="fas fa-bars"></i>
+        </div>
+      </div>
+      <ul class="nav-links">
+        <li><a href="/">Posts</a></li>
+        <li><a href="/services">Services</a></li>
+        <li><a href="/archives">Archive</a></li>
+        <li><a href="/categories">Categories</a></li>
+        <li><a href="/about">About</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <div class="page-container">
+  
+  
+  <article class="page-content">
+    <h1 class="page-title">WireGuard 实现 IPv4 / IPv6 双向分流（IPv6-only × Dual-Stack 实战）</h1>
+    <div class="page-body">
+      <h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>随着 IPv4 资源逐渐枯竭，越来越多的 VPS &#x2F; 云服务器开始提供 <strong>IPv6-only</strong> 网络环境。这类服务器通常具备：</p>
+<ul>
+<li>IPv6 公网地址</li>
+<li><strong>无公网 IPv4</strong></li>
+<li>通过 NAT64 或代理访问 IPv4 世界（质量不稳定）</li>
+</ul>
+<p>而现实中经常会遇到另一类服务器：</p>
+<ul>
+<li>同时具备 <strong>IPv4 + IPv6（Dual Stack）</strong></li>
+<li>IPv4 网络质量稳定</li>
+<li>IPv6 出口位置一般</li>
+</ul>
+<p>这就引出了一个非常实际的需求：</p>
+<blockquote>
+<p>能否让 IPv6-only 服务器使用另一台双栈服务器的 IPv4 出口，同时反过来让双栈服务器使用 IPv6-only 服务器的 IPv6 出口？</p>
+</blockquote>
+<p>答案是：可以，而且 <strong>WireGuard 是最干净、最可控的方案</strong>。</p>
+<hr>
+<h2 id="目标"><a href="#目标" class="headerlink" title="目标"></a>目标</h2><ul>
+<li>A（IPv6-only）：IPv4 → 走 B</li>
+<li>B（Dual Stack）：IPv6 → 走 A</li>
+<li>双方公网访问不受影响</li>
+<li>重启自动恢复</li>
+</ul>
+<p>一句话总结：</p>
+<blockquote>
+<p><strong>A 借 B 的 IPv4，B 借 A 的 IPv6</strong></p>
+</blockquote>
+<hr>
+<h2 id="网络拓扑"><a href="#网络拓扑" class="headerlink" title="网络拓扑"></a>网络拓扑</h2><pre class="line-numbers language-none"><code class="language-none">IPv4 Internet                  IPv6 Internet
+      ▲                              ▲
+      │                              │
+ ┌────┴────┐                    ┌────┴────┐
+ │ Server B │◄── IPv6 ── WG ──► │ Server A │
+ │ Dual     │                    │ IPv6-only│
+ │ Stack    │── IPv4 ── WG ────►│          │
+ └─────────┘                    └──────────┘<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<hr>
+<h2 id="使用方式"><a href="#使用方式" class="headerlink" title="使用方式"></a>使用方式</h2><h3 id="第一步：生成密钥（两台服务器）"><a href="#第一步：生成密钥（两台服务器）" class="headerlink" title="第一步：生成密钥（两台服务器）"></a>第一步：生成密钥（两台服务器）</h3><pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token function">sudo</span> <span class="token function">bash</span> wg_dualstack_split.sh <span class="token parameter variable">--role</span> auto<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<h3 id="第二步：部署"><a href="#第二步：部署" class="headerlink" title="第二步：部署"></a>第二步：部署</h3><h4 id="在-A-上"><a href="#在-A-上" class="headerlink" title="在 A 上"></a>在 A 上</h4><pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token function">sudo</span> <span class="token function">bash</span> wg_dualstack_split.sh <span class="token parameter variable">--role</span> a <span class="token punctuation">\</span>
+  --peer-endpoint-v6 <span class="token string">"&lt;B_PUBLIC_IPV6>"</span> <span class="token punctuation">\</span>
+  --peer-pub <span class="token string">"&lt;B_PUBLIC_KEY>"</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+
+<h4 id="在-B-上"><a href="#在-B-上" class="headerlink" title="在 B 上"></a>在 B 上</h4><pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token function">sudo</span> <span class="token function">bash</span> wg_dualstack_split.sh <span class="token parameter variable">--role</span> b <span class="token punctuation">\</span>
+  --peer-endpoint-v6 <span class="token string">"&lt;A_PUBLIC_IPV6>"</span> <span class="token punctuation">\</span>
+  --peer-pub <span class="token string">"&lt;A_PUBLIC_KEY>"</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+
+<hr>
+<h2 id="验证"><a href="#验证" class="headerlink" title="验证"></a>验证</h2><pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token comment"># A</span>
+<span class="token function">curl</span> <span class="token parameter variable">-4</span> ip.sb
+<span class="token function">curl</span> ip.sb
+
+<span class="token comment"># B</span>
+<span class="token function">curl</span> <span class="token parameter variable">-6</span> ip.sb<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<hr>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>本文展示了一套 <strong>真实可落地</strong> 的 IPv4 &#x2F; IPv6 双向分流方案，适用于：</p>
+<ul>
+<li>IPv6-only VPS</li>
+<li>双栈中转</li>
+<li>网络质量优化</li>
+</ul>
+
+    </div>
+  </article>
+</div>
+  </main>
+
+  <footer>
+    <p>
+      &copy; 2025 Shark Blog 
+      <a href="https://github.com/eddiehex/hexo-geek-source" target="_blank">
+        <i class="fab fa-github"></i>
+      </a>
+    </p>
+  </footer>
+
+  <script src="/js/search.js"></script>
+  <script src="/js/main.js"></script>
+  <script src="/js/copy-code.js"></script>
+  <script src="/js/prism.js"></script>
+  <script src="/js/toc-highlight.js"></script>
+  <script src="/js/mobile-menu.js"></script>
+</body>
+</html>

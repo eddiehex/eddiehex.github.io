@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Shark Blog</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/prism-code.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <link rel="icon" href="https://hexo.kygoho.win/upload/uploads/6e7cf36d-8cb2-40c6-831f-80ef7488cca4.png" type="image/x-icon">
+  <link rel="stylesheet" href="/css/toc.css">
+  
+  <!-- MathJax Configuration -->
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']],
+        processEscapes: true,
+        processEnvironments: true,
+        packages: ['base', 'ams', 'noerrors', 'noundefined']
+      },
+      options: {
+        ignoreHtmlClass: 'tex2jax_ignore',
+        processHtmlClass: 'tex2jax_process'
+      },
+      startup: {
+        ready() {
+          MathJax.startup.defaultReady();
+          // Re-render math when content changes
+          document.addEventListener('DOMContentLoaded', function() {
+            if (window.MathJax && window.MathJax.typesetPromise) {
+              window.MathJax.typesetPromise();
+            }
+          });
+        }
+      }
+    };
+  </script>
+  <script async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.min.js"></script>
+<meta name="generator" content="Hexo 6.3.0"></head>
+<body>
+  <header>
+    <nav>
+      <div class="nav-container">
+        <div class="logo"><a href="/">Shark Blog</a></div>
+        <div class="search-container">
+          <input type="text" id="search-input" placeholder="Search...">
+          <div id="search-results"></div>
+        </div>
+        <div class="menu-toggle">
+          <i class="fas fa-bars"></i>
+        </div>
+      </div>
+      <ul class="nav-links">
+        <li><a href="/">Posts</a></li>
+        <li><a href="/services">Services</a></li>
+        <li><a href="/archives">Archive</a></li>
+        <li><a href="/categories">Categories</a></li>
+        <li><a href="/about">About</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <div class="page-container">
+  
+    <div class="toc-card">
+      <div class="toc-content">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#DNS-Configuration"><span class="toc-text">DNS Configuration</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Other-Configuration-Options"><span class="toc-text">Other Configuration Options</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Fake-IP-Configuration"><span class="toc-text">Fake IP Configuration</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#DNS-Rule-Example"><span class="toc-text">DNS Rule Example</span></a></li></ol></li></ol>
+      </div>
+    </div>
+  
+  
+  <article class="page-content">
+    <h1 class="page-title">SingBox DNS Configuration</h1>
+    <div class="page-body">
+      <h2 id="DNS-Configuration"><a href="#DNS-Configuration" class="headerlink" title="DNS Configuration"></a>DNS Configuration</h2><p>There are generally three types of DNS servers: remote, local, and blocking.</p>
+<p><strong>Remote DNS servers</strong> are public DNS services offered by companies like Google and Cloudflare. Examples include:</p>
+<pre class="line-numbers language-json" data-language="json"><code class="language-json"><span class="token punctuation">&#123;</span>
+  <span class="token property">"tag"</span><span class="token operator">:</span> <span class="token string">"google"</span><span class="token punctuation">,</span>
+  <span class="token property">"address"</span><span class="token operator">:</span> <span class="token string">"tls://8.8.8.8"</span><span class="token punctuation">,</span>
+  <span class="token property">"detour"</span><span class="token operator">:</span> <span class="token string">"Proxy"</span>
+<span class="token punctuation">&#125;</span><span class="token punctuation">,</span>
+<span class="token punctuation">&#123;</span>
+  <span class="token property">"tag"</span><span class="token operator">:</span> <span class="token string">"cloudflare"</span><span class="token punctuation">,</span>
+  <span class="token property">"address"</span><span class="token operator">:</span> <span class="token string">"https://1.1.1.1/dns-query"</span><span class="token punctuation">,</span>
+  <span class="token property">"detour"</span><span class="token operator">:</span> <span class="token string">"Proxy"</span>
+<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p><strong>Local DNS servers</strong> are typically used to resolve domain names within a local network:</p>
+<pre class="line-numbers language-json" data-language="json"><code class="language-json"><span class="token punctuation">&#123;</span> 
+  <span class="token property">"tag"</span><span class="token operator">:</span> <span class="token string">"local-dns"</span><span class="token punctuation">,</span>
+  <span class="token property">"address"</span><span class="token operator">:</span> <span class="token string">"tls://223.5.5.5"</span><span class="token punctuation">,</span> 
+  <span class="token property">"detour"</span><span class="token operator">:</span> <span class="token string">"direct"</span>
+<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p><strong>Blocking DNS servers</strong> are used to block access to specific domains:</p>
+<pre class="line-numbers language-json" data-language="json"><code class="language-json"><span class="token punctuation">&#123;</span>
+  <span class="token property">"tag"</span><span class="token operator">:</span> <span class="token string">"block-dns"</span><span class="token punctuation">,</span>
+  <span class="token property">"address"</span><span class="token operator">:</span> <span class="token string">"rcode://success"</span>
+<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p><strong>Fake IP DNS</strong> can be used to potentially speed up connections by reducing DNS requests:</p>
+<pre class="line-numbers language-json" data-language="json"><code class="language-json"><span class="token punctuation">&#123;</span>
+  <span class="token property">"tag"</span><span class="token operator">:</span> <span class="token string">"fakeip-dns"</span><span class="token punctuation">,</span>
+  <span class="token property">"address"</span><span class="token operator">:</span> <span class="token string">"fakeip"</span>
+<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
+
+<h2 id="Other-Configuration-Options"><a href="#Other-Configuration-Options" class="headerlink" title="Other Configuration Options"></a>Other Configuration Options</h2><p>Besides server information, you can configure:</p>
+<ul>
+<li><strong>DNS Rules:</strong> Define the order of DNS server queries and rules for specific domains.</li>
+<li><strong>Strategy:</strong> Specify the preferred DNS record type (A or AAAA).</li>
+<li><strong>Fake IP:</strong> Define IP address ranges for the <code>fakeip-dns</code> server.</li>
+</ul>
+<h3 id="Fake-IP-Configuration"><a href="#Fake-IP-Configuration" class="headerlink" title="Fake IP Configuration"></a>Fake IP Configuration</h3><pre class="line-numbers language-json" data-language="json"><code class="language-json"><span class="token punctuation">&#123;</span>
+<span class="token property">"enabled"</span><span class="token operator">:</span> <span class="token boolean">true</span><span class="token punctuation">,</span>
+<span class="token property">"inet4_range"</span><span class="token operator">:</span> <span class="token string">"198.18.0.0/15"</span><span class="token punctuation">,</span>
+<span class="token property">"inet6_range"</span><span class="token operator">:</span> <span class="token string">"fc00::/18"</span>
+<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<h3 id="DNS-Rule-Example"><a href="#DNS-Rule-Example" class="headerlink" title="DNS Rule Example"></a>DNS Rule Example</h3><pre class="line-numbers language-json" data-language="json"><code class="language-json"><span class="token punctuation">&#123;</span>
+    <span class="token property">"rule_set"</span><span class="token operator">:</span> <span class="token punctuation">[</span> <span class="token comment">//advertisement match</span>
+      <span class="token string">"geosite-adguard"</span>
+    <span class="token punctuation">]</span><span class="token punctuation">,</span>
+    <span class="token property">"server"</span><span class="token operator">:</span> <span class="token string">"block-dns"</span>
+  <span class="token punctuation">&#125;</span><span class="token punctuation">,</span>
+  <span class="token punctuation">&#123;</span>
+    <span class="token property">"rule_set"</span><span class="token operator">:</span> <span class="token punctuation">[</span> <span class="token comment">// geosit match</span>
+      <span class="token string">"geosite-netflix"</span><span class="token punctuation">,</span>
+      <span class="token string">"geosite-youtube"</span><span class="token punctuation">,</span>
+      <span class="token string">"geosite-openai"</span><span class="token punctuation">,</span>
+      <span class="token string">"geosite-speedtest"</span><span class="token punctuation">,</span>
+      <span class="token string">"geosite-github"</span><span class="token punctuation">,</span>
+      <span class="token string">"geosite-cloudflare"</span><span class="token punctuation">,</span>
+      <span class="token string">"Gemini"</span><span class="token punctuation">,</span>
+      <span class="token string">"geosite-google"</span><span class="token punctuation">,</span>
+      <span class="token string">"geosite-tiktok"</span><span class="token punctuation">,</span>
+      <span class="token string">"geosite-jable"</span>
+    <span class="token punctuation">]</span><span class="token punctuation">,</span>
+    <span class="token property">"rewrite_ttl"</span><span class="token operator">:</span> <span class="token number">1</span><span class="token punctuation">,</span>
+    <span class="token property">"server"</span><span class="token operator">:</span> <span class="token string">"fakeip-dns"</span>
+  <span class="token punctuation">&#125;</span><span class="token punctuation">,</span>
+  <span class="token punctuation">&#123;</span>
+    <span class="token property">"domain_suffix"</span><span class="token operator">:</span> <span class="token punctuation">[</span> <span class="token comment">//domain match</span>
+      <span class="token string">"edu.cn"</span><span class="token punctuation">,</span>
+      <span class="token string">"gov.cn"</span><span class="token punctuation">,</span>
+      <span class="token string">"mil.cn"</span><span class="token punctuation">,</span>
+      <span class="token string">"ac.cn"</span><span class="token punctuation">,</span>
+      <span class="token string">"com.cn"</span><span class="token punctuation">,</span>
+      <span class="token string">"net.cn"</span><span class="token punctuation">,</span>
+      <span class="token string">"org.cn"</span><span class="token punctuation">,</span>
+      <span class="token string">"中国"</span><span class="token punctuation">,</span>
+      <span class="token string">"中國"</span>
+    <span class="token punctuation">]</span><span class="token punctuation">,</span>
+    <span class="token property">"server"</span><span class="token operator">:</span> <span class="token string">"local-dns"</span>
+  <span class="token punctuation">&#125;</span><span class="token punctuation">,</span>
+  <span class="token punctuation">&#123;</span>
+    <span class="token property">"rule_set"</span><span class="token operator">:</span> <span class="token punctuation">[</span> <span class="token comment">//domestic site match</span>
+      <span class="token string">"geosite-cn"</span><span class="token punctuation">,</span>
+      <span class="token string">"geosite-icloud@cn"</span><span class="token punctuation">,</span>
+      <span class="token string">"geosite-apple@cn"</span>
+    <span class="token punctuation">]</span><span class="token punctuation">,</span>
+    <span class="token property">"server"</span><span class="token operator">:</span> <span class="token string">"local-dns"</span>
+  <span class="token punctuation">&#125;</span><span class="token punctuation">,</span>
+
+  <span class="token punctuation">&#123;</span>
+    <span class="token property">"query_type"</span><span class="token operator">:</span> <span class="token punctuation">[</span>
+      <span class="token string">"A"</span><span class="token punctuation">,</span>
+      <span class="token string">"AAAA"</span>
+    <span class="token punctuation">]</span><span class="token punctuation">,</span>
+    <span class="token property">"rewrite_ttl"</span><span class="token operator">:</span> <span class="token number">1</span><span class="token punctuation">,</span>
+    <span class="token property">"server"</span><span class="token operator">:</span> <span class="token string">"fakeip-dns"</span>
+  <span class="token punctuation">&#125;</span><span class="token punctuation">,</span>
+  <span class="token punctuation">&#123;</span>
+    <span class="token property">"outbound"</span><span class="token operator">:</span> <span class="token string">"any"</span><span class="token punctuation">,</span>
+    <span class="token property">"server"</span><span class="token operator">:</span> <span class="token string">"local-dns"</span>
+  <span class="token punctuation">&#125;</span>
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>This rule <code>outboud: any, server:local</code> dictates that for any <code>outbound service</code>, the <code>local-dns</code> server will be used to resolve domain names. For example, if you have a VLESS outbound service, this rule ensures that the <code>local-dns</code> server is queried to find the IP address of the service’s domain before establishing a connection. If the specified server is <code>fakeip-dns</code>, a fake IP address within the configured address range will be returned instead. </p>
+
+    </div>
+  </article>
+</div>
+  </main>
+
+  <footer>
+    <p>
+      &copy; 2025 Shark Blog 
+      <a href="https://github.com/eddiehex/hexo-geek-source" target="_blank">
+        <i class="fab fa-github"></i>
+      </a>
+    </p>
+  </footer>
+
+  <script src="/js/search.js"></script>
+  <script src="/js/main.js"></script>
+  <script src="/js/copy-code.js"></script>
+  <script src="/js/prism.js"></script>
+  <script src="/js/toc-highlight.js"></script>
+  <script src="/js/mobile-menu.js"></script>
+</body>
+</html>

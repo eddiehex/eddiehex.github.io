@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Shark Blog</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/prism-code.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <link rel="icon" href="https://hexo.kygoho.win/upload/uploads/6e7cf36d-8cb2-40c6-831f-80ef7488cca4.png" type="image/x-icon">
+  <link rel="stylesheet" href="/css/toc.css">
+  
+  <!-- MathJax Configuration -->
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']],
+        processEscapes: true,
+        processEnvironments: true,
+        packages: ['base', 'ams', 'noerrors', 'noundefined']
+      },
+      options: {
+        ignoreHtmlClass: 'tex2jax_ignore',
+        processHtmlClass: 'tex2jax_process'
+      },
+      startup: {
+        ready() {
+          MathJax.startup.defaultReady();
+          // Re-render math when content changes
+          document.addEventListener('DOMContentLoaded', function() {
+            if (window.MathJax && window.MathJax.typesetPromise) {
+              window.MathJax.typesetPromise();
+            }
+          });
+        }
+      }
+    };
+  </script>
+  <script async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.min.js"></script>
+<meta name="generator" content="Hexo 6.3.0"></head>
+<body>
+  <header>
+    <nav>
+      <div class="nav-container">
+        <div class="logo"><a href="/">Shark Blog</a></div>
+        <div class="search-container">
+          <input type="text" id="search-input" placeholder="Search...">
+          <div id="search-results"></div>
+        </div>
+        <div class="menu-toggle">
+          <i class="fas fa-bars"></i>
+        </div>
+      </div>
+      <ul class="nav-links">
+        <li><a href="/">Posts</a></li>
+        <li><a href="/services">Services</a></li>
+        <li><a href="/archives">Archive</a></li>
+        <li><a href="/categories">Categories</a></li>
+        <li><a href="/about">About</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <div class="page-container">
+  
+  
+  <article class="page-content">
+    <h1 class="page-title">Python 中环境变量的使用</h1>
+    <div class="page-body">
+      <h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>环境变量的使用很大程度上是基于隐藏敏感信息，避免敏感信息明文在代码中。实现环境变量的的读取有多种方法，而且不同时候会出现不同的使用方式。</p>
+<h2 id="使用"><a href="#使用" class="headerlink" title="使用"></a>使用</h2><h3 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h3><pre class="line-numbers language-python" data-language="python"><code class="language-python">pip install python<span class="token operator">-</span>dotenv<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+<h3 id="创建-env文件"><a href="#创建-env文件" class="headerlink" title="创建.env文件"></a>创建<code>.env</code>文件</h3><pre class="line-numbers language-markdown" data-language="markdown"><code class="language-markdown">DATABASE_URL=postgres://user:password@localhost:5432/mydatabase
+SECRET_KEY=mysecretkey<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+
+<h3 id="加载环境变量"><a href="#加载环境变量" class="headerlink" title="加载环境变量"></a>加载环境变量</h3><pre class="line-numbers language-python" data-language="python"><code class="language-python"><span class="token keyword">from</span> dotenv <span class="token keyword">import</span> load_dotenv
+<span class="token keyword">import</span> os
+
+load_dotenv<span class="token punctuation">(</span><span class="token punctuation">)</span>
+
+database_url <span class="token operator">=</span> os<span class="token punctuation">.</span>getenv<span class="token punctuation">(</span><span class="token string">'DATABASE_URL'</span><span class="token punctuation">)</span>
+secret_key <span class="token operator">=</span> os<span class="token punctuation">.</span>getenv<span class="token punctuation">(</span><span class="token string">'SECRET_KEY'</span><span class="token punctuation">)</span>
+
+<span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string-interpolation"><span class="token string">f"Database URL: </span><span class="token interpolation"><span class="token punctuation">&#123;</span>database_url<span class="token punctuation">&#125;</span></span><span class="token string">"</span></span><span class="token punctuation">)</span>
+<span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string-interpolation"><span class="token string">f"Secret Key: </span><span class="token interpolation"><span class="token punctuation">&#123;</span>secret_key<span class="token punctuation">&#125;</span></span><span class="token string">"</span></span><span class="token punctuation">)</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p><strong>注意</strong><br>确保 .env 文件在正确的位置。默认情况下，load_dotenv() 会在当前工作目录查找 .env 文件。如果 .env 文件在其他位置，你可以指定路径</p>
+<pre class="line-numbers language-python" data-language="python"><code class="language-python">load_dotenv<span class="token punctuation">(</span><span class="token string">"/完整/路径/到/.env"</span><span class="token punctuation">)</span><span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<p>另外如果有引入Openai包的话，他会自动搜寻环境变量，不用取通过 <code>load_dotenv()</code>来加载。</p>
+<h3 id="export环境变量"><a href="#export环境变量" class="headerlink" title="export环境变量"></a>export环境变量</h3><p>如果在终端设置了环境变量</p>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token builtin class-name">export</span> <span class="token assign-left variable">DATABASE_URL</span><span class="token operator">=</span>postgres://user:password@localhost:5432/mydatabase
+<span class="token builtin class-name">export</span> <span class="token assign-left variable">SECRET_KEY</span><span class="token operator">=</span>mysecretkey<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+<p>则可以直接读取环境变量</p>
+<pre class="line-numbers language-python" data-language="python"><code class="language-python"><span class="token keyword">import</span> os
+
+database_url <span class="token operator">=</span> os<span class="token punctuation">.</span>getenv<span class="token punctuation">(</span><span class="token string">'DATABASE_URL'</span><span class="token punctuation">)</span>
+secret_key <span class="token operator">=</span> os<span class="token punctuation">.</span>getenv<span class="token punctuation">(</span><span class="token string">'SECRET_KEY'</span><span class="token punctuation">)</span>
+
+<span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string-interpolation"><span class="token string">f"Database URL: </span><span class="token interpolation"><span class="token punctuation">&#123;</span>database_url<span class="token punctuation">&#125;</span></span><span class="token string">"</span></span><span class="token punctuation">)</span>
+<span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string-interpolation"><span class="token string">f"Secret Key: </span><span class="token interpolation"><span class="token punctuation">&#123;</span>secret_key<span class="token punctuation">&#125;</span></span><span class="token string">"</span></span><span class="token punctuation">)</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+    </div>
+  </article>
+</div>
+  </main>
+
+  <footer>
+    <p>
+      &copy; 2025 Shark Blog 
+      <a href="https://github.com/eddiehex/hexo-geek-source" target="_blank">
+        <i class="fab fa-github"></i>
+      </a>
+    </p>
+  </footer>
+
+  <script src="/js/search.js"></script>
+  <script src="/js/main.js"></script>
+  <script src="/js/copy-code.js"></script>
+  <script src="/js/prism.js"></script>
+  <script src="/js/toc-highlight.js"></script>
+  <script src="/js/mobile-menu.js"></script>
+</body>
+</html>

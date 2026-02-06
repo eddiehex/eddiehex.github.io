@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Shark Blog</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/prism-code.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <link rel="icon" href="https://hexo.kygoho.win/upload/uploads/6e7cf36d-8cb2-40c6-831f-80ef7488cca4.png" type="image/x-icon">
+  <link rel="stylesheet" href="/css/toc.css">
+  
+  <!-- MathJax Configuration -->
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']],
+        processEscapes: true,
+        processEnvironments: true,
+        packages: ['base', 'ams', 'noerrors', 'noundefined']
+      },
+      options: {
+        ignoreHtmlClass: 'tex2jax_ignore',
+        processHtmlClass: 'tex2jax_process'
+      },
+      startup: {
+        ready() {
+          MathJax.startup.defaultReady();
+          // Re-render math when content changes
+          document.addEventListener('DOMContentLoaded', function() {
+            if (window.MathJax && window.MathJax.typesetPromise) {
+              window.MathJax.typesetPromise();
+            }
+          });
+        }
+      }
+    };
+  </script>
+  <script async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.min.js"></script>
+<meta name="generator" content="Hexo 6.3.0"></head>
+<body>
+  <header>
+    <nav>
+      <div class="nav-container">
+        <div class="logo"><a href="/">Shark Blog</a></div>
+        <div class="search-container">
+          <input type="text" id="search-input" placeholder="Search...">
+          <div id="search-results"></div>
+        </div>
+        <div class="menu-toggle">
+          <i class="fas fa-bars"></i>
+        </div>
+      </div>
+      <ul class="nav-links">
+        <li><a href="/">Posts</a></li>
+        <li><a href="/services">Services</a></li>
+        <li><a href="/archives">Archive</a></li>
+        <li><a href="/categories">Categories</a></li>
+        <li><a href="/about">About</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <div class="page-container">
+  
+    <div class="toc-card">
+      <div class="toc-content">
+        <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AFBBR"><span class="toc-text">什么是BBR</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%89%8D%E6%9C%9F%E5%87%86%E5%A4%87"><span class="toc-text">前期准备</span></a></li></ol>
+      </div>
+    </div>
+  
+  
+  <article class="page-content">
+    <h1 class="page-title">服务器开启BBR</h1>
+    <div class="page-body">
+      <h3 id="什么是BBR"><a href="#什么是BBR" class="headerlink" title="什么是BBR"></a>什么是BBR</h3><p>BBR是Google提出的一种新型拥塞控制算法，可以提高服务器的吞吐和TCP连接的延迟；</p>
+<h3 id="前期准备"><a href="#前期准备" class="headerlink" title="前期准备"></a>前期准备</h3><p>不同系统开启BBR的方式有些许的差异，大致可以区分是否需要安装最新内核</p>
+<p>1 查看服务器系统和服务器内核版本</p>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token function">uname</span> <span class="token parameter variable">-a</span>
+Linux <span class="token number">5.17</span>.9-1.el7.elrepo.x86_64 <span class="token comment">#1 SMP PREEMPT Tue May 17 16:17:10 EDT 2022 x86_64 x86_64 x86_64 GNU/Linux</span>
+<span class="token comment"># 可以看出内核版本为5.17</span>
+<span class="token function">cat</span> /etc/issue
+Debian GNU/Linux <span class="token number">10</span> <span class="token punctuation">\</span>n <span class="token punctuation">\</span>l
+<span class="token comment"># 系统为debian</span>
+<span class="token function">cat</span> /etc/redhat-release
+CentOS Linux release <span class="token number">7.9</span>.2009 <span class="token punctuation">(</span>Core<span class="token punctuation">)</span>
+<span class="token comment">#c 系统为centos</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>2 查看系统是bbr开启情况</p>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token function">sysctl</span> net.ipv4.tcp_available_congestion_control
+net.ipv4.tcp_available_congestion_control <span class="token operator">=</span> reno cubic bbr
+
+lsmod <span class="token operator">|</span><span class="token function">grep</span> bbr
+tcp_bbr                <span class="token number">20480</span>  <span class="token number">16</span>
+
+<span class="token comment">#两种方式返回值带bbr 则表示已开启</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+
+
+<p>3 开启BBR</p>
+<p>1）当系统内核版本低于4.1</p>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token comment">#首先安装elrepo源</span>
+<span class="token function">rpm</span> <span class="token parameter variable">--import</span> https://www.elrepo.org/RPM-GPG-KEY-elrepo.org
+<span class="token function">rpm</span> <span class="token parameter variable">-Uvh</span> http://www.elrepo.org/elrepo-release-7.0-3.el7.elrepo.noarch.rpm
+<span class="token comment">#启用elrepo-kernel</span>
+yum-config-manager <span class="token parameter variable">--enable</span> elrepo-kernel
+<span class="token comment">#安装内核</span>
+yum <span class="token parameter variable">-y</span> <span class="token function">install</span> kernel-ml kernel-ml-devel
+<span class="token comment">#查看内核启动项排序正常新安装的内核版本在0号位</span>
+<span class="token function">awk</span> -F<span class="token punctuation">\</span>' <span class="token string">'$1=="menuentry " &#123;print i++ " : " $2&#125;'</span> /etc/grub2.cfg
+<span class="token comment">#如果内核启动编号不是0执行</span>
+grub2-set-default <span class="token number">0</span>
+<span class="token comment">#重启</span>
+<span class="token function">reboot</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>2） 当系统内核版本高于4.1</p>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token comment">#直接开启BBR</span>
+<span class="token builtin class-name">echo</span> <span class="token string">"net.core.default_qdisc=fq"</span> <span class="token operator">>></span> /etc/sysctl.conf
+<span class="token builtin class-name">echo</span> <span class="token string">"net.ipv4.tcp_congestion_control=bbr"</span> <span class="token operator">>></span> /etc/sysctl.conf
+<span class="token function">sysctl</span> <span class="token parameter variable">-p</span>
+<span class="token comment">#完成后按照2 进行验证</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>4 注意事项</p>
+<p><strong>低版本的内核在升级时偶尔会遇到更新完内核重启失联的现象，故尽量选择高版本系统直接执行3-2）步骤</strong></p>
+
+    </div>
+  </article>
+</div>
+  </main>
+
+  <footer>
+    <p>
+      &copy; 2025 Shark Blog 
+      <a href="https://github.com/eddiehex/hexo-geek-source" target="_blank">
+        <i class="fab fa-github"></i>
+      </a>
+    </p>
+  </footer>
+
+  <script src="/js/search.js"></script>
+  <script src="/js/main.js"></script>
+  <script src="/js/copy-code.js"></script>
+  <script src="/js/prism.js"></script>
+  <script src="/js/toc-highlight.js"></script>
+  <script src="/js/mobile-menu.js"></script>
+</body>
+</html>

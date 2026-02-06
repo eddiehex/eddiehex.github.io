@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Shark Blog</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/prism-code.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <link rel="icon" href="https://hexo.kygoho.win/upload/uploads/6e7cf36d-8cb2-40c6-831f-80ef7488cca4.png" type="image/x-icon">
+  <link rel="stylesheet" href="/css/toc.css">
+  
+  <!-- MathJax Configuration -->
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']],
+        processEscapes: true,
+        processEnvironments: true,
+        packages: ['base', 'ams', 'noerrors', 'noundefined']
+      },
+      options: {
+        ignoreHtmlClass: 'tex2jax_ignore',
+        processHtmlClass: 'tex2jax_process'
+      },
+      startup: {
+        ready() {
+          MathJax.startup.defaultReady();
+          // Re-render math when content changes
+          document.addEventListener('DOMContentLoaded', function() {
+            if (window.MathJax && window.MathJax.typesetPromise) {
+              window.MathJax.typesetPromise();
+            }
+          });
+        }
+      }
+    };
+  </script>
+  <script async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.min.js"></script>
+<meta name="generator" content="Hexo 6.3.0"></head>
+<body>
+  <header>
+    <nav>
+      <div class="nav-container">
+        <div class="logo"><a href="/">Shark Blog</a></div>
+        <div class="search-container">
+          <input type="text" id="search-input" placeholder="Search...">
+          <div id="search-results"></div>
+        </div>
+        <div class="menu-toggle">
+          <i class="fas fa-bars"></i>
+        </div>
+      </div>
+      <ul class="nav-links">
+        <li><a href="/">Posts</a></li>
+        <li><a href="/services">Services</a></li>
+        <li><a href="/archives">Archive</a></li>
+        <li><a href="/categories">Categories</a></li>
+        <li><a href="/about">About</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <div class="page-container">
+  
+    <div class="toc-card">
+      <div class="toc-content">
+        <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#80%E7%AB%AF%E5%8F%A3%E8%AE%BF%E9%97%AE"><span class="toc-text">80端口访问</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#443%E7%AB%AF%E5%8F%A3%E8%AE%BF%E9%97%AE"><span class="toc-text">443端口访问</span></a></li></ol>
+      </div>
+    </div>
+  
+  
+  <article class="page-content">
+    <h1 class="page-title">nginx ssl 配置</h1>
+    <div class="page-body">
+      <h3 id="80端口访问"><a href="#80端口访问" class="headerlink" title="80端口访问"></a>80端口访问</h3><pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">server <span class="token punctuation">&#123;</span>
+  listen <span class="token number">80</span><span class="token punctuation">;</span>
+  listen <span class="token punctuation">[</span>::<span class="token punctuation">]</span>:80<span class="token punctuation">;</span>
+
+  <span class="token comment"># 域名</span>
+  server_name domain.com  www.domain.com<span class="token punctuation">;</span>
+
+  location / <span class="token punctuation">&#123;</span>
+    <span class="token comment">## 定位到wordpress</span>
+    proxy_pass http://wordpress<span class="token punctuation">;</span>
+
+        proxy_http_version    <span class="token number">1.1</span><span class="token punctuation">;</span>
+        proxy_cache_bypass    <span class="token variable">$http_upgrade</span><span class="token punctuation">;</span>
+
+        proxy_set_header Upgrade            <span class="token variable">$http_upgrade</span><span class="token punctuation">;</span>
+        proxy_set_header Connection         <span class="token string">"upgrade"</span><span class="token punctuation">;</span>
+        proxy_set_header Host                <span class="token variable">$host</span><span class="token punctuation">;</span>
+        proxy_set_header X-Real-IP            <span class="token variable">$remote_addr</span><span class="token punctuation">;</span>
+        proxy_set_header X-Forwarded-For    <span class="token variable">$proxy_add_x_forwarded_for</span><span class="token punctuation">;</span>
+        proxy_set_header X-Forwarded-Proto    <span class="token variable">$scheme</span><span class="token punctuation">;</span>
+        proxy_set_header X-Forwarded-Host    <span class="token variable">$host</span><span class="token punctuation">;</span>
+        proxy_set_header X-Forwarded-Port    <span class="token variable">$server_port</span><span class="token punctuation">;</span>
+  <span class="token punctuation">&#125;</span>
+<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<h3 id="443端口访问"><a href="#443端口访问" class="headerlink" title="443端口访问"></a>443端口访问</h3><p>需要将证书文件放置nginx容器中</p>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">server <span class="token punctuation">&#123;</span>
+    <span class="token comment"># 服务器端口使用443，开启ssl, 这里ssl就是上面安装的ssl模块</span>
+    listen       <span class="token number">443</span> ssl<span class="token punctuation">;</span>
+    <span class="token comment"># 域名，多个以空格分开</span>
+    server_name  domain.com www.domain.com<span class="token punctuation">;</span>
+
+    <span class="token comment"># ssl证书地址</span>
+    ssl_certificate     /etc/nginx/cert/6827606_www.domain.com.pem<span class="token punctuation">;</span>  <span class="token comment"># pem文件的路径</span>
+    ssl_certificate_key  /etc/nginx/cert/6827606_www.domain.com.key<span class="token punctuation">;</span> <span class="token comment"># key文件的路径</span>
+
+    <span class="token comment"># ssl验证相关配置</span>
+    ssl_session_timeout  5m<span class="token punctuation">;</span>    <span class="token comment">#缓存有效期</span>
+    ssl_ciphers ECDHE-RSA-AES128-GCM-SHA256:ECDHE:ECDH:AES:HIGH:<span class="token operator">!</span>NULL:<span class="token operator">!</span>aNULL:<span class="token operator">!</span>MD5:<span class="token operator">!</span>ADH:<span class="token operator">!</span>RC4<span class="token punctuation">;</span>    <span class="token comment">#加密算法</span>
+    ssl_protocols TLSv1 TLSv1.1 TLSv1.2<span class="token punctuation">;</span>    <span class="token comment">#安全链接可选的加密协议</span>
+    ssl_prefer_server_ciphers on<span class="token punctuation">;</span>   <span class="token comment">#使用服务器端的首选算法</span>
+
+    location / <span class="token punctuation">&#123;</span>
+    <span class="token comment">## 定位到wordpress</span>
+    proxy_pass http://wordpress<span class="token punctuation">;</span>
+
+        proxy_http_version    <span class="token number">1.1</span><span class="token punctuation">;</span>
+        proxy_cache_bypass    <span class="token variable">$http_upgrade</span><span class="token punctuation">;</span>
+
+        proxy_set_header Upgrade            <span class="token variable">$http_upgrade</span><span class="token punctuation">;</span>
+        proxy_set_header Connection         <span class="token string">"upgrade"</span><span class="token punctuation">;</span>
+        proxy_set_header Host                <span class="token variable">$host</span><span class="token punctuation">;</span>
+        proxy_set_header X-Real-IP            <span class="token variable">$remote_addr</span><span class="token punctuation">;</span>
+        proxy_set_header X-Forwarded-For    <span class="token variable">$proxy_add_x_forwarded_for</span><span class="token punctuation">;</span>
+        proxy_set_header X-Forwarded-Proto    <span class="token variable">$scheme</span><span class="token punctuation">;</span>
+        proxy_set_header X-Forwarded-Host    <span class="token variable">$host</span><span class="token punctuation">;</span>
+        proxy_set_header X-Forwarded-Port    <span class="token variable">$server_port</span><span class="token punctuation">;</span>
+    <span class="token punctuation">&#125;</span>
+<span class="token punctuation">&#125;</span>
+server <span class="token punctuation">&#123;</span>
+    listen       <span class="token number">80</span><span class="token punctuation">;</span>
+    server_name  domain.com www.domain.com<span class="token punctuation">;</span>
+    <span class="token builtin class-name">return</span> <span class="token number">301</span> https://<span class="token variable">$server_name</span><span class="token variable">$request_uri</span><span class="token punctuation">;</span>
+<span class="token punctuation">&#125;</span>
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+    </div>
+  </article>
+</div>
+  </main>
+
+  <footer>
+    <p>
+      &copy; 2025 Shark Blog 
+      <a href="https://github.com/eddiehex/hexo-geek-source" target="_blank">
+        <i class="fab fa-github"></i>
+      </a>
+    </p>
+  </footer>
+
+  <script src="/js/search.js"></script>
+  <script src="/js/main.js"></script>
+  <script src="/js/copy-code.js"></script>
+  <script src="/js/prism.js"></script>
+  <script src="/js/toc-highlight.js"></script>
+  <script src="/js/mobile-menu.js"></script>
+</body>
+</html>

@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Shark Blog</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/prism-code.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <link rel="icon" href="https://hexo.kygoho.win/upload/uploads/6e7cf36d-8cb2-40c6-831f-80ef7488cca4.png" type="image/x-icon">
+  <link rel="stylesheet" href="/css/toc.css">
+  
+  <!-- MathJax Configuration -->
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']],
+        processEscapes: true,
+        processEnvironments: true,
+        packages: ['base', 'ams', 'noerrors', 'noundefined']
+      },
+      options: {
+        ignoreHtmlClass: 'tex2jax_ignore',
+        processHtmlClass: 'tex2jax_process'
+      },
+      startup: {
+        ready() {
+          MathJax.startup.defaultReady();
+          // Re-render math when content changes
+          document.addEventListener('DOMContentLoaded', function() {
+            if (window.MathJax && window.MathJax.typesetPromise) {
+              window.MathJax.typesetPromise();
+            }
+          });
+        }
+      }
+    };
+  </script>
+  <script async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.min.js"></script>
+<meta name="generator" content="Hexo 6.3.0"></head>
+<body>
+  <header>
+    <nav>
+      <div class="nav-container">
+        <div class="logo"><a href="/">Shark Blog</a></div>
+        <div class="search-container">
+          <input type="text" id="search-input" placeholder="Search...">
+          <div id="search-results"></div>
+        </div>
+        <div class="menu-toggle">
+          <i class="fas fa-bars"></i>
+        </div>
+      </div>
+      <ul class="nav-links">
+        <li><a href="/">Posts</a></li>
+        <li><a href="/services">Services</a></li>
+        <li><a href="/archives">Archive</a></li>
+        <li><a href="/categories">Categories</a></li>
+        <li><a href="/about">About</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <div class="page-container">
+  
+    <div class="toc-card">
+      <div class="toc-content">
+        <ol class="toc"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%89%8B%E5%8A%A8%E9%80%9A%E8%BF%87acme%E5%AE%89%E8%A3%85%E8%AF%81%E4%B9%A6"><span class="toc-text">手动通过acme安装证书</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8E%BB%E5%9F%9F%E5%90%8D%E6%9C%8D%E5%8A%A1%E5%95%86%E5%A4%84%E6%B7%BB%E5%8A%A0TXT"><span class="toc-text">去域名服务商处添加TXT</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%94%9F%E6%88%90%E7%BB%93%E6%9E%9C%E5%A6%82%E4%B8%8B"><span class="toc-text">生成结果如下</span></a></li></ol>
+      </div>
+    </div>
+  
+  
+  <article class="page-content">
+    <h1 class="page-title">acme安装证书</h1>
+    <div class="page-body">
+      <h4 id="手动通过acme安装证书"><a href="#手动通过acme安装证书" class="headerlink" title="手动通过acme安装证书"></a>手动通过acme安装证书</h4><pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token function">curl</span> https://get.acme.sh <span class="token operator">|</span> <span class="token function">sh</span> <span class="token comment">#安装acme</span><span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">~/.acme.sh/acme.sh --set-default-ca <span class="token parameter variable">--server</span> letsencrypt <span class="token comment">#替换服务</span><span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">~/.acme.sh/acme.sh <span class="token parameter variable">--issue</span> <span class="token parameter variable">-d</span> khw.423327.xyz <span class="token parameter variable">--dns</span> --yes-I-know-dns-manual-mode-enough-go-ahead-please  <span class="token comment">#生成添加TXT需要的NAME和Value</span><span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<h4 id="去域名服务商处添加TXT"><a href="#去域名服务商处添加TXT" class="headerlink" title="去域名服务商处添加TXT"></a>去域名服务商处添加TXT</h4><pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">~/.acme.sh/acme.sh <span class="token parameter variable">--renew</span> <span class="token parameter variable">-d</span> khw.423327.xyz --yes-I-know-dns-manual-mode-enough-go-ahead-please  <span class="token comment">#生成证书</span><span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<h4 id="生成结果如下"><a href="#生成结果如下" class="headerlink" title="生成结果如下"></a>生成结果如下</h4><pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token punctuation">[</span>Fri 06 Jan <span class="token number">2023</span> 07:37:07 AM EST<span class="token punctuation">]</span> Your cert is in: /root/.acme.sh/khw.423327.xyz/khw.423327.xyz.cer
+<span class="token punctuation">[</span>Fri 06 Jan <span class="token number">2023</span> 07:37:07 AM EST<span class="token punctuation">]</span> Your cert key is in: /root/.acme.sh/khw.423327.xyz/khw.423327.xyz.key <span class="token comment">#使用这个</span>
+<span class="token punctuation">[</span>Fri 06 Jan <span class="token number">2023</span> 07:37:07 AM EST<span class="token punctuation">]</span> The intermediate CA cert is in: /root/.acme.sh/khw.423327.xyz/ca.cer
+<span class="token punctuation">[</span>Fri 06 Jan <span class="token number">2023</span> 07:37:07 AM EST<span class="token punctuation">]</span> And the full chain certs is there: /root/.acme.sh/khw.423327.xyz/fullchain.cer <span class="token comment">#使用这个</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
+
+    </div>
+  </article>
+</div>
+  </main>
+
+  <footer>
+    <p>
+      &copy; 2025 Shark Blog 
+      <a href="https://github.com/eddiehex/hexo-geek-source" target="_blank">
+        <i class="fab fa-github"></i>
+      </a>
+    </p>
+  </footer>
+
+  <script src="/js/search.js"></script>
+  <script src="/js/main.js"></script>
+  <script src="/js/copy-code.js"></script>
+  <script src="/js/prism.js"></script>
+  <script src="/js/toc-highlight.js"></script>
+  <script src="/js/mobile-menu.js"></script>
+</body>
+</html>

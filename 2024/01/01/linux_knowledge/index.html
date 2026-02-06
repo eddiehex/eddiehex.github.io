@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Shark Blog</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/prism-code.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <link rel="icon" href="https://hexo.kygoho.win/upload/uploads/6e7cf36d-8cb2-40c6-831f-80ef7488cca4.png" type="image/x-icon">
+  <link rel="stylesheet" href="/css/toc.css">
+  
+  <!-- MathJax Configuration -->
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']],
+        processEscapes: true,
+        processEnvironments: true,
+        packages: ['base', 'ams', 'noerrors', 'noundefined']
+      },
+      options: {
+        ignoreHtmlClass: 'tex2jax_ignore',
+        processHtmlClass: 'tex2jax_process'
+      },
+      startup: {
+        ready() {
+          MathJax.startup.defaultReady();
+          // Re-render math when content changes
+          document.addEventListener('DOMContentLoaded', function() {
+            if (window.MathJax && window.MathJax.typesetPromise) {
+              window.MathJax.typesetPromise();
+            }
+          });
+        }
+      }
+    };
+  </script>
+  <script async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.min.js"></script>
+<meta name="generator" content="Hexo 6.3.0"></head>
+<body>
+  <header>
+    <nav>
+      <div class="nav-container">
+        <div class="logo"><a href="/">Shark Blog</a></div>
+        <div class="search-container">
+          <input type="text" id="search-input" placeholder="Search...">
+          <div id="search-results"></div>
+        </div>
+        <div class="menu-toggle">
+          <i class="fas fa-bars"></i>
+        </div>
+      </div>
+      <ul class="nav-links">
+        <li><a href="/">Posts</a></li>
+        <li><a href="/services">Services</a></li>
+        <li><a href="/archives">Archive</a></li>
+        <li><a href="/categories">Categories</a></li>
+        <li><a href="/about">About</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <div class="page-container">
+  
+    <div class="toc-card">
+      <div class="toc-content">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9F%A5%E7%9C%8B%E6%9C%8D%E5%8A%A1%E5%99%A8%E6%83%85%E5%86%B5"><span class="toc-text">查看服务器情况</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%99%BB%E9%99%86"><span class="toc-text">服务器登陆</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%89%E8%A3%85%E7%9B%B8%E5%85%B3%E4%BE%9D%E8%B5%96"><span class="toc-text">安装相关依赖</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B8%B8%E7%94%A8-vm-%E6%B5%8B%E8%AF%95"><span class="toc-text">常用 vm 测试</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9F%A5%E7%9C%8B-ip"><span class="toc-text">查看 ip</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%96%87%E4%BB%B6%E5%A4%B9%E6%93%8D%E4%BD%9C"><span class="toc-text">文件夹操作</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%A4%84%E7%90%86%E9%98%B2%E7%81%AB%E5%A2%99"><span class="toc-text">处理防火墙</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F"><span class="toc-text">环境变量</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%97%A5%E6%9C%9F-%E6%97%B6%E9%97%B4"><span class="toc-text">日期&amp;&amp;时间</span></a></li></ol>
+      </div>
+    </div>
+  
+  
+  <article class="page-content">
+    <h1 class="page-title">linux 知识</h1>
+    <div class="page-body">
+      <h2 id="查看服务器情况"><a href="#查看服务器情况" class="headerlink" title="查看服务器情况"></a>查看服务器情况</h2><pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token comment">#查看硬盘使用情况</span>
+<span class="token function">df</span> <span class="token parameter variable">-h</span>
+<span class="token comment">#查看内存使用情况</span>
+<span class="token function">free</span> <span class="token parameter variable">-h</span>
+<span class="token comment">#查看块设备情况</span>
+lsblk<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<h2 id="服务器登陆"><a href="#服务器登陆" class="headerlink" title="服务器登陆"></a>服务器登陆</h2><pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token comment">#ssh 用户名@ip地址 -p 端口号 -i 密钥地址</span>
+<span class="token function">ssh</span> root@206.190.232.205 <span class="token parameter variable">-p</span> <span class="token number">26838</span> <span class="token parameter variable">-i</span> /Users/eddieho/hx_for_hob/ssa/bwg_jp
+<span class="token comment"># 使用管理员权限</span>
+<span class="token function">sudo</span> <span class="token parameter variable">-i</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
+
+<h2 id="安装相关依赖"><a href="#安装相关依赖" class="headerlink" title="安装相关依赖"></a>安装相关依赖</h2><pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">yum <span class="token parameter variable">-y</span> <span class="token function">install</span> <span class="token function">wget</span>
+yum update <span class="token parameter variable">-y</span> <span class="token operator">&amp;&amp;</span> yum <span class="token function">install</span> <span class="token function">curl</span> <span class="token parameter variable">-y</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+
+<h2 id="常用-vm-测试"><a href="#常用-vm-测试" class="headerlink" title="常用 vm 测试"></a>常用 vm 测试</h2><pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token function">wget</span> -qO- bench.sh <span class="token operator">|</span> <span class="token function">bash</span><span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<h2 id="查看-ip"><a href="#查看-ip" class="headerlink" title="查看 ip"></a>查看 ip</h2><pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token comment">#查看公网ip</span>
+<span class="token function">curl</span> <span class="token parameter variable">-s</span> http://tnx.nl/ip
+<span class="token comment">#</span>
+<span class="token function">ifconfig</span> <span class="token parameter variable">-a</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
+
+<h2 id="文件夹操作"><a href="#文件夹操作" class="headerlink" title="文件夹操作"></a>文件夹操作</h2><pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token comment"># 移动或者改名</span>
+<span class="token function">mv</span> mynginx/ myblog/
+<span class="token comment"># 创建</span>
+<span class="token function">mkdir</span> myblog
+<span class="token comment"># 删除</span>
+<span class="token function">rm</span> myblog
+<span class="token function">rm</span> <span class="token parameter variable">-rf</span> blog<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<h2 id="处理防火墙"><a href="#处理防火墙" class="headerlink" title="处理防火墙"></a>处理防火墙</h2><pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token comment">#停止firewall</span>
+systemctl stop firewalld.service
+<span class="token comment">#禁止firewall开机启动</span>
+systemctl disable firewalld.service
+<span class="token comment">#关闭iptables</span>
+<span class="token function">service</span> iptables stop
+<span class="token comment">#去掉iptables开机启动</span>
+<span class="token function">chkconfig</span> iptables off<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<h2 id="环境变量"><a href="#环境变量" class="headerlink" title="环境变量"></a>环境变量</h2><pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token comment"># 直接用export命令</span>
+<span class="token builtin class-name">export</span> <span class="token assign-left variable"><span class="token environment constant">PATH</span></span><span class="token operator">=</span><span class="token environment constant">$PATH</span>:/opt/au1200_rm/build_tools/bin
+<span class="token comment"># 修改profile文件</span>
+<span class="token function">vi</span> /etc/profile
+<span class="token builtin class-name">export</span> <span class="token assign-left variable"><span class="token environment constant">PATH</span></span><span class="token operator">=</span><span class="token string">"<span class="token environment constant">$PATH</span>:/opt/au1200_rm/build_tools/bin"</span>
+<span class="token builtin class-name">source</span> /etc/profile
+<span class="token comment"># 修改.bashrc文件</span>
+ <span class="token function">vi</span> /root/.bashrc
+<span class="token builtin class-name">export</span> <span class="token assign-left variable"><span class="token environment constant">PATH</span></span><span class="token operator">=</span><span class="token string">"<span class="token environment constant">$PATH</span>:/opt/au1200_rm/build_tools/bin"</span>
+<span class="token comment"># 修改.bashrc</span>
+<span class="token function">vi</span> ~/.bashrc
+<span class="token builtin class-name">alias</span> <span class="token assign-left variable">v2ray</span><span class="token operator">=</span>/usr/local/sbin/v2ray<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<h2 id="日期-时间"><a href="#日期-时间" class="headerlink" title="日期&amp;&amp;时间"></a>日期&amp;&amp;时间</h2><pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token comment"># 当前时间</span>
+<span class="token function">date</span>
+- Tue <span class="token number">14</span> Nov <span class="token number">2023</span> 04:13:21 PM UTC
+<span class="token comment"># 当前时区</span>
+timedatectl
+- Local time: Tue <span class="token number">2023</span>-11-14 <span class="token number">16</span>:14:00 UTC
+           Universal time: Tue <span class="token number">2023</span>-11-14 <span class="token number">16</span>:14:00 UTC
+                 RTC time: Tue <span class="token number">2023</span>-11-14 <span class="token number">16</span>:14:01
+                Time zone: Etc/UTC <span class="token punctuation">(</span>UTC, +0000<span class="token punctuation">)</span>
+- System clock synchronized: <span class="token function">yes</span>
+              NTP service: active
+          RTC <span class="token keyword">in</span> <span class="token builtin class-name">local</span> TZ: no
+
+<span class="token comment"># 修改时区为上海</span>
+timedatectl set-timezone Asia/Shanghai<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+    </div>
+  </article>
+</div>
+  </main>
+
+  <footer>
+    <p>
+      &copy; 2025 Shark Blog 
+      <a href="https://github.com/eddiehex/hexo-geek-source" target="_blank">
+        <i class="fab fa-github"></i>
+      </a>
+    </p>
+  </footer>
+
+  <script src="/js/search.js"></script>
+  <script src="/js/main.js"></script>
+  <script src="/js/copy-code.js"></script>
+  <script src="/js/prism.js"></script>
+  <script src="/js/toc-highlight.js"></script>
+  <script src="/js/mobile-menu.js"></script>
+</body>
+</html>

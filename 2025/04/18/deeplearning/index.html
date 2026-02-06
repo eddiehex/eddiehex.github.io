@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Shark Blog</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/prism-code.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <link rel="icon" href="https://hexo.kygoho.win/upload/uploads/6e7cf36d-8cb2-40c6-831f-80ef7488cca4.png" type="image/x-icon">
+  <link rel="stylesheet" href="/css/toc.css">
+  
+  <!-- MathJax Configuration -->
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']],
+        processEscapes: true,
+        processEnvironments: true,
+        packages: ['base', 'ams', 'noerrors', 'noundefined']
+      },
+      options: {
+        ignoreHtmlClass: 'tex2jax_ignore',
+        processHtmlClass: 'tex2jax_process'
+      },
+      startup: {
+        ready() {
+          MathJax.startup.defaultReady();
+          // Re-render math when content changes
+          document.addEventListener('DOMContentLoaded', function() {
+            if (window.MathJax && window.MathJax.typesetPromise) {
+              window.MathJax.typesetPromise();
+            }
+          });
+        }
+      }
+    };
+  </script>
+  <script async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.min.js"></script>
+<meta name="generator" content="Hexo 6.3.0"></head>
+<body>
+  <header>
+    <nav>
+      <div class="nav-container">
+        <div class="logo"><a href="/">Shark Blog</a></div>
+        <div class="search-container">
+          <input type="text" id="search-input" placeholder="Search...">
+          <div id="search-results"></div>
+        </div>
+        <div class="menu-toggle">
+          <i class="fas fa-bars"></i>
+        </div>
+      </div>
+      <ul class="nav-links">
+        <li><a href="/">Posts</a></li>
+        <li><a href="/services">Services</a></li>
+        <li><a href="/archives">Archive</a></li>
+        <li><a href="/categories">Categories</a></li>
+        <li><a href="/about">About</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <div class="page-container">
+  
+    <div class="toc-card">
+      <div class="toc-content">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-MLP-Multilayer-Perceptron-%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E7%9A%84%E5%9F%BA%E7%9F%B3"><span class="toc-text">1. MLP (Multilayer Perceptron): 深度学习的基石</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-CNN-Convolutional-Neural-Network-%E5%9B%BE%E5%83%8F%E4%B8%96%E7%95%8C%E7%9A%84%E4%B8%93%E5%AE%B6"><span class="toc-text">2. CNN (Convolutional Neural Network): 图像世界的专家</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-RNN-Recurrent-Neural-Network-LSTM-%E5%BA%8F%E5%88%97%E6%95%B0%E6%8D%AE%E7%9A%84%E8%AE%B0%E5%BF%86%E8%80%85"><span class="toc-text">3. RNN (Recurrent Neural Network) &amp; LSTM: 序列数据的记忆者</span></a></li></ol>
+      </div>
+    </div>
+  
+  
+  <article class="page-content">
+    <h1 class="page-title">深度学习入门：从 MLP 到 RNN/LSTM，核心架构解析</h1>
+    <div class="page-body">
+      <p>深度学习是机器学习领域一个非常强大且活跃的分支，它主要依赖于<strong>人工神经网络</strong>，特别是那些拥有<strong>多层</strong>结构的神经网络，来从数据中学习复杂的模式。理解不同的神经网络架构是入门深度学习的关键一步，因为不同的架构擅长处理不同类型的数据和任务。</p>
+<p>今天，我们将回顾以下几种核心架构：</p>
+<ol>
+<li><strong>MLP (多层感知机)：</strong> 最基础的前馈网络。</li>
+<li><strong>CNN (卷积神经网络)：</strong> 图像处理的利器。</li>
+<li><strong>RNN (循环神经网络) 及 LSTM：</strong> 处理序列数据的能手。</li>
+</ol>
+<h2 id="1-MLP-Multilayer-Perceptron-深度学习的基石"><a href="#1-MLP-Multilayer-Perceptron-深度学习的基石" class="headerlink" title="1. MLP (Multilayer Perceptron): 深度学习的基石"></a>1. MLP (Multilayer Perceptron): 深度学习的基石</h2><p>MLP，即多层感知机，是最基础、最经典的一种<strong>前馈神经网络</strong>。你可以将它视为更复杂网络的构建块。</p>
+<p><strong>架构特点：</strong></p>
+<ul>
+<li>由<strong>输入层</strong>、一个或多个<strong>隐藏层</strong>和<strong>输出层</strong>组成。</li>
+<li>层与层之间是<strong>全连接 (Fully Connected)</strong> 的：上一层的每一个神经元节点都连接到下一层的每一个神经元节点。</li>
+</ul>
+<p><strong>处理过程（前向传播）：</strong></p>
+<ol>
+<li><strong>输入层：</strong> 接收原始数据。<strong>输入层的节点数量</strong>等于你<strong>单个样本的特征数量</strong>。每个节点代表样本的一个特征值。</li>
+<li><strong>隐藏层&#x2F;输出层：</strong> 数据从上一层流向当前层。在当前层的每个节点，进行以下两个关键步骤：<ul>
+<li><strong>线性转换 (Linear Transformation)：</strong> 接收来自上一层所有节点的输出，将它们分别乘以对应的连接**权重 (Weights)<strong>，然后求和，并加上该节点的</strong>偏置 (Bias)**。这步计算是线性的 (Wx + b)。</li>
+<li><strong>非线性激活 (Non-linear Activation)：</strong> 将线性转换的结果通过一个<strong>非线性激活函数</strong>（如 ReLU）。<strong>这是非常关键的一步！</strong>它引入了非线性，使得多层网络能够学习复杂的非线性关系，而不是仅仅叠加多个线性转换（那样最终仍是线性）。</li>
+</ul>
+</li>
+<li>这个“线性转换 + 非线性激活”的过程在每个隐藏层重复进行，直到数据到达输出层，产生最终预测结果。</li>
+</ol>
+<p><strong>总结：</strong> MLP 通过多层<strong>非线性</strong>转换，将输入数据映射到输出空间。它是一种通用模型，但处理高维、有结构的数据（如图像）效率不高。</p>
+<h2 id="2-CNN-Convolutional-Neural-Network-图像世界的专家"><a href="#2-CNN-Convolutional-Neural-Network-图像世界的专家" class="headerlink" title="2. CNN (Convolutional Neural Network): 图像世界的专家"></a>2. CNN (Convolutional Neural Network): 图像世界的专家</h2><p>CNN，即卷积神经网络，是专门为处理具有<strong>网格结构</strong>的数据而设计的，最成功的应用领域是<strong>图像处理</strong>。它通过模仿人类视觉系统的一些特性来工作。</p>
+<p><strong>架构特点：</strong></p>
+<p>CNN 的核心在于其特殊的层：</p>
+<ul>
+<li><strong>卷积层 (Convolutional Layer)：</strong> CNN 的灵魂。</li>
+<li><strong>池化层 (Pooling Layer)：</strong> 常用于降维。</li>
+<li><strong>全连接层 (Fully Connected Layer)：</strong> 通常在网络的末端用于分类。</li>
+</ul>
+<p><strong>处理过程：</strong></p>
+<ol>
+<li><strong>输入层：</strong> 接收图像数据。图像是 3D 的（高度、宽度、通道数）。</li>
+<li><strong>卷积层：</strong><ul>
+<li>使用小的<strong>滤波器 (Filter) &#x2F; 卷积核 (Kernel)</strong> 在输入图片（或上一层的特征图）上<strong>滑动</strong>。</li>
+<li>滤波器内包含学习到的权重，它与覆盖区域的像素值进行卷积运算（乘加）。</li>
+<li>每个滤波器检测一种特定的<strong>局部特征</strong>（如边缘、纹理）。</li>
+<li><strong>参数共享：</strong> 同一个滤波器在图片不同位置重复使用，大大减少参数。</li>
+<li><strong>局部连接：</strong> 每个神经元只连接到输入的一个小区域。</li>
+<li>输出是一系列**特征图 (Feature Map)**，每个特征图由一个滤波器生成，表示该特征在输入中的分布。</li>
+</ul>
+</li>
+<li><strong>激活函数：</strong> 对卷积层的输出（特征图）应用非线性激活。</li>
+<li><strong>池化层 (可选)：</strong><ul>
+<li>在特征图上滑动窗口，取窗口内的最大值（最大池化）或平均值（平均池化）。</li>
+<li><strong>作用：</strong> 减小特征图的空间尺寸（降维），减少计算量，并增加对特征位置微小变化的鲁棒性。</li>
+</ul>
+</li>
+<li><strong>重复：</strong> 通常会堆叠多个卷积层和池化层。随着网络加深，学习到的特征越来越抽象和复杂。</li>
+<li><strong>展平层 (Flatten Layer)：</strong> 在将 3D 的特征图输入到 MLP 式的全连接层之前，需要将其展平为一个 1D 向量。</li>
+<li><strong>全连接层 &amp; 输出层：</strong> 接收展平后的特征向量，进行 MLP 式的计算，最终输出分类或回归结果。</li>
+</ol>
+<p><strong>总结：</strong> CNN 利用卷积和池化操作，有效地捕捉图像的<strong>空间局部性</strong>和<strong>特征的层次结构</strong>，并通过参数共享提高了效率，使其成为图像处理领域的首选架构。</p>
+<h2 id="3-RNN-Recurrent-Neural-Network-LSTM-序列数据的记忆者"><a href="#3-RNN-Recurrent-Neural-Network-LSTM-序列数据的记忆者" class="headerlink" title="3. RNN (Recurrent Neural Network) &amp; LSTM: 序列数据的记忆者"></a>3. RNN (Recurrent Neural Network) &amp; LSTM: 序列数据的记忆者</h2><p>RNN，即循环神经网络，是为处理<strong>序列数据</strong>而设计的，比如文本、时间序列、语音等，这些数据点之间存在<strong>顺序</strong>和<strong>依赖关系</strong>。</p>
+<p><strong>RNN 核心思想：记忆</strong></p>
+<p>与 MLP 和 CNN 不同，RNN 具有<strong>“记忆”</strong>能力。它在处理序列中的当前数据点时，会考虑之前处理过的数据点的信息。这种记忆体现在其内部的<strong>隐藏状态 (Hidden State)</strong> 中，隐藏状态会在处理序列的过程中不断更新，并将信息从上一个时间步传递到下一个时间步，形成一个<strong>循环</strong>。</p>
+<p><strong>处理过程：</strong></p>
+<ol>
+<li><strong>输入：</strong> 序列数据，一个数据点（如一个词的向量）在<strong>一个时间步 (Time Step)</strong> 输入到 RNN 单元。</li>
+<li><strong>RNN 单元计算：</strong> 在每个时间步 ‘t’，RNN 单元接收：<ul>
+<li>当前输入 x_t。</li>
+<li><strong>上一个时间步的隐藏状态</strong> h_{t-1}（这就是记忆的来源）。</li>
+<li>它将 x_t 和 h_{t-1} 结合（通过加权求和和激活函数）进行计算。</li>
+</ul>
+</li>
+<li><strong>输出：</strong> 产生<strong>当前时间步的隐藏状态</strong> h_t（新的记忆）和可选的当前时间步的输出 y_t。</li>
+<li><strong>循环：</strong> 计算出的 h_t 会被作为<strong>下一个时间步</strong>的 h_{t-1} 输入到同一个 RNN 单元中。</li>
+</ol>
+<p><strong>RNN 的挑战：长距离依赖</strong></p>
+<p>标准 RNN 在处理<strong>长序列</strong>时，由于梯度消失等问题，很难有效地捕捉和利用序列中<strong>长距离的依赖关系</strong>。早期的信息在多次传递和计算后容易丢失。</p>
+<p><strong>LSTM (Long Short-Term Memory): 增强的记忆</strong></p>
+<p>LSTM 是 RNN 的一个重要改进，专门为了解决标准 RNN 的长距离依赖问题而设计。</p>
+<p><strong>LSTM 的核心：细胞状态 (Cell State) 和 门 (Gates)</strong></p>
+<p>LSTM 引入了一个独立的<strong>细胞状态 (Cell State)<strong>，它像一条信息高速公路，可以相对完整地传递信息。同时，它有三个特殊的</strong>“门”</strong>来精确控制信息的流动：</p>
+<ol>
+<li><strong>遗忘门 (Forget Gate)：</strong> 控制从<strong>上一个细胞状态</strong>中<strong>丢弃</strong>多少信息。</li>
+<li><strong>输入门 (Input Gate)：</strong> 控制将当前输入和隐藏状态中的<strong>哪些新信息</strong>添加到<strong>当前细胞状态</strong>中。</li>
+<li><strong>输出门 (Output Gate)：</strong> 控制从<strong>当前细胞状态</strong>中<strong>输出</strong>多少信息作为当前的<strong>隐藏状态</strong>。</li>
+</ol>
+<p>通过这些门的协同作用，LSTM 能够<strong>选择性地记忆</strong>重要的信息，<strong>遗忘</strong>不重要的信息，从而在长序列中有效地保持和利用长期记忆。</p>
+<p><strong>总结：</strong> RNN（包括 LSTM）通过引入循环连接和隐藏状态，使得网络能够处理序列数据并具备记忆能力。LSTM 通过细胞状态和门控机制，克服了标准 RNN 在长序列上的局限性，是处理文本、语音等序列数据的强大工具。GRU 是 LSTM 的一个简化变体。</p>
+<p><strong>结语</strong></p>
+<p>MLP、CNN 和 RNN&#x2F;LSTM 是深度学习中最基本也是最重要的几种神经网络架构。它们各自有不同的结构特点和适用场景：</p>
+<ul>
+<li><strong>MLP：</strong> 通用基础，理解线性+非线性转换。</li>
+<li><strong>CNN：</strong> 擅长网格数据（图像），理解卷积、池化和空间层次特征。</li>
+<li><strong>RNN&#x2F;LSTM：</strong> 擅长序列数据，理解循环、隐藏状态和长期记忆。</li>
+</ul>
+
+    </div>
+  </article>
+</div>
+  </main>
+
+  <footer>
+    <p>
+      &copy; 2025 Shark Blog 
+      <a href="https://github.com/eddiehex/hexo-geek-source" target="_blank">
+        <i class="fab fa-github"></i>
+      </a>
+    </p>
+  </footer>
+
+  <script src="/js/search.js"></script>
+  <script src="/js/main.js"></script>
+  <script src="/js/copy-code.js"></script>
+  <script src="/js/prism.js"></script>
+  <script src="/js/toc-highlight.js"></script>
+  <script src="/js/mobile-menu.js"></script>
+</body>
+</html>

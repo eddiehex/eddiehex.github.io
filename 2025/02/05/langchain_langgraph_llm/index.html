@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Shark Blog</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/prism-code.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <link rel="icon" href="https://hexo.kygoho.win/upload/uploads/6e7cf36d-8cb2-40c6-831f-80ef7488cca4.png" type="image/x-icon">
+  <link rel="stylesheet" href="/css/toc.css">
+  
+  <!-- MathJax Configuration -->
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']],
+        processEscapes: true,
+        processEnvironments: true,
+        packages: ['base', 'ams', 'noerrors', 'noundefined']
+      },
+      options: {
+        ignoreHtmlClass: 'tex2jax_ignore',
+        processHtmlClass: 'tex2jax_process'
+      },
+      startup: {
+        ready() {
+          MathJax.startup.defaultReady();
+          // Re-render math when content changes
+          document.addEventListener('DOMContentLoaded', function() {
+            if (window.MathJax && window.MathJax.typesetPromise) {
+              window.MathJax.typesetPromise();
+            }
+          });
+        }
+      }
+    };
+  </script>
+  <script async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.min.js"></script>
+<meta name="generator" content="Hexo 6.3.0"></head>
+<body>
+  <header>
+    <nav>
+      <div class="nav-container">
+        <div class="logo"><a href="/">Shark Blog</a></div>
+        <div class="search-container">
+          <input type="text" id="search-input" placeholder="Search...">
+          <div id="search-results"></div>
+        </div>
+        <div class="menu-toggle">
+          <i class="fas fa-bars"></i>
+        </div>
+      </div>
+      <ul class="nav-links">
+        <li><a href="/">Posts</a></li>
+        <li><a href="/services">Services</a></li>
+        <li><a href="/archives">Archive</a></li>
+        <li><a href="/categories">Categories</a></li>
+        <li><a href="/about">About</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <div class="page-container">
+  
+    <div class="toc-card">
+      <div class="toc-content">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80%E3%80%81%E6%A0%B8%E5%BF%83%E6%A6%82%E5%BF%B5%E5%AF%B9%E6%AF%94%EF%BC%9AChain-vs-Graph"><span class="toc-text">一、核心概念对比：Chain vs. Graph</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C%E3%80%81%E5%B8%B8%E8%A7%81%E5%87%BD%E6%95%B0%E5%88%86%E7%B1%BB%E4%B8%8E%E5%AF%B9%E6%AF%94"><span class="toc-text">二、常见函数分类与对比</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-LLM-%E8%AF%AD%E8%A8%80%E6%A8%A1%E5%9E%8B-%E7%9B%B8%E5%85%B3"><span class="toc-text">1. LLM (语言模型) 相关</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-Prompt-%E6%8F%90%E7%A4%BA%E8%AF%8D-%E7%9B%B8%E5%85%B3"><span class="toc-text">2. Prompt (提示词) 相关</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-Chain-%E9%93%BE-Node-%E8%8A%82%E7%82%B9-%E7%9B%B8%E5%85%B3"><span class="toc-text">3. Chain (链) &#x2F; Node (节点) 相关</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#3-1-Langchain-Chain-%E9%93%BE"><span class="toc-text">3.1 Langchain - Chain (链)</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-2-LangGraph-Node-%E8%8A%82%E7%82%B9"><span class="toc-text">3.2 LangGraph - Node (节点)</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-Agent-%E4%BB%A3%E7%90%86-%E7%9B%B8%E5%85%B3"><span class="toc-text">4. Agent (代理) 相关</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#4-1-Langchain-Agent"><span class="toc-text">4.1 Langchain - Agent</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4-2-LangGraph-Agent"><span class="toc-text">4.2 LangGraph - Agent</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-%E5%B7%A5%E5%85%B7-Tools-%E7%9B%B8%E5%85%B3"><span class="toc-text">5. 工具 (Tools) 相关</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-%E7%8A%B6%E6%80%81%E7%AE%A1%E7%90%86-State-Management-LangGraph-%E7%89%B9%E6%9C%89"><span class="toc-text">6. 状态管理 (State Management) (LangGraph 特有)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#7-%E5%9B%BE%E7%BB%93%E6%9E%84%E6%9E%84%E5%BB%BA-Graph-Construction-LangGraph-%E7%89%B9%E6%9C%89"><span class="toc-text">7. 图结构构建 (Graph Construction) (LangGraph 特有)</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89%E3%80%81run-%E4%B8%8E-invoke-%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="toc-text">三、run 与 invoke 的区别</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9B%E3%80%81%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3-Runnable"><span class="toc-text">四、深入理解 Runnable</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%94%E3%80%81%E7%90%86%E8%A7%A3-partial-variables"><span class="toc-text">五、理解 partial_variables</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%AD%E3%80%81Agent-%E5%92%8C-AgentExecutor-%E8%AF%A6%E8%A7%A3"><span class="toc-text">六、Agent 和 AgentExecutor 详解</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-Agent-vs-AgentExecutor"><span class="toc-text">1. Agent vs. AgentExecutor</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-create-react-agent-vs-create-with-tools-agent"><span class="toc-text">2. create_react_agent vs. create_with_tools_agent</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-Agent-%E4%B8%AD-tools-%E5%92%8C-AgentExecutor-%E4%B8%AD-tools-%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="toc-text">3. Agent 中 tools 和 AgentExecutor 中 tools 的区别</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-AgentExecutor-%E7%9A%84%E5%88%9B%E5%BB%BA%E6%96%B9%E6%B3%95"><span class="toc-text">4. AgentExecutor 的创建方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-Agent-%E5%92%8C-LLM-%E7%9A%84%E5%88%86%E7%A6%BB"><span class="toc-text">5. Agent 和 LLM 的分离</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-AgentExecutor-from-agent-and-tools-%E4%B8%8D%E6%8E%A5%E5%8F%97-llm-%E5%8F%82%E6%95%B0"><span class="toc-text">6. AgentExecutor.from_agent_and_tools 不接受 llm 参数</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%83%E3%80%81Memory-vs-StateGraph"><span class="toc-text">七、Memory vs. StateGraph</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%AB%E3%80%81Agent-%E5%B5%8C%E5%A5%97"><span class="toc-text">八、Agent 嵌套</span></a></li></ol>
+      </div>
+    </div>
+  
+  
+  <article class="page-content">
+    <h1 class="page-title">深入浅出 Langchain 与 LangGraph：LLM 应用开发的双剑客</h1>
+    <div class="page-body">
+      <h2 id="一、核心概念对比：Chain-vs-Graph"><a href="#一、核心概念对比：Chain-vs-Graph" class="headerlink" title="一、核心概念对比：Chain vs. Graph"></a>一、核心概念对比：Chain vs. Graph</h2><p>Langchain 和 LangGraph 的核心区别在于它们构建应用的<strong>基本模型</strong>：</p>
+<ul>
+<li><strong>Langchain:</strong> 专注于构建 <strong>链式 (Chain)</strong> 应用，将 LLM、Prompt、工具等组件 <strong>线性串联</strong>，形成一个顺序执行的工作流程。这种方式适合构建相对简单、流程固定的应用。</li>
+<li><strong>LangGraph:</strong> 专注于构建 <strong>图状 (Graph)</strong> 应用，将 LLM、Prompt、工具等组件视为 **节点 (Node)**，节点之间通过 <strong>边 (Edge)</strong> 连接，形成一个更复杂、更灵活、可定制、支持状态管理的图状工作流程。这种方式适合构建需要复杂逻辑控制、状态管理和灵活性的应用，例如复杂的 Agent、多轮对话系统等。</li>
+</ul>
+<p>如果把 LLM 应用比作流程图，那么 Langchain 就像是 <strong>流程图中的直线型流程</strong>，而 LangGraph 则是 <strong>带有分支、循环和复杂逻辑的流程图</strong>。</p>
+<h2 id="二、常见函数分类与对比"><a href="#二、常见函数分类与对比" class="headerlink" title="二、常见函数分类与对比"></a>二、常见函数分类与对比</h2><p>本节将按照功能对 Langchain 和 LangGraph 的常见函数进行分类，并对比它们在类似功能上的实现方式。</p>
+<h3 id="1-LLM-语言模型-相关"><a href="#1-LLM-语言模型-相关" class="headerlink" title="1. LLM (语言模型) 相关"></a>1. LLM (语言模型) 相关</h3><p>无论是 Langchain 还是 LangGraph，都需要与 LLM 进行交互。两者在这方面的处理方式类似，都是直接初始化 LLM 对象，例如 <code>ChatOpenAI</code>、<code>OpenAI</code> 等。</p>
+<p><strong>示例 (Langchain &amp; LangGraph 类似):</strong></p>
+<pre class="line-numbers language-python" data-language="python"><code class="language-python"><span class="token keyword">from</span> langchain_openai <span class="token keyword">import</span> ChatOpenAI
+
+<span class="token comment"># Langchain &amp; LangGraph 中都一样</span>
+llm <span class="token operator">=</span> ChatOpenAI<span class="token punctuation">(</span>model_name<span class="token operator">=</span><span class="token string">"gpt-3.5-turbo"</span><span class="token punctuation">,</span> temperature<span class="token operator">=</span><span class="token number">0</span><span class="token punctuation">)</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
+
+<h3 id="2-Prompt-提示词-相关"><a href="#2-Prompt-提示词-相关" class="headerlink" title="2. Prompt (提示词) 相关"></a>2. Prompt (提示词) 相关</h3><p>Langchain 和 LangGraph 都使用 <code>PromptTemplate</code> 来构建提示词模板，方便管理和复用 Prompt。</p>
+<p><strong>示例 (Langchain &amp; LangGraph 类似):</strong></p>
+<pre class="line-numbers language-python" data-language="python"><code class="language-python"><span class="token keyword">from</span> langchain<span class="token punctuation">.</span>prompts <span class="token keyword">import</span> PromptTemplate
+
+prompt <span class="token operator">=</span> PromptTemplate<span class="token punctuation">.</span>from_template<span class="token punctuation">(</span><span class="token string">"请用 &#123;language&#125; 总结以下内容：&#123;text&#125;"</span><span class="token punctuation">)</span>
+
+<span class="token comment"># Langchain 中可以直接格式化 prompt</span>
+formatted_prompt_langchain <span class="token operator">=</span> prompt<span class="token punctuation">.</span><span class="token builtin">format</span><span class="token punctuation">(</span>language<span class="token operator">=</span><span class="token string">"中文"</span><span class="token punctuation">,</span> text<span class="token operator">=</span><span class="token string">"Langchain 是一个用于构建 LLM 应用的框架..."</span><span class="token punctuation">)</span>
+<span class="token keyword">print</span><span class="token punctuation">(</span>formatted_prompt_langchain<span class="token punctuation">)</span>
+
+<span class="token comment"># LangGraph 中通常在 Node 中格式化 prompt</span>
+<span class="token comment"># (后续 Node 示例会展示)</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<h3 id="3-Chain-链-Node-节点-相关"><a href="#3-Chain-链-Node-节点-相关" class="headerlink" title="3. Chain (链) &#x2F; Node (节点) 相关"></a>3. Chain (链) &#x2F; Node (节点) 相关</h3><p>这是 Langchain 和 LangGraph 最核心的区别所在。</p>
+<h4 id="3-1-Langchain-Chain-链"><a href="#3-1-Langchain-Chain-链" class="headerlink" title="3.1 Langchain - Chain (链)"></a>3.1 Langchain - Chain (链)</h4><ul>
+<li><strong>概念:</strong> 将多个组件 (LLM, Prompt, 工具等) 线性串联起来，形成一个工作流程。</li>
+<li><strong>常见 Chain 类型:</strong><ul>
+<li><code>LLMChain</code>: 最基础的 Chain，将 Prompt 和 LLM 结合。</li>
+<li><code>SequentialChain</code>: 将多个 Chain 顺序连接起来。</li>
+<li><code>SimpleSequentialChain</code>: 简化版的 <code>SequentialChain</code>。</li>
+<li><code>RetrievalQAChain</code>: 用于问答，结合检索器 (Retriever)。</li>
+<li><code>AgentExecutor</code>: 用于执行 Agent 的 Chain。</li>
+</ul>
+</li>
+<li><strong>核心函数&#x2F;类:</strong><ul>
+<li><code>LLMChain(llm=..., prompt=...)</code></li>
+<li><code>SequentialChain(chains=[...], input_variables=[...], output_variables=[...])</code></li>
+<li><code>SimpleSequentialChain(chains=[...])</code></li>
+<li><code>RetrievalQAChain.from_llm(llm=..., retriever=...)</code></li>
+<li><code>AgentExecutor.from_agent_and_tools(agent=..., tools=...)</code></li>
+</ul>
+</li>
+</ul>
+<p><strong>示例 - Langchain Chain (<code>LLMChain</code>):</strong></p>
+<pre class="line-numbers language-python" data-language="python"><code class="language-python"><span class="token keyword">from</span> langchain_openai <span class="token keyword">import</span> ChatOpenAI
+<span class="token keyword">from</span> langchain<span class="token punctuation">.</span>prompts <span class="token keyword">import</span> PromptTemplate
+<span class="token keyword">from</span> langchain<span class="token punctuation">.</span>chains <span class="token keyword">import</span> LLMChain
+
+llm <span class="token operator">=</span> ChatOpenAI<span class="token punctuation">(</span>model_name<span class="token operator">=</span><span class="token string">"gpt-3.5-turbo"</span><span class="token punctuation">,</span> temperature<span class="token operator">=</span><span class="token number">0</span><span class="token punctuation">)</span>
+prompt <span class="token operator">=</span> PromptTemplate<span class="token punctuation">.</span>from_template<span class="token punctuation">(</span><span class="token string">"请用 &#123;language&#125; 总结以下内容：&#123;text&#125;"</span><span class="token punctuation">)</span>
+
+chain <span class="token operator">=</span> LLMChain<span class="token punctuation">(</span>llm<span class="token operator">=</span>llm<span class="token punctuation">,</span> prompt<span class="token operator">=</span>prompt<span class="token punctuation">)</span>
+
+output <span class="token operator">=</span> chain<span class="token punctuation">.</span>run<span class="token punctuation">(</span>language<span class="token operator">=</span><span class="token string">"中文"</span><span class="token punctuation">,</span> text<span class="token operator">=</span><span class="token string">"Langchain 是一个用于构建 LLM 应用的框架..."</span><span class="token punctuation">)</span>
+<span class="token keyword">print</span><span class="token punctuation">(</span>output<span class="token punctuation">)</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<h4 id="3-2-LangGraph-Node-节点"><a href="#3-2-LangGraph-Node-节点" class="headerlink" title="3.2 LangGraph - Node (节点)"></a>3.2 LangGraph - Node (节点)</h4><ul>
+<li><strong>概念:</strong> 图中的一个计算单元，可以是 LLM 调用、函数调用、工具调用等。Node 是构建 Graph 的基本 building block。</li>
+<li><strong>Node 的形式:</strong> 可以是函数、Langchain Runnable (例如 <code>LLMChain</code>, <code>RetrievalQAChain</code>) 等。</li>
+<li><strong>核心函数&#x2F;类 (Graph 构建相关):</strong><ul>
+<li><code>StateGraph(AgentState)</code>: 创建状态图，<code>AgentState</code> 是自定义的状态类。</li>
+<li><code>graph.add_node(&quot;node_name&quot;, node_function)</code>: 向图中添加节点。</li>
+<li><code>graph.add_edge(&quot;node1_name&quot;, &quot;node2_name&quot;)</code>: 添加节点之间的有向边，表示流程顺序。</li>
+<li><code>graph.set_entry_point(&quot;node_name&quot;)</code>: 设置图的入口节点。</li>
+<li><code>graph.set_conditional_edges(&quot;node_name&quot;, conditional_mapping)</code>: 添加条件边，根据节点输出决定下一步走向。</li>
+<li><code>graph.set_finish_point(&quot;node_name&quot;)</code>: 设置图的结束节点。</li>
+</ul>
+</li>
+</ul>
+<p><strong>示例 - LangGraph Node (函数作为 Node):</strong></p>
+<pre class="line-numbers language-python" data-language="python"><code class="language-python"><span class="token keyword">from</span> langgraph<span class="token punctuation">.</span>graph <span class="token keyword">import</span> StateGraph
+<span class="token keyword">from</span> langchain_core<span class="token punctuation">.</span>messages <span class="token keyword">import</span> AIMessage<span class="token punctuation">,</span> HumanMessage
+<span class="token keyword">from</span> langgraph<span class="token punctuation">.</span>pregel <span class="token keyword">import</span> PregelProcess
+
+<span class="token comment"># 定义状态类 (简单示例)</span>
+<span class="token keyword">class</span> <span class="token class-name">AgentState</span><span class="token punctuation">:</span>
+    messages<span class="token punctuation">:</span> <span class="token builtin">list</span><span class="token punctuation">[</span><span class="token builtin">dict</span><span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token punctuation">[</span><span class="token punctuation">]</span>
+
+<span class="token comment"># 定义一个 Node 函数</span>
+<span class="token keyword">def</span> <span class="token function">summarize_node</span><span class="token punctuation">(</span>state<span class="token punctuation">)</span><span class="token punctuation">:</span>
+    messages <span class="token operator">=</span> state<span class="token punctuation">.</span>get<span class="token punctuation">(</span><span class="token string">"messages"</span><span class="token punctuation">,</span> <span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token punctuation">)</span>
+    text_to_summarize <span class="token operator">=</span> messages<span class="token punctuation">[</span><span class="token operator">-</span><span class="token number">1</span><span class="token punctuation">]</span><span class="token punctuation">[</span><span class="token string">"content"</span><span class="token punctuation">]</span> <span class="token comment"># 假设最后一条消息是用户输入</span>
+    llm <span class="token operator">=</span> ChatOpenAI<span class="token punctuation">(</span>model_name<span class="token operator">=</span><span class="token string">"gpt-3.5-turbo"</span><span class="token punctuation">,</span> temperature<span class="token operator">=</span><span class="token number">0</span><span class="token punctuation">)</span>
+    prompt <span class="token operator">=</span> PromptTemplate<span class="token punctuation">.</span>from_template<span class="token punctuation">(</span><span class="token string">"请用中文总结以下内容：&#123;text&#125;"</span><span class="token punctuation">)</span>
+    chain <span class="token operator">=</span> LLMChain<span class="token punctuation">(</span>llm<span class="token operator">=</span>llm<span class="token punctuation">,</span> prompt<span class="token operator">=</span>prompt<span class="token punctuation">)</span>
+    summary <span class="token operator">=</span> chain<span class="token punctuation">.</span>run<span class="token punctuation">(</span>text<span class="token operator">=</span>text_to_summarize<span class="token punctuation">)</span>
+    <span class="token keyword">return</span> <span class="token punctuation">&#123;</span><span class="token string">"messages"</span><span class="token punctuation">:</span> messages <span class="token operator">+</span> <span class="token punctuation">[</span><span class="token punctuation">&#123;</span><span class="token string">"role"</span><span class="token punctuation">:</span> <span class="token string">"assistant"</span><span class="token punctuation">,</span> <span class="token string">"content"</span><span class="token punctuation">:</span> summary<span class="token punctuation">&#125;</span><span class="token punctuation">]</span><span class="token punctuation">&#125;</span> <span class="token comment"># 更新状态</span>
+
+<span class="token comment"># 创建状态图</span>
+graph <span class="token operator">=</span> StateGraph<span class="token punctuation">(</span>AgentState<span class="token punctuation">)</span>
+
+<span class="token comment"># 添加 Node</span>
+graph<span class="token punctuation">.</span>add_node<span class="token punctuation">(</span><span class="token string">"summarize"</span><span class="token punctuation">,</span> summarize_node<span class="token punctuation">)</span>
+
+<span class="token comment"># 设置入口节点</span>
+graph<span class="token punctuation">.</span>set_entry_point<span class="token punctuation">(</span><span class="token string">"summarize"</span><span class="token punctuation">)</span>
+
+<span class="token comment"># 设置结束节点 (这里简化，直接结束)</span>
+graph<span class="token punctuation">.</span>set_finish_point<span class="token punctuation">(</span><span class="token string">"summarize"</span><span class="token punctuation">)</span>
+
+<span class="token comment"># 编译图</span>
+app <span class="token operator">=</span> graph<span class="token punctuation">.</span><span class="token builtin">compile</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+
+<span class="token comment"># 运行图</span>
+inputs <span class="token operator">=</span> <span class="token punctuation">&#123;</span><span class="token string">"messages"</span><span class="token punctuation">:</span> <span class="token punctuation">[</span><span class="token punctuation">&#123;</span><span class="token string">"role"</span><span class="token punctuation">:</span> <span class="token string">"user"</span><span class="token punctuation">,</span> <span class="token string">"content"</span><span class="token punctuation">:</span> <span class="token string">"Langgraph 是一个用于构建复杂 LLM 应用的框架..."</span><span class="token punctuation">&#125;</span><span class="token punctuation">]</span><span class="token punctuation">&#125;</span>
+result <span class="token operator">=</span> app<span class="token punctuation">.</span>invoke<span class="token punctuation">(</span>inputs<span class="token punctuation">)</span>
+<span class="token keyword">print</span><span class="token punctuation">(</span>result<span class="token punctuation">)</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p><strong>示例 - LangGraph Node (Langchain Runnable 作为 Node):</strong></p>
+<pre class="line-numbers language-python" data-language="python"><code class="language-python"><span class="token keyword">from</span> langgraph<span class="token punctuation">.</span>graph <span class="token keyword">import</span> StateGraph
+<span class="token keyword">from</span> langchain_openai <span class="token keyword">import</span> ChatOpenAI
+<span class="token keyword">from</span> langchain<span class="token punctuation">.</span>prompts <span class="token keyword">import</span> PromptTemplate
+<span class="token keyword">from</span> langchain<span class="token punctuation">.</span>chains <span class="token keyword">import</span> LLMChain
+
+<span class="token comment"># 定义状态类 (简单示例)</span>
+<span class="token keyword">class</span> <span class="token class-name">AgentState</span><span class="token punctuation">:</span>
+    messages<span class="token punctuation">:</span> <span class="token builtin">list</span><span class="token punctuation">[</span><span class="token builtin">dict</span><span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token punctuation">[</span><span class="token punctuation">]</span>
+
+<span class="token comment"># 创建 Langchain Runnable (LLMChain)</span>
+llm <span class="token operator">=</span> ChatOpenAI<span class="token punctuation">(</span>model_name<span class="token operator">=</span><span class="token string">"gpt-3.5-turbo"</span><span class="token punctuation">,</span> temperature<span class="token operator">=</span><span class="token number">0</span><span class="token punctuation">)</span>
+prompt <span class="token operator">=</span> PromptTemplate<span class="token punctuation">.</span>from_template<span class="token punctuation">(</span><span class="token string">"请用中文总结以下内容：&#123;text&#125;"</span><span class="token punctuation">)</span>
+summarize_chain <span class="token operator">=</span> LLMChain<span class="token punctuation">(</span>llm<span class="token operator">=</span>llm<span class="token punctuation">,</span> prompt<span class="token operator">=</span>prompt<span class="token punctuation">)</span>
+
+<span class="token comment"># 定义 Node 函数 (直接使用 Runnable)</span>
+<span class="token keyword">def</span> <span class="token function">summarize_node</span><span class="token punctuation">(</span>state<span class="token punctuation">)</span><span class="token punctuation">:</span>
+    messages <span class="token operator">=</span> state<span class="token punctuation">.</span>get<span class="token punctuation">(</span><span class="token string">"messages"</span><span class="token punctuation">,</span> <span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token punctuation">)</span>
+    text_to_summarize <span class="token operator">=</span> messages<span class="token punctuation">[</span><span class="token operator">-</span><span class="token number">1</span><span class="token punctuation">]</span><span class="token punctuation">[</span><span class="token string">"content"</span><span class="token punctuation">]</span> <span class="token comment"># 假设最后一条消息是用户输入</span>
+    summary <span class="token operator">=</span> summarize_chain<span class="token punctuation">.</span>run<span class="token punctuation">(</span>text<span class="token operator">=</span>text_to_summarize<span class="token punctuation">)</span>
+    <span class="token keyword">return</span> <span class="token punctuation">&#123;</span><span class="token string">"messages"</span><span class="token punctuation">:</span> messages <span class="token operator">+</span> <span class="token punctuation">[</span><span class="token punctuation">&#123;</span><span class="token string">"role"</span><span class="token punctuation">:</span> <span class="token string">"assistant"</span><span class="token punctuation">,</span> <span class="token string">"content"</span><span class="token punctuation">:</span> summary<span class="token punctuation">&#125;</span><span class="token punctuation">]</span><span class="token punctuation">&#125;</span> <span class="token comment"># 更新状态</span>
+
+<span class="token comment"># 创建状态图 (与上例相同)</span>
+graph <span class="token operator">=</span> StateGraph<span class="token punctuation">(</span>AgentState<span class="token punctuation">)</span>
+graph<span class="token punctuation">.</span>add_node<span class="token punctuation">(</span><span class="token string">"summarize"</span><span class="token punctuation">,</span> summarize_node<span class="token punctuation">)</span>
+graph<span class="token punctuation">.</span>set_entry_point<span class="token punctuation">(</span><span class="token string">"summarize"</span><span class="token punctuation">)</span>
+graph<span class="token punctuation">.</span>set_finish_point<span class="token punctuation">(</span><span class="token string">"summarize"</span><span class="token punctuation">)</span>
+app <span class="token operator">=</span> graph<span class="token punctuation">.</span><span class="token builtin">compile</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+
+<span class="token comment"># 运行图 (与上例相同)</span>
+inputs <span class="token operator">=</span> <span class="token punctuation">&#123;</span><span class="token string">"messages"</span><span class="token punctuation">:</span> <span class="token punctuation">[</span><span class="token punctuation">&#123;</span><span class="token string">"role"</span><span class="token punctuation">:</span> <span class="token string">"user"</span><span class="token punctuation">,</span> <span class="token string">"content"</span><span class="token punctuation">:</span> <span class="token string">"Langgraph 是一个用于构建复杂 LLM 应用的框架..."</span><span class="token punctuation">&#125;</span><span class="token punctuation">]</span><span class="token punctuation">&#125;</span>
+result <span class="token operator">=</span> app<span class="token punctuation">.</span>invoke<span class="token punctuation">(</span>inputs<span class="token punctuation">)</span>
+<span class="token keyword">print</span><span class="token punctuation">(</span>result<span class="token punctuation">)</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<h3 id="4-Agent-代理-相关"><a href="#4-Agent-代理-相关" class="headerlink" title="4. Agent (代理) 相关"></a>4. Agent (代理) 相关</h3><h4 id="4-1-Langchain-Agent"><a href="#4-1-Langchain-Agent" class="headerlink" title="4.1 Langchain - Agent"></a>4.1 Langchain - Agent</h4><ul>
+<li><strong>概念:</strong> 能够根据用户输入和环境信息，自主决定下一步行动 (例如使用工具、调用 LLM)，并进行迭代，直到完成目标。</li>
+<li><strong>核心组件:</strong><ul>
+<li><code>Agent</code>: 负责决策下一步行动。通常需要 <code>Prompt</code> 来指导 Agent 的行为。</li>
+<li><code>Tools</code>: Agent 可以使用的工具 (例如搜索、计算器、数据库查询等)。</li>
+<li><code>AgentExecutor</code>: 负责执行 Agent 的 Chain，管理 Agent 的状态和工具的使用。</li>
+</ul>
+</li>
+<li><strong>核心函数&#x2F;类:</strong><ul>
+<li><code>create_react_agent(llm=..., tools=..., prompt=...)</code>: 创建 ReAct 类型的 Agent。</li>
+<li><code>AgentExecutor.from_agent_and_tools(agent=..., tools=...)</code>: 创建 AgentExecutor。</li>
+</ul>
+</li>
+</ul>
+<p><strong>示例 - Langchain Agent (<code>ReAct Agent</code>):</strong></p>
+<pre class="line-numbers language-python" data-language="python"><code class="language-python"><span class="token keyword">from</span> langchain_openai <span class="token keyword">import</span> ChatOpenAI
+<span class="token keyword">from</span> langchain<span class="token punctuation">.</span>agents <span class="token keyword">import</span> create_react_agent<span class="token punctuation">,</span> AgentExecutor
+<span class="token keyword">from</span> langchain<span class="token punctuation">.</span>tools <span class="token keyword">import</span> DuckDuckGoSearchRun
+
+llm <span class="token operator">=</span> ChatOpenAI<span class="token punctuation">(</span>model_name<span class="token operator">=</span><span class="token string">"gpt-3.5-turbo"</span><span class="token punctuation">,</span> temperature<span class="token operator">=</span><span class="token number">0</span><span class="token punctuation">)</span>
+tools <span class="token operator">=</span> <span class="token punctuation">[</span>DuckDuckGoSearchRun<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">]</span> <span class="token comment"># 使用 DuckDuckGo 搜索工具</span>
+
+prompt <span class="token operator">=</span> PromptTemplate<span class="token punctuation">.</span>from_template<span class="token punctuation">(</span><span class="token triple-quoted-string string">"""
+你是一个有用的助手，可以使用工具回答问题。
+
+&#123;agent_scratchpad&#125;
+"""</span><span class="token punctuation">)</span> <span class="token comment"># 简化 Prompt，实际 ReAct Prompt 会更复杂</span>
+
+agent <span class="token operator">=</span> create_react_agent<span class="token punctuation">(</span>llm<span class="token operator">=</span>llm<span class="token punctuation">,</span> tools<span class="token operator">=</span>tools<span class="token punctuation">,</span> prompt<span class="token operator">=</span>prompt<span class="token punctuation">)</span>
+agent_executor <span class="token operator">=</span> AgentExecutor<span class="token punctuation">.</span>from_agent_and_tools<span class="token punctuation">(</span>agent<span class="token operator">=</span>agent<span class="token punctuation">,</span> tools<span class="token operator">=</span>tools<span class="token punctuation">,</span> verbose<span class="token operator">=</span><span class="token boolean">True</span><span class="token punctuation">)</span>
+
+output <span class="token operator">=</span> agent_executor<span class="token punctuation">.</span>run<span class="token punctuation">(</span><span class="token string">"今天北京天气怎么样？"</span><span class="token punctuation">)</span>
+<span class="token keyword">print</span><span class="token punctuation">(</span>output<span class="token punctuation">)</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<h4 id="4-2-LangGraph-Agent"><a href="#4-2-LangGraph-Agent" class="headerlink" title="4.2 LangGraph - Agent"></a>4.2 LangGraph - Agent</h4><ul>
+<li><strong>概念:</strong> Agent 被视为 Graph 中的一个或多个 Node。LangGraph 提供了更灵活的方式来构建 Agent 的工作流程，可以实现更复杂的状态管理、条件判断和循环逻辑。</li>
+<li><strong>核心概念:</strong><ul>
+<li><code>AgentState</code>: 用于管理 Agent 的状态，例如对话历史、工具使用记录、中间结果等。</li>
+<li>Agent 的决策和行动逻辑被分解到不同的 Node 中，并通过 Edge 连接。</li>
+</ul>
+</li>
+<li><strong>示例 (LangGraph Agent 框架):</strong> LangGraph 提供了一个 <code>pregel_process</code> 模块，用于构建更复杂的 Agent 流程，例如：<ul>
+<li><code>pregel_process.from_functions(...)</code>: 从函数定义 Agent 的 Node 和 Edge。</li>
+<li><code>pregel_process.add_node(...)</code>, <code>pregel_process.add_edge(...)</code>, <code>pregel_process.set_conditional_edges(...)</code> 等用于构建更细粒度的 Agent 图结构。</li>
+</ul>
+</li>
+</ul>
+<p><strong>示例 - LangGraph Agent (简化的概念示例，非完整可运行代码):</strong></p>
+<pre class="line-numbers language-python" data-language="python"><code class="language-python"><span class="token keyword">from</span> langgraph<span class="token punctuation">.</span>graph <span class="token keyword">import</span> StateGraph
+<span class="token keyword">from</span> langchain_openai <span class="token keyword">import</span> ChatOpenAI
+<span class="token keyword">from</span> langchain<span class="token punctuation">.</span>tools <span class="token keyword">import</span> DuckDuckGoSearchRun
+<span class="token keyword">from</span> langchain<span class="token punctuation">.</span>prompts <span class="token keyword">import</span> PromptTemplate
+
+<span class="token comment"># 定义 AgentState (包含对话历史和工具输出)</span>
+<span class="token keyword">class</span> <span class="token class-name">AgentState</span><span class="token punctuation">:</span>
+    messages<span class="token punctuation">:</span> <span class="token builtin">list</span><span class="token punctuation">[</span><span class="token builtin">dict</span><span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token punctuation">[</span><span class="token punctuation">]</span>
+    tool_output<span class="token punctuation">:</span> <span class="token builtin">str</span> <span class="token operator">=</span> <span class="token boolean">None</span>
+    next_action<span class="token punctuation">:</span> <span class="token builtin">str</span> <span class="token operator">=</span> <span class="token boolean">None</span> <span class="token comment"># 例如 "search", "answer", "finalize"</span>
+
+<span class="token comment"># 定义 Node 函数 - 决策下一步行动</span>
+<span class="token keyword">def</span> <span class="token function">agent_decision_node</span><span class="token punctuation">(</span>state<span class="token punctuation">)</span><span class="token punctuation">:</span>
+    messages <span class="token operator">=</span> state<span class="token punctuation">.</span>get<span class="token punctuation">(</span><span class="token string">"messages"</span><span class="token punctuation">,</span> <span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token punctuation">)</span>
+    llm <span class="token operator">=</span> ChatOpenAI<span class="token punctuation">(</span>model_name<span class="token operator">=</span><span class="token string">"gpt-3.5-turbo"</span><span class="token punctuation">,</span> temperature<span class="token operator">=</span><span class="token number">0</span><span class="token punctuation">)</span>
+    prompt <span class="token operator">=</span> PromptTemplate<span class="token punctuation">.</span>from_template<span class="token punctuation">(</span><span class="token triple-quoted-string string">"""
+    你是一个 Agent，根据对话历史决定下一步行动。
+    可选行动： search, answer, finalize
+    对话历史：&#123;messages&#125;
+    请输出下一步行动 (search, answer, finalize):
+    """</span><span class="token punctuation">)</span>
+    chain <span class="token operator">=</span> LLMChain<span class="token punctuation">(</span>llm<span class="token operator">=</span>llm<span class="token punctuation">,</span> prompt<span class="token operator">=</span>prompt<span class="token punctuation">)</span>
+    next_action <span class="token operator">=</span> chain<span class="token punctuation">.</span>run<span class="token punctuation">(</span>messages<span class="token operator">=</span>messages<span class="token punctuation">)</span>
+    <span class="token keyword">return</span> <span class="token punctuation">&#123;</span><span class="token string">"next_action"</span><span class="token punctuation">:</span> next_action<span class="token punctuation">&#125;</span>
+
+<span class="token comment"># 定义 Node 函数 - 使用搜索工具</span>
+<span class="token keyword">def</span> <span class="token function">search_tool_node</span><span class="token punctuation">(</span>state<span class="token punctuation">)</span><span class="token punctuation">:</span>
+    messages <span class="token operator">=</span> state<span class="token punctuation">.</span>get<span class="token punctuation">(</span><span class="token string">"messages"</span><span class="token punctuation">,</span> <span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token punctuation">)</span>
+    query <span class="token operator">=</span> messages<span class="token punctuation">[</span><span class="token operator">-</span><span class="token number">1</span><span class="token punctuation">]</span><span class="token punctuation">[</span><span class="token string">"content"</span><span class="token punctuation">]</span> <span class="token comment"># 假设最后一条消息是用户问题</span>
+    search_tool <span class="token operator">=</span> DuckDuckGoSearchRun<span class="token punctuation">(</span><span class="token punctuation">)</span>
+    tool_output <span class="token operator">=</span> search_tool<span class="token punctuation">.</span>run<span class="token punctuation">(</span>query<span class="token punctuation">)</span>
+    <span class="token keyword">return</span> <span class="token punctuation">&#123;</span><span class="token string">"tool_output"</span><span class="token punctuation">:</span> tool_output<span class="token punctuation">&#125;</span>
+
+<span class="token comment"># 定义 Node 函数 - 生成最终答案</span>
+<span class="token keyword">def</span> <span class="token function">generate_answer_node</span><span class="token punctuation">(</span>state<span class="token punctuation">)</span><span class="token punctuation">:</span>
+    messages <span class="token operator">=</span> state<span class="token punctuation">.</span>get<span class="token punctuation">(</span><span class="token string">"messages"</span><span class="token punctuation">,</span> <span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token punctuation">)</span>
+    tool_output <span class="token operator">=</span> state<span class="token punctuation">.</span>get<span class="token punctuation">(</span><span class="token string">"tool_output"</span><span class="token punctuation">)</span>
+    llm <span class="token operator">=</span> ChatOpenAI<span class="token punctuation">(</span>model_name<span class="token operator">=</span><span class="token string">"gpt-3.5-turbo"</span><span class="token punctuation">,</span> temperature<span class="token operator">=</span><span class="token number">0</span><span class="token punctuation">)</span>
+    prompt <span class="token operator">=</span> PromptTemplate<span class="token punctuation">.</span>from_template<span class="token punctuation">(</span><span class="token triple-quoted-string string">"""
+    根据搜索结果回答用户问题。
+    用户问题：&#123;user_question&#125;
+    搜索结果：&#123;tool_output&#125;
+    请生成答案：
+    """</span><span class="token punctuation">)</span>
+    chain <span class="token operator">=</span> LLMChain<span class="token punctuation">(</span>llm<span class="token operator">=</span>llm<span class="token punctuation">,</span> prompt<span class="token operator">=</span>prompt<span class="token punctuation">)</span>
+    answer <span class="token operator">=</span> chain<span class="token punctuation">.</span>run<span class="token punctuation">(</span>user_question<span class="token operator">=</span>messages<span class="token punctuation">[</span><span class="token operator">-</span><span class="token number">1</span><span class="token punctuation">]</span><span class="token punctuation">[</span><span class="token string">"content"</span><span class="token punctuation">]</span><span class="token punctuation">,</span> tool_output<span class="token operator">=</span>tool_output<span class="token punctuation">)</span>
+    <span class="token keyword">return</span> <span class="token punctuation">&#123;</span><span class="token string">"messages"</span><span class="token punctuation">:</span> messages <span class="token operator">+</span> <span class="token punctuation">[</span><span class="token punctuation">&#123;</span><span class="token string">"role"</span><span class="token punctuation">:</span> <span class="token string">"assistant"</span><span class="token punctuation">,</span> <span class="token string">"content"</span><span class="token punctuation">:</span> answer<span class="token punctuation">&#125;</span><span class="token punctuation">]</span><span class="token punctuation">&#125;</span>
+
+<span class="token comment"># 创建状态图</span>
+graph <span class="token operator">=</span> StateGraph<span class="token punctuation">(</span>AgentState<span class="token punctuation">)</span>
+
+<span class="token comment"># 添加 Node</span>
+graph<span class="token punctuation">.</span>add_node<span class="token punctuation">(</span><span class="token string">"decision"</span><span class="token punctuation">,</span> agent_decision_node<span class="token punctuation">)</span>
+graph<span class="token punctuation">.</span>add_node<span class="token punctuation">(</span><span class="token string">"search"</span><span class="token punctuation">,</span> search_tool_node<span class="token punctuation">)</span>
+graph<span class="token punctuation">.</span>add_node<span class="token punctuation">(</span><span class="token string">"answer"</span><span class="token punctuation">,</span> generate_answer_node<span class="token punctuation">)</span>
+
+<span class="token comment"># 定义 Edge 和条件边 (简化示例)</span>
+graph<span class="token punctuation">.</span>set_entry_point<span class="token punctuation">(</span><span class="token string">"decision"</span><span class="token punctuation">)</span>
+graph<span class="token punctuation">.</span>add_edge<span class="token punctuation">(</span><span class="token string">"decision"</span><span class="token punctuation">,</span> <span class="token string">"search"</span><span class="token punctuation">)</span> <span class="token comment"># 假设 always 先 search</span>
+graph<span class="token punctuation">.</span>add_edge<span class="token punctuation">(</span><span class="token string">"search"</span><span class="token punctuation">,</span> <span class="token string">"answer"</span><span class="token punctuation">)</span>
+graph<span class="token punctuation">.</span>set_finish_point<span class="token punctuation">(</span><span class="token string">"answer"</span><span class="token punctuation">)</span>
+
+<span class="token comment"># 编译图</span>
+app <span class="token operator">=</span> graph<span class="token punctuation">.</span><span class="token builtin">compile</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+
+<span class="token comment"># 运行图</span>
+inputs <span class="token operator">=</span> <span class="token punctuation">&#123;</span><span class="token string">"messages"</span><span class="token punctuation">:</span> <span class="token punctuation">[</span><span class="token punctuation">&#123;</span><span class="token string">"role"</span><span class="token punctuation">:</span> <span class="token string">"user"</span><span class="token punctuation">,</span> <span class="token string">"content"</span><span class="token punctuation">:</span> <span class="token string">"今天北京天气怎么样？"</span><span class="token punctuation">&#125;</span><span class="token punctuation">]</span><span class="token punctuation">&#125;</span>
+result <span class="token operator">=</span> app<span class="token punctuation">.</span>invoke<span class="token punctuation">(</span>inputs<span class="token punctuation">)</span>
+<span class="token keyword">print</span><span class="token punctuation">(</span>result<span class="token punctuation">)</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<h3 id="5-工具-Tools-相关"><a href="#5-工具-Tools-相关" class="headerlink" title="5. 工具 (Tools) 相关"></a>5. 工具 (Tools) 相关</h3><p>Langchain 和 LangGraph 在工具的使用方式上基本相同，都使用 <code>langchain.tools</code> 模块提供的工具，或者自定义工具。</p>
+<p><strong>示例 (Langchain &amp; LangGraph 类似):</strong></p>
+<pre class="line-numbers language-python" data-language="python"><code class="language-python"><span class="token keyword">from</span> langchain<span class="token punctuation">.</span>tools <span class="token keyword">import</span> DuckDuckGoSearchRun<span class="token punctuation">,</span> CalculatorInput<span class="token punctuation">,</span> CalculatorRun
+
+<span class="token comment"># 搜索工具</span>
+search_tool <span class="token operator">=</span> DuckDuckGoSearchRun<span class="token punctuation">(</span><span class="token punctuation">)</span>
+search_output <span class="token operator">=</span> search_tool<span class="token punctuation">.</span>run<span class="token punctuation">(</span><span class="token string">"最新的 Langchain 版本"</span><span class="token punctuation">)</span>
+<span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string-interpolation"><span class="token string">f"搜索结果: </span><span class="token interpolation"><span class="token punctuation">&#123;</span>search_output<span class="token punctuation">&#125;</span></span><span class="token string">"</span></span><span class="token punctuation">)</span>
+
+<span class="token comment"># 计算器工具</span>
+calculator_tool <span class="token operator">=</span> CalculatorRun<span class="token punctuation">(</span><span class="token punctuation">)</span>
+calculator_input <span class="token operator">=</span> CalculatorInput<span class="token punctuation">(</span>expression<span class="token operator">=</span><span class="token string">"2 + 2"</span><span class="token punctuation">)</span>
+calculator_output <span class="token operator">=</span> calculator_tool<span class="token punctuation">.</span>run<span class="token punctuation">(</span>calculator_input<span class="token punctuation">)</span> <span class="token comment"># 或 calculator_tool.run("2 + 2")</span>
+<span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string-interpolation"><span class="token string">f"计算结果: </span><span class="token interpolation"><span class="token punctuation">&#123;</span>calculator_output<span class="token punctuation">&#125;</span></span><span class="token string">"</span></span><span class="token punctuation">)</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>在 Langchain Agent 中，工具会传递给 <code>AgentExecutor</code>。在 LangGraph 中，工具可以在 Node 函数中直接调用。</p>
+<h3 id="6-状态管理-State-Management-LangGraph-特有"><a href="#6-状态管理-State-Management-LangGraph-特有" class="headerlink" title="6. 状态管理 (State Management) (LangGraph 特有)"></a>6. 状态管理 (State Management) (LangGraph 特有)</h3><p>LangGraph 通过 <code>StateGraph</code> 和自定义的 <code>AgentState</code> 类来显式地管理状态。状态在图的节点之间传递和更新。<code>AgentState</code> 可以自定义，包含任何需要跟踪的信息，例如对话历史、工具输出、中间结果、用户偏好等。状态管理是 LangGraph 的核心优势之一，使得构建复杂的、状态化的 Agent 和工作流程成为可能。</p>
+<p><strong>(在之前的 LangGraph Node 和 Agent 示例中已经展示了状态管理的使用，例如 <code>AgentState</code> 类和 Node 函数中对 <code>state</code> 参数的访问和更新。)</strong></p>
+<h3 id="7-图结构构建-Graph-Construction-LangGraph-特有"><a href="#7-图结构构建-Graph-Construction-LangGraph-特有" class="headerlink" title="7. 图结构构建 (Graph Construction) (LangGraph 特有)"></a>7. 图结构构建 (Graph Construction) (LangGraph 特有)</h3><p>LangGraph 通过 <code>StateGraph</code> 类提供的方法来构建图结构：<code>add_node()</code>, <code>add_edge()</code>, <code>set_entry_point()</code>, <code>set_conditional_edges()</code>, <code>set_finish_point()</code> 等方法用于定义节点、边和图的流程控制逻辑。这种显式的图结构构建方式使得 LangGraph 能够表达非常复杂的流程，例如循环、条件分支、并行处理等。</p>
+<h2 id="三、run-与-invoke-的区别"><a href="#三、run-与-invoke-的区别" class="headerlink" title="三、run 与 invoke 的区别"></a>三、<code>run</code> 与 <code>invoke</code> 的区别</h2><p><code>run</code> 和 <code>invoke</code> 是 Langchain 和 LangGraph 中用于执行 Chain 或 Runnable 的两种方法，它们之间存在一些关键的区别：</p>
+<ul>
+<li><strong>输入类型:</strong> <code>run</code> 主要接受单个字符串作为输入，而 <code>invoke</code> 接受一个字典 (dict) 作为输入，允许更结构化的输入数据。</li>
+<li><strong>输出类型:</strong> <code>run</code> 主要返回单个字符串作为输出，而 <code>invoke</code> 返回一个字典 (dict) 作为输出，提供更结构化的输出数据。</li>
+<li><strong>底层机制:</strong> <code>run</code> 是 Langchain 较早版本中使用的方法，相对较为简单直接。<code>invoke</code> 是 Langchain <strong>Runnable 协议</strong> 的一部分，是更现代、更推荐的方法。<code>invoke</code> 更加灵活，支持更复杂的功能，例如异步调用、流式输出、中间结果访问等，并且与 Langchain 的 <strong>Runnable 接口</strong> 更好地集成。</li>
+<li><strong>功能和灵活性:</strong> <code>run</code> 功能相对有限，主要用于简单的字符串输入和输出场景。<code>invoke</code> 功能更强大，更灵活，支持更丰富的功能。</li>
+<li><strong>是否推荐使用:</strong> <code>run</code> 在一些简单的 Langchain 代码示例中仍然可以看到，但 <strong>不推荐在新代码中使用</strong>。**强烈推荐使用 <code>invoke</code> (以及 <code>ainvoke</code>, <code>stream</code>, <code>astream</code>)**，它是 Langchain 官方推荐的执行 Runnable 的方法。</li>
+</ul>
+<p><strong>具体示例对比 (以 <code>LLMChain</code> 为例):</strong></p>
+<pre class="line-numbers language-python" data-language="python"><code class="language-python"><span class="token keyword">from</span> langchain_openai <span class="token keyword">import</span> ChatOpenAI
+<span class="token keyword">from</span> langchain<span class="token punctuation">.</span>prompts <span class="token keyword">import</span> PromptTemplate
+<span class="token keyword">from</span> langchain<span class="token punctuation">.</span>chains <span class="token keyword">import</span> LLMChain
+
+llm <span class="token operator">=</span> ChatOpenAI<span class="token punctuation">(</span>model_name<span class="token operator">=</span><span class="token string">"gpt-3.5-turbo"</span><span class="token punctuation">,</span> temperature<span class="token operator">=</span><span class="token number">0</span><span class="token punctuation">)</span>
+prompt <span class="token operator">=</span> PromptTemplate<span class="token punctuation">.</span>from_template<span class="token punctuation">(</span><span class="token string">"请用 &#123;language&#125; 向 &#123;name&#125; 问好"</span><span class="token punctuation">)</span>
+chain <span class="token operator">=</span> LLMChain<span class="token punctuation">(</span>llm<span class="token operator">=</span>llm<span class="token punctuation">,</span> prompt<span class="token operator">=</span>prompt<span class="token punctuation">)</span>
+
+<span class="token comment"># 使用 run (不推荐)</span>
+<span class="token comment"># output_run = chain.run("中文", name="张三") # 错误使用，run 无法处理多个参数</span>
+<span class="token comment"># print(f"run 输出: &#123;output_run&#125;")</span>
+
+<span class="token comment"># 使用 invoke (推荐)</span>
+output_invoke <span class="token operator">=</span> chain<span class="token punctuation">.</span>invoke<span class="token punctuation">(</span><span class="token punctuation">&#123;</span><span class="token string">"language"</span><span class="token punctuation">:</span> <span class="token string">"中文"</span><span class="token punctuation">,</span> <span class="token string">"name"</span><span class="token punctuation">:</span> <span class="token string">"李四"</span><span class="token punctuation">&#125;</span><span class="token punctuation">)</span>
+<span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string-interpolation"><span class="token string">f"invoke 输出: </span><span class="token interpolation"><span class="token punctuation">&#123;</span>output_invoke<span class="token punctuation">&#125;</span></span><span class="token string">"</span></span><span class="token punctuation">)</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p><strong>总结表格:</strong></p>
+<table>
+<thead>
+<tr>
+<th>特性</th>
+<th><code>run</code></th>
+<th><code>invoke</code> (及 <code>ainvoke</code>, <code>stream</code>, <code>astream</code>)</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>输入类型</strong></td>
+<td>主要接受 <strong>单个字符串</strong></td>
+<td>接受 <strong>字典 (dict)</strong></td>
+</tr>
+<tr>
+<td><strong>输出类型</strong></td>
+<td>主要返回 <strong>单个字符串</strong></td>
+<td>返回 <strong>字典 (dict)</strong></td>
+</tr>
+<tr>
+<td><strong>底层机制</strong></td>
+<td>较早版本的方法，相对简单直接</td>
+<td><strong>Runnable 协议</strong> 的一部分，更现代、更灵活</td>
+</tr>
+<tr>
+<td><strong>功能</strong></td>
+<td>相对有限</td>
+<td>更强大，支持异步、流式输出、结构化数据、中间结果访问等</td>
+</tr>
+<tr>
+<td><strong>灵活性</strong></td>
+<td>较低，输入输出处理方式局限</td>
+<td>较高，输入输出处理方式更结构化、更灵活</td>
+</tr>
+<tr>
+<td><strong>是否推荐</strong></td>
+<td><strong>不推荐</strong>在新代码中使用</td>
+<td><strong>强烈推荐</strong> 使用</td>
+</tr>
+<tr>
+<td><strong>异步支持</strong></td>
+<td>间接异步 (可能依赖底层 LLM 库的异步支持)</td>
+<td>直接支持异步 (<code>ainvoke</code>)</td>
+</tr>
+<tr>
+<td><strong>流式输出</strong></td>
+<td>不支持直接流式输出</td>
+<td>支持流式输出 (<code>stream</code>, <code>astream</code>)</td>
+</tr>
+<tr>
+<td><strong>结构化数据</strong></td>
+<td>处理结构化数据不方便</td>
+<td>更方便处理结构化数据 (通过字典输入输出)</td>
+</tr>
+</tbody></table>
+<h2 id="四、深入理解-Runnable"><a href="#四、深入理解-Runnable" class="headerlink" title="四、深入理解 Runnable"></a>四、深入理解 Runnable</h2><p>Runnable 可以理解为 Langchain 框架的核心 <strong>构建模块</strong> 和 <strong>统一接口</strong>，用于构建复杂的 LLM 应用流程。Runnable 就像是乐高积木中的一块块标准砖，你可以将它们组合、连接，搭建出各种各样的应用。</p>
+<p><strong>关键点：</strong></p>
+<ol>
+<li><strong>Runnable 是一个接口 (Interface) 或协议 (Protocol):</strong>  定义了一组标准方法，任何实现了这些方法的对象都可以被认为是 “Runnable”。</li>
+<li><strong>Runnable 的核心能力：执行和组合:</strong>  提供了一种统一的方式来执行组件，并且可以方便地将它们组合成更复杂的流程。</li>
+<li><strong>Runnable 提供的标准方法:</strong>  <code>invoke</code>, <code>ainvoke</code>, <code>stream</code>, <code>astream</code>, <code>batch</code>, <code>abatch</code>。</li>
+<li><strong>Runnable 的组合示例 (使用 <code>|</code> 管道操作符):</strong></li>
+</ol>
+<pre class="line-numbers language-python" data-language="python"><code class="language-python"><span class="token keyword">from</span> langchain<span class="token punctuation">.</span>prompts <span class="token keyword">import</span> PromptTemplate
+<span class="token keyword">from</span> langchain_openai <span class="token keyword">import</span> ChatOpenAI
+<span class="token keyword">from</span> langchain<span class="token punctuation">.</span>output_parsers <span class="token keyword">import</span> StructuredOutputParser<span class="token punctuation">,</span> ResponseSchema
+
+<span class="token comment"># 1. 定义 ResponseSchema，描述期望的输出结构</span>
+response_schemas <span class="token operator">=</span> <span class="token punctuation">[</span>
+    ResponseSchema<span class="token punctuation">(</span>name<span class="token operator">=</span><span class="token string">"summary"</span><span class="token punctuation">,</span> description<span class="token operator">=</span><span class="token string">"对 &#123;topic&#125; 的中文总结"</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+    ResponseSchema<span class="token punctuation">(</span>name<span class="token operator">=</span><span class="token string">"keywords"</span><span class="token punctuation">,</span> description<span class="token operator">=</span><span class="token string">"关于 &#123;topic&#125; 的三个中文关键词"</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+<span class="token punctuation">]</span>
+
+<span class="token comment"># 2. 创建 StructuredOutputParser</span>
+output_parser <span class="token operator">=</span> StructuredOutputParser<span class="token punctuation">.</span>from_response_schemas<span class="token punctuation">(</span>response_schemas<span class="token punctuation">)</span>
+
+<span class="token comment"># 3. 创建 PromptTemplate，使用 ResponseSchema 的格式指令，并接受 topic 和 language 作为输入变量</span>
+prompt_template <span class="token operator">=</span> PromptTemplate<span class="token punctuation">(</span>
+    template<span class="token operator">=</span><span class="token string">"请用 &#123;language&#125; 总结关于 &#123;topic&#125; 的内容，并提取关键词。\n&#123;format_instructions&#125;\n"</span><span class="token punctuation">,</span>
+    input_variables<span class="token operator">=</span><span class="token punctuation">[</span><span class="token string">"language"</span><span class="token punctuation">,</span> <span class="token string">"topic"</span><span class="token punctuation">]</span><span class="token punctuation">,</span>
+    partial_variables<span class="token operator">=</span><span class="token punctuation">&#123;</span><span class="token string">"format_instructions"</span><span class="token punctuation">:</span> output_parser<span class="token punctuation">.</span>get_format_instructions<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">&#125;</span> <span class="token comment"># 注入格式指令</span>
+<span class="token punctuation">)</span>
+
+<span class="token comment"># 4. 创建 ChatOpenAI 实例</span>
+llm <span class="token operator">=</span> ChatOpenAI<span class="token punctuation">(</span>model_name<span class="token operator">=</span><span class="token string">"gpt-3.5-turbo"</span><span class="token punctuation">,</span> temperature<span class="token operator">=</span><span class="token number">0</span><span class="token punctuation">)</span>
+
+<span class="token comment"># 5. 组装 Runnable Chain： PromptTemplate -> LLM -> OutputParser</span>
+runnable_chain <span class="token operator">=</span> prompt_template <span class="token operator">|</span> llm <span class="token operator">|</span> output_parser
+
+<span class="token comment"># 6. 定义输入数据</span>
+input_data <span class="token operator">=</span> <span class="token punctuation">&#123;</span><span class="token string">"topic"</span><span class="token punctuation">:</span> <span class="token string">"猫"</span><span class="token punctuation">,</span> <span class="token string">"language"</span><span class="token punctuation">:</span> <span class="token string">"中文"</span><span class="token punctuation">&#125;</span>
+
+<span class="token comment"># 7. 使用 invoke 执行整个链</span>
+output <span class="token operator">=</span> runnable_chain<span class="token punctuation">.</span>invoke<span class="token punctuation">(</span>input_data<span class="token punctuation">)</span>
+
+<span class="token comment"># 8. 打印输出结果</span>
+<span class="token keyword">print</span><span class="token punctuation">(</span>output<span class="token punctuation">)</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<h2 id="五、理解-partial-variables"><a href="#五、理解-partial-variables" class="headerlink" title="五、理解 partial_variables"></a>五、理解 <code>partial_variables</code></h2><p><code>partial_variables</code> 在 Langchain 的 <code>PromptTemplate</code> 中是一个非常有用的特性，它允许你 <strong>预先填充 (partially fill)</strong> Prompt 模板中的 <strong>一部分变量</strong>，而将 <strong>另一部分变量</strong> 留到 <strong>后续使用时再动态填充</strong>。</p>
+<p><strong>关键点：</strong></p>
+<ul>
+<li><strong>Partial (部分的):</strong> 只填充 <em>一部分</em> 变量。</li>
+<li><strong>Variables (变量):</strong> Prompt 模板中用花括号 <code>&#123;&#125;</code> 包裹的占位符。</li>
+<li><strong>Pre-set (预设的):</strong>  <code>partial_variables</code> 的值在 <strong>创建 <code>PromptTemplate</code> 对象时就被设定好</strong>。</li>
+</ul>
+<p><strong>作用和用途：</strong></p>
+<ol>
+<li><strong>固定 Prompt 模板的一部分内容。</strong></li>
+<li><strong>简化 Prompt 模板的输入。</strong></li>
+<li><strong>注入上下文信息或指令。</strong></li>
+</ol>
+<p><strong>示例解释:</strong></p>
+<pre class="line-numbers language-python" data-language="python"><code class="language-python">prompt_template <span class="token operator">=</span> PromptTemplate<span class="token punctuation">(</span>
+    template<span class="token operator">=</span><span class="token string">"请用 &#123;language&#125; 总结关于 &#123;topic&#125; 的内容，并提取关键词。\n&#123;format_instructions&#125;\n"</span><span class="token punctuation">,</span>
+    input_variables<span class="token operator">=</span><span class="token punctuation">[</span><span class="token string">"language"</span><span class="token punctuation">,</span> <span class="token string">"topic"</span><span class="token punctuation">]</span><span class="token punctuation">,</span> <span class="token comment"># 声明了需要动态填充的变量</span>
+    partial_variables<span class="token operator">=</span><span class="token punctuation">&#123;</span><span class="token string">"format_instructions"</span><span class="token punctuation">:</span> output_parser<span class="token punctuation">.</span>get_format_instructions<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">&#125;</span> <span class="token comment"># 预先填充 format_instructions</span>
+<span class="token punctuation">)</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>在这个例子中，<code>format_instructions</code> 已经被预先设定，你只需要在 <code>format()</code> 或 <code>invoke()</code> 时 <strong>提供 <code>language</code> 和 <code>topic</code> 的值</strong> 即可。</p>
+<h2 id="六、Agent-和-AgentExecutor-详解"><a href="#六、Agent-和-AgentExecutor-详解" class="headerlink" title="六、Agent 和 AgentExecutor 详解"></a>六、Agent 和 AgentExecutor 详解</h2><h3 id="1-Agent-vs-AgentExecutor"><a href="#1-Agent-vs-AgentExecutor" class="headerlink" title="1. Agent vs. AgentExecutor"></a>1. Agent vs. AgentExecutor</h3><ul>
+<li><p><strong>Agent (代理): 决策者和规划者 (The Brain)</strong></p>
+<ul>
+<li><strong>核心职责:</strong> <strong>决定下一步应该做什么</strong>。</li>
+<li><strong>思考过程:</strong> Agent 内部通常包含一个 <strong>Prompt (提示词)</strong> 和一个 **LLM (语言模型)**。</li>
+<li><strong>输出:</strong> <strong>行动计划 (Action Plan)</strong> 或 <strong>下一步的指令</strong>。</li>
+<li><strong>比喻:</strong>  <code>Agent</code> 就像一个 <strong>架构师</strong> 或 <strong>项目经理</strong>。</li>
+</ul>
+</li>
+<li><p><strong>AgentExecutor (代理执行器): 执行者和协调者 (The Body)</strong></p>
+<ul>
+<li><strong>核心职责:</strong> <strong>执行 Agent 制定的行动计划</strong> 并 <strong>协调整个 Agent 的运行流程</strong>。</li>
+<li><strong>执行流程:</strong> <code>AgentExecutor</code> 的执行流程通常是一个 **循环 (Loop)**。</li>
+<li><strong>状态管理:</strong> <code>AgentExecutor</code> 通常还负责 <strong>管理 Agent 的运行状态</strong>。</li>
+<li><strong>比喻:</strong> <code>AgentExecutor</code> 就像一个 <strong>施工队</strong> 或 <strong>执行团队</strong>。</li>
+</ul>
+</li>
+</ul>
+<p><strong>关键区别总结:</strong></p>
+<table>
+<thead>
+<tr>
+<th>特性</th>
+<th>Agent (代理)</th>
+<th>AgentExecutor (代理执行器)</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>角色</strong></td>
+<td><strong>决策者、规划者 (The Brain)</strong></td>
+<td><strong>执行者、协调者 (The Body)</strong></td>
+</tr>
+<tr>
+<td><strong>核心职责</strong></td>
+<td><strong>决定下一步做什么 (What to do next?)</strong></td>
+<td><strong>执行行动计划，协调流程 (How to execute the plan?)</strong></td>
+</tr>
+<tr>
+<td><strong>内部组件</strong></td>
+<td>Prompt (提示词) + LLM (语言模型)</td>
+<td>Agent + Tools (工具) +  (可选) Memory (记忆) + 执行循环逻辑</td>
+</tr>
+<tr>
+<td><strong>输入</strong></td>
+<td>用户输入、工具、有时记忆</td>
+<td>Agent 的行动计划、工具、当前状态</td>
+</tr>
+<tr>
+<td><strong>输出</strong></td>
+<td>行动计划 (Action Plan) 或 最终答案 (Final Answer)</td>
+<td>最终答案 (Final Answer)</td>
+</tr>
+<tr>
+<td><strong>是否直接执行</strong></td>
+<td><strong>否</strong>，需要 <code>AgentExecutor</code> 来执行</td>
+<td><strong>是</strong>，可以使用 <code>run</code> 或 <code>invoke</code> 方法直接执行</td>
+</tr>
+</tbody></table>
+<h3 id="2-create-react-agent-vs-create-with-tools-agent"><a href="#2-create-react-agent-vs-create-with-tools-agent" class="headerlink" title="2. create_react_agent vs. create_with_tools_agent"></a>2. <code>create_react_agent</code> vs. <code>create_with_tools_agent</code></h3><p>这两个函数都是 Langchain 中用于 <strong>创建 Agent 的辅助函数</strong>，它们的主要区别在于它们 <strong>创建的 Agent 类型</strong> 和 <strong>使用的 Prompt 策略</strong> 不同：</p>
+<ul>
+<li><p><strong><code>create_react_agent</code>:</strong></p>
+<ul>
+<li><strong>创建类型:</strong> <strong>ReAct Agent</strong> (implicitly)。</li>
+<li><strong>Prompt 策略:</strong> **ReAct (Reasoning and Acting)**。</li>
+<li><strong>Prompt 定制:</strong> 允许可选地传入自定义的 <code>prompt</code>，但应该遵循 ReAct 风格。</li>
+<li><strong>适用场景:</strong> 快速创建一个基于 ReAct 策略的 Agent。</li>
+</ul>
+</li>
+<li><p><strong><code>create_with_tools_agent</code>:</strong></p>
+<ul>
+<li><strong>创建类型:</strong> <strong>通用 Agent</strong> (explicitly controlled by prompt)。</li>
+<li><strong>Prompt 策略:</strong> <strong>用户自定义 Prompt 策略</strong>。</li>
+<li><strong>Prompt 定制:</strong> 强制要求提供 <code>prompt</code> 参数，完全定义 Agent 的行为。</li>
+<li><strong>适用场景:</strong> 需要对 Agent 的行为进行高度定制，或者尝试不同的 Prompt 策略。</li>
+</ul>
+</li>
+</ul>
+<p><strong>关键区别总结:</strong></p>
+<table>
+<thead>
+<tr>
+<th>特性</th>
+<th><code>create_react_agent</code></th>
+<th><code>create_with_tools_agent</code></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Agent 类型</strong></td>
+<td><strong>ReAct Agent</strong> (隐式创建)</td>
+<td><strong>通用 Agent</strong> (Prompt 完全控制)</td>
+</tr>
+<tr>
+<td><strong>Prompt 策略</strong></td>
+<td><strong>ReAct 策略</strong> (默认或自定义 ReAct 风格 Prompt)</td>
+<td><strong>用户自定义 Prompt 策略</strong> (可以是任何风格)</td>
+</tr>
+<tr>
+<td><strong>Prompt 定制程度</strong></td>
+<td><strong>较低</strong>，主要使用预定义的 ReAct Prompt，可微调</td>
+<td><strong>较高</strong>，完全由用户提供 Prompt，灵活度高</td>
+</tr>
+<tr>
+<td><strong>Prompt 参数</strong></td>
+<td><code>prompt</code> 参数 <strong>可选</strong> (不提供则使用默认 ReAct Prompt)</td>
+<td><code>prompt</code> 参数 <strong>必选</strong> (用户必须提供 Prompt)</td>
+</tr>
+<tr>
+<td><strong>使用场景</strong></td>
+<td><strong>快速创建 ReAct Agent，简化 ReAct Agent 构建</strong></td>
+<td><strong>高度定制 Agent 行为，尝试不同 Prompt 策略，非 ReAct Agent</strong></td>
+</tr>
+<tr>
+<td><strong>上手难度 (Prompt)</strong></td>
+<td><strong>较低</strong>，ReAct Prompt 结构相对固定，易于理解和使用</td>
+<td><strong>较高</strong>，需要用户自行设计 Prompt 策略，Prompt 工程难度较高</td>
+</tr>
+</tbody></table>
+<h3 id="3-Agent-中-tools-和-AgentExecutor-中-tools-的区别"><a href="#3-Agent-中-tools-和-AgentExecutor-中-tools-的区别" class="headerlink" title="3. Agent 中 tools 和 AgentExecutor 中 tools 的区别"></a>3. Agent 中 <code>tools</code> 和 AgentExecutor 中 <code>tools</code> 的区别</h3><ul>
+<li><strong><code>Agent</code> 中的 <code>tools</code>:</strong>  让 <code>Agent</code> 知道有哪些工具可以使用，以及每个工具的功能和描述。Agent 实际上并不 <em>直接</em> 执行 <code>tools</code>，它只是 <em>思考</em> 和 <em>计划</em> 如何使用 <code>tools</code>。</li>
+<li><strong><code>AgentExecutor</code> 中的 <code>tools</code>:</strong> 让 <code>AgentExecutor</code> 拥有 <em>实际可执行的工具对象</em>。<code>AgentExecutor</code> 负责 <em>执行</em> <code>Agent</code> 输出的 Action (行动)。</li>
+</ul>
+<p><strong>总结来说，<code>tools</code> 传递两次，但目的是不同的：</strong></p>
+<ul>
+<li><strong>第一次传给 <code>Agent</code>：</strong> 为了让 <code>Agent</code> **了解工具信息，用于思考和决策 (Planning &amp; Reasoning)**。传递的是工具的 <em>描述性信息</em>。</li>
+<li><strong>第二次传给 <code>AgentExecutor</code>：</strong> 为了让 <code>AgentExecutor</code> **拥有可执行的工具实例，用于实际执行 Agent 的行动计划 (Execution)**。传递的是工具的 <em>可执行对象</em>。</li>
+</ul>
+<h3 id="4-AgentExecutor-的创建方法"><a href="#4-AgentExecutor-的创建方法" class="headerlink" title="4. AgentExecutor 的创建方法"></a>4. AgentExecutor 的创建方法</h3><p>除了 <code>AgentExecutor.from_agent_and_tools</code>，还有以下几种创建方法：</p>
+<ul>
+<li><strong><code>AgentExecutor(...)</code> (直接使用构造函数):</strong>  更底层和灵活，可以直接控制 <code>AgentExecutor</code> 的各个参数。</li>
+<li><strong><code>initialize_agent(...)</code> (更早版本的方法，逐渐被 <code>create_xxx_agent</code> + <code>from_agent_and_tools</code> 替代):</strong>  一步创建 <code>Agent</code> 和 <code>AgentExecutor</code>，灵活性稍差，逐渐被替代。</li>
+</ul>
+<p><strong>最佳实践建议:</strong></p>
+<p><strong>对于新的 Langchain Agent 项目，强烈推荐使用 <code>create_xxx_agent</code> (例如 <code>create_react_agent</code>, <code>create_conversational_agent</code> 等) 创建 <code>Agent</code>，然后使用 <code>AgentExecutor.from_agent_and_tools(agent=agent, tools=tools, ...)</code> 创建 <code>AgentExecutor</code> 的方式。</strong></p>
+<h3 id="5-Agent-和-LLM-的分离"><a href="#5-Agent-和-LLM-的分离" class="headerlink" title="5. Agent 和 LLM 的分离"></a>5. Agent 和 LLM 的分离</h3><p>将 <code>Agent</code> 和 <code>LLM</code> 分开设计带来了 <strong>模块化、灵活性、可配置性、概念清晰</strong> 等多方面的优势。这种分离使得 Langchain 能够更好地利用 LLM 的强大能力，构建出更强大、更灵活、更易于维护的 Agent 应用。</p>
+<h3 id="6-AgentExecutor-from-agent-and-tools-不接受-llm-参数"><a href="#6-AgentExecutor-from-agent-and-tools-不接受-llm-参数" class="headerlink" title="6. AgentExecutor.from_agent_and_tools 不接受 llm 参数"></a>6. <code>AgentExecutor.from_agent_and_tools</code> 不接受 <code>llm</code> 参数</h3><p>这是因为 <code>Agent</code> 对象在创建时就已经被赋予了 <code>llm</code>，<code>AgentExecutor</code> 通过 <code>agent</code> 参数间接获得了所需的 <code>llm</code>，无需再次传入。这种参数设计体现了 Langchain Agent 架构的职责分离和模块化原则。</p>
+<h2 id="七、Memory-vs-StateGraph"><a href="#七、Memory-vs-StateGraph" class="headerlink" title="七、Memory vs. StateGraph"></a>七、Memory vs. StateGraph</h2><table>
+<thead>
+<tr>
+<th>特性</th>
+<th>Langchain <code>Memory</code></th>
+<th>LangGraph <code>StateGraph</code> &#x2F; <code>AgentState</code></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>核心目的</strong></td>
+<td>**管理对话历史 (Conversational History)**，主要用于记住对话上下文，使 Chain 或 Agent 具有对话记忆能力。</td>
+<td>**管理更广泛的应用状态 (Application State)**，不仅限于对话历史，可以跟踪任何需要在图执行过程中维护和传递的数据。</td>
+</tr>
+<tr>
+<td><strong>状态类型</strong></td>
+<td>主要关注 <strong>消息 (Messages)</strong> 序列，通常是对话的 <code>HumanMessage</code> 和 <code>AIMessage</code>。</td>
+<td>**自定义的状态类 <code>AgentState</code>**，可以包含任何类型的数据，例如消息历史、工具输出、中间结果、用户偏好、计数器等。</td>
+</tr>
+<tr>
+<td><strong>作用范围</strong></td>
+<td>主要作用于 <strong>Chain 或 AgentExecutor 级别</strong>，为单个 Chain 或 Agent 提供记忆能力。</td>
+<td>作用于 <strong>整个 LangGraph 图级别</strong>，状态在图中的各个节点之间传递和更新，影响整个图的执行流程。</td>
+</tr>
+<tr>
+<td><strong>数据结构</strong></td>
+<td>通常使用 <strong>列表 (List)</strong> 来存储消息历史，例如 <code>ConversationBufferMemory</code> 使用消息列表。</td>
+<td>使用 <strong>自定义的 <code>AgentState</code> 类</strong>，其内部数据结构可以根据需求灵活定义，例如可以使用字典、列表、对象属性等。</td>
+</tr>
+<tr>
+<td><strong>灵活性&#x2F;定制性</strong></td>
+<td>相对 <strong>较低</strong>，主要关注对话历史管理，提供的 Memory 类型和配置选项相对有限。</td>
+<td>相对 <strong>较高</strong>，<code>AgentState</code> 是完全自定义的，可以根据应用需求设计任何复杂的状态结构和管理逻辑。</td>
+</tr>
+<tr>
+<td><strong>复杂性</strong></td>
+<td>相对 <strong>简单</strong>，易于上手和使用，配置和集成比较直接。</td>
+<td>相对 <strong>复杂</strong>，需要理解图的概念、状态类定义、节点间状态传递等，学习曲线稍高。</td>
+</tr>
+<tr>
+<td><strong>适用场景</strong></td>
+<td>**对话型应用 (Chatbots, Conversational Agents)**，需要记住对话上下文以实现连贯对话。</td>
+<td>**复杂状态化应用 (Complex Agents, Multi-step Workflows, Decision Processes)**，需要跟踪和管理多维度的状态信息，并基于状态控制流程。</td>
+</tr>
+<tr>
+<td><strong>与流程控制</strong></td>
+<td>主要影响 Chain 或 Agent 的输入，间接影响流程，但本身不直接控制流程。</td>
+<td><strong>直接控制图的执行流程</strong>，状态变化可以决定图的下一步走向 (通过条件边等)，是图流程控制的核心组成部分。</td>
+</tr>
+</tbody></table>
+<p><strong>如何选择:</strong></p>
+<ul>
+<li>如果你的应用是简单的对话型应用，只需要基本的对话记忆功能，并且希望快速上手，那么 Langchain <code>Memory</code> 通常是更合适的选择。</li>
+<li>如果你的应用是复杂的 Agent 或工作流程，需要管理多维度的状态信息，并需要基于状态进行流程控制，那么 LangGraph <code>StateGraph</code> &#x2F; <code>AgentState</code> 是更强大的选择。</li>
+</ul>
+<h2 id="八、Agent-嵌套"><a href="#八、Agent-嵌套" class="headerlink" title="八、Agent 嵌套"></a>八、Agent 嵌套</h2><p>Agent 中可以嵌套 Agent，实现的核心思路是： <strong>将一个 Agent 封装成一个 Langchain Tool，然后让另一个 Agent 可以使用这个 Tool</strong>。</p>
+<p><strong>代码示例 (概念性示例):</strong></p>
+<pre><code class="python">from langchain_openai import ChatOpenAI
+from langchain.agents import create_react_agent, AgentExecutor, Tool
+from langchain.prompts import PromptTemplate
+
+# 1. 创建内层 Agent (Inner Agent) - 假设是一个简单的总结 Agent
+inner_llm = ChatOpenAI(model_name=&quot;gpt-3.5-turbo&quot;, temperature=0.0)
+inner_prompt_template = PromptTemplate.from_template(&quot;请总结以下内容：&#123;text&#125;&quot;)
+inner_agent = create_react_agent(llm=inner_llm, tools=[], prompt=inner_prompt_template) # Inner Agent 没有 tools
+inner_agent_executor = AgentExecutor.from_agent_and_tools(agent=inner_agent, tools=[], verbose=False)
+
+# 2. 创建 Agent Tool - 封装内层 Agent
+class SummaryAgentTool(Tool):
+    name = &quot;SummaryAgent&quot;
+    description = &quot;用于总结文本内容的 Agent. 输入应该是要总结的文本。&quot;
+
+    def _run(self, text: str) -&gt; str:
+        &quot;&quot;&quot;使用 Summary Agent
+</code></pre>
+
+    </div>
+  </article>
+</div>
+  </main>
+
+  <footer>
+    <p>
+      &copy; 2025 Shark Blog 
+      <a href="https://github.com/eddiehex/hexo-geek-source" target="_blank">
+        <i class="fab fa-github"></i>
+      </a>
+    </p>
+  </footer>
+
+  <script src="/js/search.js"></script>
+  <script src="/js/main.js"></script>
+  <script src="/js/copy-code.js"></script>
+  <script src="/js/prism.js"></script>
+  <script src="/js/toc-highlight.js"></script>
+  <script src="/js/mobile-menu.js"></script>
+</body>
+</html>

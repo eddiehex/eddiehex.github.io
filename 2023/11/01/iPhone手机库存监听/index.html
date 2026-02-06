@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Shark Blog</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/prism-code.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <link rel="icon" href="https://hexo.kygoho.win/upload/uploads/6e7cf36d-8cb2-40c6-831f-80ef7488cca4.png" type="image/x-icon">
+  <link rel="stylesheet" href="/css/toc.css">
+  
+  <!-- MathJax Configuration -->
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']],
+        processEscapes: true,
+        processEnvironments: true,
+        packages: ['base', 'ams', 'noerrors', 'noundefined']
+      },
+      options: {
+        ignoreHtmlClass: 'tex2jax_ignore',
+        processHtmlClass: 'tex2jax_process'
+      },
+      startup: {
+        ready() {
+          MathJax.startup.defaultReady();
+          // Re-render math when content changes
+          document.addEventListener('DOMContentLoaded', function() {
+            if (window.MathJax && window.MathJax.typesetPromise) {
+              window.MathJax.typesetPromise();
+            }
+          });
+        }
+      }
+    };
+  </script>
+  <script async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.min.js"></script>
+<meta name="generator" content="Hexo 6.3.0"></head>
+<body>
+  <header>
+    <nav>
+      <div class="nav-container">
+        <div class="logo"><a href="/">Shark Blog</a></div>
+        <div class="search-container">
+          <input type="text" id="search-input" placeholder="Search...">
+          <div id="search-results"></div>
+        </div>
+        <div class="menu-toggle">
+          <i class="fas fa-bars"></i>
+        </div>
+      </div>
+      <ul class="nav-links">
+        <li><a href="/">Posts</a></li>
+        <li><a href="/services">Services</a></li>
+        <li><a href="/archives">Archive</a></li>
+        <li><a href="/categories">Categories</a></li>
+        <li><a href="/about">About</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <div class="page-container">
+  
+    <div class="toc-card">
+      <div class="toc-content">
+        
+      </div>
+    </div>
+  
+  
+  <article class="page-content">
+    <h1 class="page-title">iphone手机库存监听</h1>
+    <div class="page-body">
+      <pre class="line-numbers language-python" data-language="python"><code class="language-python"><span class="token keyword">from</span> enum <span class="token keyword">import</span> Flag
+<span class="token keyword">from</span> random <span class="token keyword">import</span> choice
+<span class="token keyword">import</span> requests
+<span class="token keyword">import</span> re
+<span class="token keyword">from</span> time <span class="token keyword">import</span> sleep
+
+<span class="token keyword">import</span> requests
+<span class="token keyword">import</span> time
+
+<span class="token keyword">import</span> smtplib
+<span class="token keyword">from</span> email<span class="token punctuation">.</span>mime<span class="token punctuation">.</span>text <span class="token keyword">import</span> MIMEText
+
+<span class="token comment"># Telegram Bot API token and chat ID</span>
+telegram_api_token <span class="token operator">=</span> <span class="token string">'bot_token'</span>
+telegram_chat_id <span class="token operator">=</span> <span class="token string">'-chat_id'</span>
+
+<span class="token keyword">def</span> <span class="token function">sendTelegramMessage</span><span class="token punctuation">(</span>message<span class="token punctuation">)</span><span class="token punctuation">:</span>
+    <span class="token keyword">try</span><span class="token punctuation">:</span>
+        url <span class="token operator">=</span> <span class="token string-interpolation"><span class="token string">f"https://api.telegram.org/bot</span><span class="token interpolation"><span class="token punctuation">&#123;</span>telegram_api_token<span class="token punctuation">&#125;</span></span><span class="token string">/sendMessage"</span></span>
+        params <span class="token operator">=</span> <span class="token punctuation">&#123;</span><span class="token string">"chat_id"</span><span class="token punctuation">:</span> telegram_chat_id<span class="token punctuation">,</span> <span class="token string">"text"</span><span class="token punctuation">:</span> message<span class="token punctuation">&#125;</span>
+        response <span class="token operator">=</span> requests<span class="token punctuation">.</span>post<span class="token punctuation">(</span>url<span class="token punctuation">,</span> params<span class="token operator">=</span>params<span class="token punctuation">)</span>
+        response<span class="token punctuation">.</span>raise_for_status<span class="token punctuation">(</span><span class="token punctuation">)</span>
+        <span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string">'Telegram message sent successfully'</span><span class="token punctuation">)</span>
+    <span class="token keyword">except</span> Exception <span class="token keyword">as</span> e<span class="token punctuation">:</span>
+        <span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string">'Error sending Telegram message:'</span><span class="token punctuation">,</span> e<span class="token punctuation">)</span>
+
+
+<span class="token keyword">def</span> <span class="token function">AppleMonitor</span><span class="token punctuation">(</span>flag0<span class="token punctuation">,</span> count<span class="token punctuation">)</span><span class="token punctuation">:</span>
+    <span class="token keyword">try</span><span class="token punctuation">:</span>
+        <span class="token comment">#根据需要修改地址及产品id，location、product（parts.0=后面的）</span>
+        location<span class="token operator">=</span><span class="token string">'辽宁 大连 中山区'</span>
+        product<span class="token operator">=</span><span class="token string">'MTQA3CH/A'</span>
+        <span class="token comment">#product='MPUW3CH/A'</span>
+        url<span class="token operator">=</span><span class="token string">'https://www.apple.com.cn/shop/fulfillment-messages?pl=true&amp;mts.0=regular&amp;parts.0='</span><span class="token operator">+</span>product<span class="token operator">+</span><span class="token string">'&amp;location='</span><span class="token operator">+</span>location
+        <span class="token keyword">print</span><span class="token punctuation">(</span>url<span class="token punctuation">)</span>
+        user_agent_list<span class="token operator">=</span><span class="token punctuation">[</span><span class="token string">'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/536.5 (KHTML, like Gecko)'</span><span class="token punctuation">,</span><span class="token string">'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:11.0) Gecko/20100101 Firefox/11.0'</span><span class="token punctuation">,</span><span class="token string">'Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 6.1; WOW64; Trident/4.0; SLCC2; .NET CLR 2.0.50727; .NET CLR 3.5.30729; .NET CLR 3.0.30729; Media Center PC 6.0; .NET4.0C; .NET4.0E)'</span><span class="token punctuation">,</span><span class="token string">'Opera/9.80 (Windows NT 6.1; WOW64; U; zh-cn) Presto/2.10.229 Version/11.62'</span><span class="token punctuation">]</span>
+        kv <span class="token operator">=</span> <span class="token punctuation">&#123;</span><span class="token string">'user-agent'</span><span class="token punctuation">:</span> choice<span class="token punctuation">(</span>user_agent_list<span class="token punctuation">)</span><span class="token punctuation">&#125;</span>
+        r <span class="token operator">=</span> requests<span class="token punctuation">.</span>get<span class="token punctuation">(</span>url<span class="token punctuation">,</span> headers<span class="token operator">=</span>kv<span class="token punctuation">)</span>
+        r<span class="token punctuation">.</span>raise_for_status<span class="token punctuation">(</span><span class="token punctuation">)</span>
+        pattern <span class="token operator">=</span> re<span class="token punctuation">.</span><span class="token builtin">compile</span><span class="token punctuation">(</span><span class="token string">'"pickupDisplay":"(.*?)"'</span><span class="token punctuation">,</span> re<span class="token punctuation">.</span>S<span class="token punctuation">)</span>
+        r<span class="token punctuation">.</span>encoding <span class="token operator">=</span> r<span class="token punctuation">.</span>apparent_encoding
+        res<span class="token operator">=</span>re<span class="token punctuation">.</span>search<span class="token punctuation">(</span>pattern<span class="token punctuation">,</span>r<span class="token punctuation">.</span>text<span class="token punctuation">)</span>
+        <span class="token keyword">if</span> res<span class="token punctuation">.</span>group<span class="token punctuation">(</span><span class="token number">1</span><span class="token punctuation">)</span> <span class="token operator">!=</span> <span class="token string">'unavailable'</span><span class="token punctuation">:</span>
+            <span class="token keyword">if</span> <span class="token keyword">not</span> flag0<span class="token punctuation">:</span>
+                <span class="token comment"># Send a Telegram message when the product is available</span>
+                sendTelegramMessage<span class="token punctuation">(</span><span class="token string">'AppleMonitor: ip15pro 大连有货！'</span><span class="token punctuation">)</span>
+                flag0 <span class="token operator">=</span> <span class="token boolean">True</span>
+                count <span class="token operator">=</span> <span class="token number">120</span>
+
+            <span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string">'======================================='</span><span class="token punctuation">)</span>
+            <span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string">'======================================='</span><span class="token punctuation">)</span>
+            <span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string">'======================================='</span><span class="token punctuation">)</span>
+            <span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string">'                有货！'</span><span class="token punctuation">)</span>
+            <span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string">'======================================='</span><span class="token punctuation">)</span>
+            <span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string">'======================================='</span><span class="token punctuation">)</span>
+            <span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string">'======================================='</span><span class="token punctuation">)</span>
+            <span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string">''</span><span class="token punctuation">)</span>
+
+        <span class="token keyword">if</span> flag0<span class="token punctuation">:</span>
+            count <span class="token operator">-=</span> <span class="token number">1</span>
+            <span class="token keyword">if</span> count <span class="token operator">==</span> <span class="token number">0</span><span class="token punctuation">:</span>
+                flag0 <span class="token operator">=</span> <span class="token boolean">False</span>
+
+        <span class="token keyword">return</span> flag0<span class="token punctuation">,</span> count
+    <span class="token keyword">except</span> Exception <span class="token keyword">as</span> e<span class="token punctuation">:</span>
+        <span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string">"失败:"</span><span class="token punctuation">,</span> e<span class="token punctuation">)</span>
+        <span class="token keyword">return</span> flag0<span class="token punctuation">,</span> count
+
+<span class="token keyword">if</span> __name__ <span class="token operator">==</span> <span class="token string">'__main__'</span><span class="token punctuation">:</span>
+    flag0 <span class="token operator">=</span> <span class="token boolean">False</span>
+    count <span class="token operator">=</span> <span class="token number">120</span>
+    <span class="token keyword">while</span> <span class="token number">1</span><span class="token punctuation">:</span>
+        flag0<span class="token punctuation">,</span> count <span class="token operator">=</span> AppleMonitor<span class="token punctuation">(</span>flag0<span class="token punctuation">,</span> count<span class="token punctuation">)</span>
+        <span class="token comment"># Add a sleep to avoid excessive requests</span>
+        time<span class="token punctuation">.</span>sleep<span class="token punctuation">(</span><span class="token number">30</span><span class="token punctuation">)</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+
+    </div>
+  </article>
+</div>
+  </main>
+
+  <footer>
+    <p>
+      &copy; 2025 Shark Blog 
+      <a href="https://github.com/eddiehex/hexo-geek-source" target="_blank">
+        <i class="fab fa-github"></i>
+      </a>
+    </p>
+  </footer>
+
+  <script src="/js/search.js"></script>
+  <script src="/js/main.js"></script>
+  <script src="/js/copy-code.js"></script>
+  <script src="/js/prism.js"></script>
+  <script src="/js/toc-highlight.js"></script>
+  <script src="/js/mobile-menu.js"></script>
+</body>
+</html>

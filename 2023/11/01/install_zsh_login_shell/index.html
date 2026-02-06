@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Shark Blog</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/prism-code.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <link rel="icon" href="https://hexo.kygoho.win/upload/uploads/6e7cf36d-8cb2-40c6-831f-80ef7488cca4.png" type="image/x-icon">
+  <link rel="stylesheet" href="/css/toc.css">
+  
+  <!-- MathJax Configuration -->
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']],
+        processEscapes: true,
+        processEnvironments: true,
+        packages: ['base', 'ams', 'noerrors', 'noundefined']
+      },
+      options: {
+        ignoreHtmlClass: 'tex2jax_ignore',
+        processHtmlClass: 'tex2jax_process'
+      },
+      startup: {
+        ready() {
+          MathJax.startup.defaultReady();
+          // Re-render math when content changes
+          document.addEventListener('DOMContentLoaded', function() {
+            if (window.MathJax && window.MathJax.typesetPromise) {
+              window.MathJax.typesetPromise();
+            }
+          });
+        }
+      }
+    };
+  </script>
+  <script async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.min.js"></script>
+<meta name="generator" content="Hexo 6.3.0"></head>
+<body>
+  <header>
+    <nav>
+      <div class="nav-container">
+        <div class="logo"><a href="/">Shark Blog</a></div>
+        <div class="search-container">
+          <input type="text" id="search-input" placeholder="Search...">
+          <div id="search-results"></div>
+        </div>
+        <div class="menu-toggle">
+          <i class="fas fa-bars"></i>
+        </div>
+      </div>
+      <ul class="nav-links">
+        <li><a href="/">Posts</a></li>
+        <li><a href="/services">Services</a></li>
+        <li><a href="/archives">Archive</a></li>
+        <li><a href="/categories">Categories</a></li>
+        <li><a href="/about">About</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <div class="page-container">
+  
+    <div class="toc-card">
+      <div class="toc-content">
+        <ol class="toc"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%AE%89%E8%A3%85iterm2%E5%92%8Coh-my-zsh"><span class="toc-text">安装iterm2和oh-my-zsh</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%BC%96%E5%86%99%E7%AE%80%E6%98%93%E7%99%BB%E9%99%86%E8%84%9A%E6%9C%AC"><span class="toc-text">编写简易登陆脚本</span></a></li></ol>
+      </div>
+    </div>
+  
+  
+  <article class="page-content">
+    <h1 class="page-title">如何编写简易登陆脚本&amp;&amp;安装iterm2和oh-my-zsh&amp;&amp;配置oh-my-zsh</h1>
+    <div class="page-body">
+      <p>最近看了几篇推荐mac软件的文章，其中多少有提到了iterm2再加上mac自带的终端相对有些局限就开始捣鼓iterm2和oh-my-zsh；</p>
+<h4 id="安装iterm2和oh-my-zsh"><a href="#安装iterm2和oh-my-zsh" class="headerlink" title="安装iterm2和oh-my-zsh"></a>安装iterm2和oh-my-zsh</h4><ul>
+<li>安装iterm2</li>
+</ul>
+<p>搜索并直接下载</p>
+<ul>
+<li>安装oh-my-zsh</li>
+</ul>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token comment">#查看当前环境shell</span>
+<span class="token builtin class-name">echo</span> <span class="token environment constant">$SHELL</span>
+<span class="token comment">#查看系统自带shell</span>
+<span class="token function">cat</span> /etc/shells
+<span class="token comment">#安装zsh</span>
+yum <span class="token function">install</span> <span class="token function">zsh</span> <span class="token comment"># CentOS</span>
+brew <span class="token function">install</span> <span class="token function">zsh</span> <span class="token comment"># mac安装</span>
+<span class="token comment">#将zsh设置默认</span>
+chsh <span class="token parameter variable">-s</span> /bin/zsh <span class="token comment"># CentOS</span>
+<span class="token comment"># Mac如下</span>
+<span class="token comment"># 在 /etc/shells 文件中加入如下一行</span>
+/usr/local/bin/zsh
+<span class="token comment"># 接着运行</span>
+chsh <span class="token parameter variable">-s</span> /usr/local/bin/zsh<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token comment">#安装oh-my-zsh</span>
+<span class="token function">sh</span> <span class="token parameter variable">-c</span> <span class="token string">"<span class="token variable"><span class="token variable">$(</span><span class="token function">curl</span> <span class="token parameter variable">-fsSL</span> https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh<span class="token variable">)</span></span>"</span> <span class="token comment">#curl</span>
+<span class="token function">sh</span> <span class="token parameter variable">-c</span> <span class="token string">"<span class="token variable"><span class="token variable">$(</span><span class="token function">wget</span> https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh <span class="token parameter variable">-O</span> -<span class="token variable">)</span></span>"</span> <span class="token comment">#wget</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token comment">#在安装oh-my-zsh时会受到网络因素影响，故应先设置iterm2代理</span>
+<span class="token builtin class-name">export</span> <span class="token assign-left variable">http_proxy</span><span class="token operator">=</span>http://127.0.0.1:1087
+<span class="token builtin class-name">export</span> <span class="token assign-left variable">https_proxy</span><span class="token operator">=</span><span class="token variable">$http_proxy</span>
+<span class="token comment">#关闭</span>
+<span class="token builtin class-name">unset</span> http_proxy https_proxy
+<span class="token comment">#在安装zsh后也可以写入.zshrc中</span>
+<span class="token builtin class-name">alias</span> <span class="token assign-left variable">goproxy</span><span class="token operator">=</span><span class="token string">'export http_proxy=http://127.0.0.1:1087 https_proxy=http://127.0.0.1:1087'</span>
+<span class="token builtin class-name">alias</span> <span class="token assign-left variable">disproxy</span><span class="token operator">=</span><span class="token string">'unset http_proxy https_proxy'</span>
+<span class="token comment">#测试方式</span>
+<span class="token function">curl</span> cip.cc<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+
+
+<ul>
+<li>配置zsh</li>
+</ul>
+<p>zsh的配置文件为.zshrc 路径为 <code>~/.zshrc</code> 文件中可进行主题、环境变量、alias修改</p>
+<p>不过zsh的配置尽量在  <code> ~/.oh-my-zsh/custom/example.zsh </code> 中进行修改</p>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token comment">#快速编辑配置文件</span>
+<span class="token builtin class-name">alias</span> <span class="token assign-left variable">zshconfig</span><span class="token operator">=</span><span class="token string">"vim ~/.oh-my-zsh/custom/example.zsh"</span>
+<span class="token comment">#配置主文件夹bin的环境变量</span>
+<span class="token builtin class-name">export</span> <span class="token assign-left variable"><span class="token environment constant">PATH</span></span><span class="token operator">=~</span>/bin:<span class="token string">"<span class="token environment constant">$PATH</span>"</span>
+<span class="token comment">#启动配置文件</span>
+<span class="token builtin class-name">source</span> ~/.oh-my-zsh/custom/example.zsh<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<h4 id="编写简易登陆脚本"><a href="#编写简易登陆脚本" class="headerlink" title="编写简易登陆脚本"></a>编写简易登陆脚本</h4><p>上一次学会了如何设置ssh私钥登陆，但是每一次都要复制登陆命令，整个行为极度繁琐，索性就想学习制作一个简易脚本可以直接登陆；</p>
+<ul>
+<li>编写shell文件</li>
+</ul>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token comment">#在主文件夹中创建一个文件夹bin 并创建一个文件 lg.sh ,并写入脚本</span>
+<span class="token function">mkdir</span> bin
+<span class="token function">touch</span> lg.sh
+<span class="token function">vim</span> lg.sh<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
+
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token comment">#登陆脚本</span>
+<span class="token comment">#!/bin/bash</span>
+<span class="token builtin class-name">echo</span> <span class="token string">"1) hk server"</span>
+<span class="token builtin class-name">echo</span> <span class="token string">"2) jp_gigs server"</span>
+<span class="token builtin class-name">echo</span> <span class="token string">"3) jp_bwg server"</span>
+<span class="token builtin class-name">echo</span> <span class="token string">"please input your choice:"</span>
+<span class="token builtin class-name">read</span> num
+<span class="token keyword">if</span> <span class="token builtin class-name">test</span> <span class="token variable">$num</span> <span class="token parameter variable">-eq</span> <span class="token number">1</span>
+        <span class="token keyword">then</span> <span class="token function">ssh</span> root@121.xxx.xxx.96 <span class="token parameter variable">-i</span> /Users/eddieho/hx_for_hob/ssa/hk666
+<span class="token keyword">elif</span> <span class="token builtin class-name">test</span> <span class="token variable">$num</span> <span class="token parameter variable">-eq</span> <span class="token number">2</span>
+	<span class="token keyword">then</span> <span class="token function">ssh</span> root@103.xxx.xxx.96 <span class="token parameter variable">-i</span> /Users/eddieho/hx_for_hob/ssa/gigs_jp
+<span class="token keyword">else</span> <span class="token function">ssh</span> root@206.xxx.xxx.205 <span class="token parameter variable">-p</span> <span class="token number">26838</span> <span class="token parameter variable">-i</span> /Users/eddieho/hx_for_hob/ssa/bwg_jp
+<span class="token keyword">fi</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<ul>
+<li>为shell文件授予执行权限，并添加环境变量</li>
+</ul>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token function">chmod</span> +x ./lg.sh
+<span class="token comment"># 正常文件路径下可以直接执行，但想要全局的话就得增加环境变量</span>
+<span class="token comment"># vshconfgi -- 最后添加下面这条命令</span>
+<span class="token builtin class-name">export</span> <span class="token assign-left variable"><span class="token environment constant">PATH</span></span><span class="token operator">=~</span>/bin:<span class="token string">"<span class="token environment constant">$PATH</span>"</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>这样就可直接用命令进行登陆了！！</p>
+
+    </div>
+  </article>
+</div>
+  </main>
+
+  <footer>
+    <p>
+      &copy; 2025 Shark Blog 
+      <a href="https://github.com/eddiehex/hexo-geek-source" target="_blank">
+        <i class="fab fa-github"></i>
+      </a>
+    </p>
+  </footer>
+
+  <script src="/js/search.js"></script>
+  <script src="/js/main.js"></script>
+  <script src="/js/copy-code.js"></script>
+  <script src="/js/prism.js"></script>
+  <script src="/js/toc-highlight.js"></script>
+  <script src="/js/mobile-menu.js"></script>
+</body>
+</html>

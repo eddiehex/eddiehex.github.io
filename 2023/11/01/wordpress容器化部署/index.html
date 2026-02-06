@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Shark Blog</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/prism-code.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <link rel="icon" href="https://hexo.kygoho.win/upload/uploads/6e7cf36d-8cb2-40c6-831f-80ef7488cca4.png" type="image/x-icon">
+  <link rel="stylesheet" href="/css/toc.css">
+  
+  <!-- MathJax Configuration -->
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']],
+        processEscapes: true,
+        processEnvironments: true,
+        packages: ['base', 'ams', 'noerrors', 'noundefined']
+      },
+      options: {
+        ignoreHtmlClass: 'tex2jax_ignore',
+        processHtmlClass: 'tex2jax_process'
+      },
+      startup: {
+        ready() {
+          MathJax.startup.defaultReady();
+          // Re-render math when content changes
+          document.addEventListener('DOMContentLoaded', function() {
+            if (window.MathJax && window.MathJax.typesetPromise) {
+              window.MathJax.typesetPromise();
+            }
+          });
+        }
+      }
+    };
+  </script>
+  <script async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.min.js"></script>
+<meta name="generator" content="Hexo 6.3.0"></head>
+<body>
+  <header>
+    <nav>
+      <div class="nav-container">
+        <div class="logo"><a href="/">Shark Blog</a></div>
+        <div class="search-container">
+          <input type="text" id="search-input" placeholder="Search...">
+          <div id="search-results"></div>
+        </div>
+        <div class="menu-toggle">
+          <i class="fas fa-bars"></i>
+        </div>
+      </div>
+      <ul class="nav-links">
+        <li><a href="/">Posts</a></li>
+        <li><a href="/services">Services</a></li>
+        <li><a href="/archives">Archive</a></li>
+        <li><a href="/categories">Categories</a></li>
+        <li><a href="/about">About</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <div class="page-container">
+  
+    <div class="toc-card">
+      <div class="toc-content">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%AE%B0"><span class="toc-text">前记</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%AD%A3%E6%96%87"><span class="toc-text">正文</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%90%8E%E8%AE%B0-%E6%80%9D%E8%80%83"><span class="toc-text">后记&amp;思考</span></a></li></ol>
+      </div>
+    </div>
+  
+  
+  <article class="page-content">
+    <h1 class="page-title">wordpress容器化部署</h1>
+    <div class="page-body">
+      <h2 id="前记"><a href="#前记" class="headerlink" title="前记"></a>前记</h2><p>早在大学期间就有接触过wordpress这个软件，当时纯粹是因为手头的vps仅仅是挂个代理有点没能做到物尽其用，便在网上各种搜寻，想着利用vps整点有意思的东西。不过当时通过wordpress搭建个人还是建非常繁琐的事情，啥啥不干就得下四个软件，中间各种配置连接测试令人头大；这两天闲来无事，便又开始捣鼓起了手上的vps，再加上最近docker成风，就寻思能否利用docker来进行搭建，一来docker独立于服务器中，不受环境影响，也不影响环境；二来docker的镜像安装卸载及其方便几条命令就能解决；三来也能学习学习。</p>
+<h2 id="正文"><a href="#正文" class="headerlink" title="正文"></a>正文</h2><ol>
+<li>Docker环境的搭建</li>
+</ol>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token function">curl</span> <span class="token parameter variable">-fsSL</span> https://get.docker.com <span class="token operator">|</span> <span class="token function">bash</span> <span class="token parameter variable">-s</span> <span class="token function">docker</span>  <span class="token comment">#安装</span>
+systemctl start <span class="token function">docker</span> <span class="token comment">#启动docker</span>
+<span class="token function">docker</span> run hello-world <span class="token comment">#测试是否成功安装</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+
+<p>docker 架构主要包括三个部分 镜像、仓库、容器；其中镜像可以理解成一个个root文件系统；容器就是运行镜像的一个载体，可以无限删除重建极为方便；仓库可以简单理解为镜像商店，可以从中pull各种镜像。</p>
+<ol start="2">
+<li>mysql安装</li>
+</ol>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token function">docker</span> pull mysql <span class="token comment">#下载最新版mysql镜像</span>
+<span class="token function">docker</span> run <span class="token parameter variable">-d</span> <span class="token parameter variable">--name</span> mysql <span class="token parameter variable">-e</span> <span class="token assign-left variable">MYSQL_ROOT_PASSWORD</span><span class="token operator">=</span><span class="token number">123456</span> <span class="token parameter variable">-p</span> <span class="token number">3306</span>:3306 mysql <span class="token comment">#运行mysql镜像</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+
+<p><code>-d 容器后台运行，否则运行完将直接退出</code></p>
+<p><code>--name 容器定义别名 </code></p>
+<p><code>-e 配置环境，新版mysql不设定root密码无法安装</code></p>
+<ol start="3">
+<li>wordpress 安装</li>
+</ol>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token function">docker</span> pull wordpress
+<span class="token function">docker</span> run <span class="token parameter variable">--name</span> wordpress <span class="token parameter variable">--link</span> mysql:mysql <span class="token parameter variable">-d</span> <span class="token parameter variable">-p</span> <span class="token number">8080</span>:80 wordpress<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+
+<p><code>--link 因为容器和容器之间都是独立，link为连个容器创造连接</code></p>
+<p>到这通过 xxxx.xxx.xx.x:8080 便可登陆wordpress后台，但个人博客怎么能没有域名了，能通过域名进行访问的博客才是合格的</p>
+<p>4.ngnix 安装反向代理</p>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token comment"># ngnix 安装</span>
+<span class="token function">docker</span> pull nginx
+<span class="token function">docker</span> run <span class="token parameter variable">--name</span> nginx <span class="token parameter variable">--link</span> wordpress:wordpress <span class="token parameter variable">-p</span> <span class="token number">80</span>:80 <span class="token parameter variable">-d</span> nginx<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token comment"># ngnix 配置</span>
+<span class="token comment"># 新建一个 xxx.conf</span>
+<span class="token function">touch</span> vhost.conf
+<span class="token function">vi</span> vhost.conf
+server <span class="token punctuation">&#123;</span>
+  listen <span class="token number">80</span><span class="token punctuation">;</span>
+  listen <span class="token punctuation">[</span>::<span class="token punctuation">]</span>:80<span class="token punctuation">;</span>
+
+  <span class="token comment"># 域名</span>
+  server_name www.kygoho.win<span class="token punctuation">;</span>
+
+  location / <span class="token punctuation">&#123;</span>
+    <span class="token comment">## 定位到wordpress</span>
+    proxy_pass http://wordpress<span class="token punctuation">;</span>
+
+        proxy_http_version    <span class="token number">1.1</span><span class="token punctuation">;</span>
+        proxy_cache_bypass    <span class="token variable">$http_upgrade</span><span class="token punctuation">;</span>
+
+        proxy_set_header Upgrade            <span class="token variable">$http_upgrade</span><span class="token punctuation">;</span>
+        proxy_set_header Connection         <span class="token string">"upgrade"</span><span class="token punctuation">;</span>
+        proxy_set_header Host                <span class="token variable">$host</span><span class="token punctuation">;</span>
+        proxy_set_header X-Real-IP            <span class="token variable">$remote_addr</span><span class="token punctuation">;</span>
+        proxy_set_header X-Forwarded-For    <span class="token variable">$proxy_add_x_forwarded_for</span><span class="token punctuation">;</span>
+        proxy_set_header X-Forwarded-Proto    <span class="token variable">$scheme</span><span class="token punctuation">;</span>
+        proxy_set_header X-Forwarded-Host    <span class="token variable">$host</span><span class="token punctuation">;</span>
+        proxy_set_header X-Forwarded-Port    <span class="token variable">$server_port</span><span class="token punctuation">;</span>
+  <span class="token punctuation">&#125;</span>
+<span class="token punctuation">&#125;</span>
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token comment"># 将vhost.conf 拷贝至 nginx 容器 /etc/ngnix/conf.d/ 目录下</span>
+<span class="token function">docker</span> <span class="token function">cp</span> vhost.conf blog_nginx_1:/etc/nginx/conf.d
+<span class="token comment"># 重启ngnix</span>
+<span class="token function">docker</span> restart blog_nginx_1<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
+
+
+
+<p>完成这一步稍等几分钟正常通过域名即可访问wordpress了。</p>
+<h2 id="后记-思考"><a href="#后记-思考" class="headerlink" title="后记&amp;思考"></a>后记&amp;思考</h2><pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token function">docker</span> <span class="token builtin class-name">exec</span> <span class="token parameter variable">-i</span> <span class="token parameter variable">-t</span> ngnix <span class="token function">bash</span> <span class="token comment">#这条命令可以直接进入ngnix容器中，查看ngnix的各项内容</span>
+<span class="token function">docker</span> <span class="token function">ps</span> <span class="token comment">#查看容器状态</span>
+<span class="token function">docker</span> <span class="token function">ps</span> <span class="token parameter variable">-a</span>
+<span class="token function">docker</span> images <span class="token comment">#查看镜像</span>
+dockeer run <span class="token parameter variable">-v</span> <span class="token comment">#挂在容器到本地文件夹 我还没用过</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<ol>
+<li>在ngnix代理这一块一开始想着因为wordpress有映射到本地端口8080，所以在映射时直接转proxy_pass http:&#x2F;&#x2F;本地ip：8080，但发现不行。即域名访问80端口——ngnix——8080端口实现域名访问wordpress</li>
+<li>通过查找资料发现可以连接ngnix和wordpress两个容器，再通过配置实现域名直接访问。</li>
+</ol>
+<p>docker 的link相关问题还需继续学习；</p>
+<p>ngnix还要再学习！</p>
+<blockquote>
+<p><a target="_blank" rel="noopener" href="https://mhy12345.xyz/tutorials/wordpress-tutorials/">从0使用docker搭建wordpress</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.runoob.com/docker/docker-architecture.html">docker教程</a></p>
+<p><a target="_blank" rel="noopener" href="https://juejin.cn/post/6844904117165359111">小白学习docker</a></p>
+<p><a target="_blank" rel="noopener" href="https://leozl.site/linux/%E4%BD%BF%E7%94%A8docker%E6%90%AD%E5%BB%BAwordpress%E5%8D%9A%E5%AE%A2%E7%B3%BB%E7%BB%9F%E5%B9%B6%E9%85%8D%E7%BD%AEhttps/">使用docker搭建WordPress博客系统并配置HTTPS</a></p>
+</blockquote>
+
+    </div>
+  </article>
+</div>
+  </main>
+
+  <footer>
+    <p>
+      &copy; 2025 Shark Blog 
+      <a href="https://github.com/eddiehex/hexo-geek-source" target="_blank">
+        <i class="fab fa-github"></i>
+      </a>
+    </p>
+  </footer>
+
+  <script src="/js/search.js"></script>
+  <script src="/js/main.js"></script>
+  <script src="/js/copy-code.js"></script>
+  <script src="/js/prism.js"></script>
+  <script src="/js/toc-highlight.js"></script>
+  <script src="/js/mobile-menu.js"></script>
+</body>
+</html>

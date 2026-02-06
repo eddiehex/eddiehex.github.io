@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Shark Blog</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/prism-code.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <link rel="icon" href="https://hexo.kygoho.win/upload/uploads/6e7cf36d-8cb2-40c6-831f-80ef7488cca4.png" type="image/x-icon">
+  <link rel="stylesheet" href="/css/toc.css">
+  
+  <!-- MathJax Configuration -->
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']],
+        processEscapes: true,
+        processEnvironments: true,
+        packages: ['base', 'ams', 'noerrors', 'noundefined']
+      },
+      options: {
+        ignoreHtmlClass: 'tex2jax_ignore',
+        processHtmlClass: 'tex2jax_process'
+      },
+      startup: {
+        ready() {
+          MathJax.startup.defaultReady();
+          // Re-render math when content changes
+          document.addEventListener('DOMContentLoaded', function() {
+            if (window.MathJax && window.MathJax.typesetPromise) {
+              window.MathJax.typesetPromise();
+            }
+          });
+        }
+      }
+    };
+  </script>
+  <script async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.min.js"></script>
+<meta name="generator" content="Hexo 6.3.0"></head>
+<body>
+  <header>
+    <nav>
+      <div class="nav-container">
+        <div class="logo"><a href="/">Shark Blog</a></div>
+        <div class="search-container">
+          <input type="text" id="search-input" placeholder="Search...">
+          <div id="search-results"></div>
+        </div>
+        <div class="menu-toggle">
+          <i class="fas fa-bars"></i>
+        </div>
+      </div>
+      <ul class="nav-links">
+        <li><a href="/">Posts</a></li>
+        <li><a href="/services">Services</a></li>
+        <li><a href="/archives">Archive</a></li>
+        <li><a href="/categories">Categories</a></li>
+        <li><a href="/about">About</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <div class="page-container">
+  
+    <div class="toc-card">
+      <div class="toc-content">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#COT-Prompt%E8%AE%BE%E8%AE%A1%E6%A1%86%E6%9E%B6"><span class="toc-text">COT Prompt设计框架**</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-%E6%83%85%E7%BB%AA%E5%88%86%E6%9E%90%E6%A8%A1%E5%9D%97"><span class="toc-text">1. 情绪分析模块</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-%E5%9F%BA%E6%9C%AC%E9%9D%A2%E5%88%86%E6%9E%90%E6%A8%A1%E5%9D%97"><span class="toc-text">2. 基本面分析模块</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-%E6%8A%80%E6%9C%AF%E5%88%86%E6%9E%90%E6%A8%A1%E5%9D%97"><span class="toc-text">3. 技术分析模块</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#COT-Prompt%E8%BE%93%E5%87%BA%E8%A7%84%E8%8C%83"><span class="toc-text">COT Prompt输出规范</span></a></li></ol></li></ol>
+      </div>
+    </div>
+  
+  
+  <article class="page-content">
+    <h1 class="page-title">Stock Analysis three basic agents builds method</h1>
+    <div class="page-body">
+      <h2 id="COT-Prompt设计框架"><a href="#COT-Prompt设计框架" class="headerlink" title="COT Prompt设计框架**"></a>COT Prompt设计框架**</h2><h4 id="1-情绪分析模块"><a href="#1-情绪分析模块" class="headerlink" title="1. 情绪分析模块"></a><strong>1. 情绪分析模块</strong></h4><p><strong>目标</strong>：评估市场对个股的短期情绪波动与投资者行为倾向。</p>
+<p><strong>推理步骤与指标</strong>：</p>
+<ol>
+<li><p><strong>技术指标信号</strong>  </p>
+<ul>
+<li>计算RSI（14日周期）：若&gt;70则超买，&lt;30则超卖  </li>
+<li>监测MACD柱状图变化：DIF与DEA交叉信号（金叉&#x2F;死叉）  </li>
+<li>检查布林带：股价突破上轨（看涨）或下轨（看跌）  <pre class="line-numbers language-公式" data-language="公式"><code class="language-公式">RSI &#x3D; 100 - (100 &#x2F; (1 + 平均涨幅&#x2F;平均跌幅))  
+MACD &#x3D; EMA(12) - EMA(26), Signal &#x3D; EMA(MACD,9)  <span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre></li>
+</ul>
+</li>
+<li><p><strong>市场行为数据</strong>  </p>
+<ul>
+<li>换手率：近5日平均换手率&gt;5%表明高关注度  </li>
+<li>融资余额变化：连续3日融资买入额增长超过10%视为情绪升温  </li>
+<li>北向资金流向：单日净流入占比流通市值&gt;0.5%为积极信号</li>
+</ul>
+</li>
+<li><p><strong>舆情与新闻解析</strong>  </p>
+<ul>
+<li>使用NLP分析个股相关新闻标题情感倾向（正向&#x2F;负向词频比）  </li>
+<li>监测社交媒体讨论热度：东方财富论坛日发帖量突增2倍触发预警</li>
+</ul>
+</li>
+<li><p><strong>综合情绪指数</strong><br>采用加权模型整合指标（参考）：  </p>
+<pre class="line-numbers language-none"><code class="language-none">情绪指数 &#x3D; 0.3×RSI标准化值 + 0.2×换手率Z-score + 0.25×融资余额增长率 + 0.15×新闻情感得分 + 0.1×北向资金流量  <span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<p><strong>阈值</strong>：指数&gt;0.8（过度乐观，建议减仓）；&lt;-0.8（恐慌超卖，关注反弹）</p>
+</li>
+</ol>
+<hr>
+<h4 id="2-基本面分析模块"><a href="#2-基本面分析模块" class="headerlink" title="2. 基本面分析模块"></a><strong>2. 基本面分析模块</strong></h4><p><strong>目标</strong>：评估个股的长期价值与经营质量。</p>
+<p><strong>推理步骤与指标</strong>：</p>
+<ol>
+<li><p><strong>财务健康度诊断</strong>  </p>
+<ul>
+<li><strong>盈利能力</strong>：近3年ROE均值&gt;15%，毛利率行业排名前30%  </li>
+<li><strong>偿债能力</strong>：流动比率&gt;2，资产负债率&lt;行业均值  </li>
+<li><strong>现金流质量</strong>：经营活动现金流净额&#x2F;净利润&gt;0.8（排除会计粉饰）</li>
+</ul>
+</li>
+<li><p><strong>成长性评估</strong>  </p>
+<ul>
+<li>复合增长率（CAGR）：过去5年营收CAGR&gt;10%且净利润CAGR&gt;15%  </li>
+<li>研发投入强度：研发费用&#x2F;营收占比高于行业75分位数</li>
+</ul>
+</li>
+<li><p><strong>估值合理性判断</strong>  </p>
+<ul>
+<li>动态PE分位数：当前PE位于近5年30%以下为低估  </li>
+<li>PEG比率：PEG&lt;1（盈利增速匹配估值）  <pre class="line-numbers language-公式" data-language="公式"><code class="language-公式">PEG &#x3D; (当前PE) &#x2F; (预期净利润增长率×100)  <span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre></li>
+</ul>
+</li>
+<li><p><strong>行业与竞争分析</strong>  </p>
+<ul>
+<li>市场份额变化：近3年市占率提升幅度&gt;2个百分点  </li>
+<li>护城河评分：基于品牌溢价、专利数量、成本优势构建5级评分体系</li>
+</ul>
+</li>
+</ol>
+<p><strong>综合决策矩阵</strong>：  </p>
+<table>
+<thead>
+<tr>
+<th>维度</th>
+<th>权重</th>
+<th>评分（1-5）</th>
+<th>加权得分</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>财务健康度</td>
+<td>30%</td>
+<td>-</td>
+<td>-</td>
+</tr>
+<tr>
+<td>成长性</td>
+<td>25%</td>
+<td>-</td>
+<td>-</td>
+</tr>
+<tr>
+<td>估值</td>
+<td>20%</td>
+<td>-</td>
+<td>-</td>
+</tr>
+<tr>
+<td>行业地位</td>
+<td>25%</td>
+<td>-</td>
+<td>-</td>
+</tr>
+<tr>
+<td><strong>结论阈值</strong>：总分≥4.0（强烈推荐）；2.5-4.0（中性）；&lt;2.5（规避）</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody></table>
+<hr>
+<h4 id="3-技术分析模块"><a href="#3-技术分析模块" class="headerlink" title="3. 技术分析模块"></a><strong>3. 技术分析模块</strong></h4><p><strong>目标</strong>：识别价格趋势与关键买卖信号。</p>
+<p><strong>推理步骤与指标</strong>：</p>
+<ol>
+<li><p><strong>趋势判定</strong>  </p>
+<ul>
+<li>均线系统：50日均线上穿200日均线（黄金交叉）确认长期上升趋势  </li>
+<li>ADX指标：ADX&gt;25且+DI&gt;-DI为强趋势信号</li>
+</ul>
+</li>
+<li><p><strong>动量与波动分析</strong>  </p>
+<ul>
+<li>布林带收缩突破：带宽（上轨-下轨）&lt;10%历史分位后放量突破上轨  </li>
+<li>成交量突变：单日成交量&gt;5日均量2倍且价格上涨（确认资金介入）</li>
+</ul>
+</li>
+<li><p><strong>形态学信号</strong>  </p>
+<ul>
+<li>头肩底形态：右肩成交量&gt;左肩，突破颈线幅度&gt;3%  </li>
+<li>杯柄形态：杯部回撤&lt;30%，柄部缩量整理</li>
+</ul>
+</li>
+<li><p><strong>多因子择时模型</strong><br>集成MACD、RSI、成交量变异系数构建信号强度：  </p>
+<pre class="line-numbers language-none"><code class="language-none">信号强度 &#x3D; 0.4×MACD柱状图斜率 + 0.3×RSI偏离度 + 0.3×成交量Z-score  <span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<p><strong>触发条件</strong>：强度&gt;1.5且K线收于5日最高点（买入）；&lt;-1.5且跌破20日均线（卖出）</p>
+</li>
+</ol>
+<hr>
+<h3 id="COT-Prompt输出规范"><a href="#COT-Prompt输出规范" class="headerlink" title="COT Prompt输出规范"></a><strong>COT Prompt输出规范</strong></h3><ol>
+<li><strong>结构化呈现</strong>：分模块输出分析结论，使用表格对比关键指标与阈值。  </li>
+<li><strong>风险提示</strong>：标注数据盲区（如财报审计风险、政策不确定性）。  </li>
+<li><strong>操作建议</strong>：根据三模块综合评分生成概率化建议（例：情绪过热+基本面稳健+技术突破&#x3D;70%概率短期看涨）。</li>
+</ol>
+<p><strong>示例输出框架</strong>：  </p>
+<pre class="line-numbers language-markdown" data-language="markdown"><code class="language-markdown"><span class="token title important"><span class="token punctuation">###</span> 情绪分析结论  </span>
+<span class="token list punctuation">-</span> RSI(14)=68（接近超买）  
+<span class="token list punctuation">-</span> 融资余额周增幅+12%（情绪升温）  
+<span class="token list punctuation">-</span> 综合情绪指数=0.75（警戒区间） → 建议跟踪北向资金流向变化  
+
+<span class="token title important"><span class="token punctuation">###</span> 基本面评估  </span>
+<span class="token list punctuation">-</span> ROE三年均值18%（优于85%同行）  
+<span class="token list punctuation">-</span> PEG=0.89（估值合理）  
+<span class="token list punctuation">-</span> 行业地位评分4.2/5（龙头优势稳固）  
+
+<span class="token title important"><span class="token punctuation">###</span> 技术信号  </span>
+<span class="token list punctuation">-</span> MACD金叉+成交量突破（强买入信号）  
+<span class="token list punctuation">-</span> 短期目标价：前高+8%  
+
+<span class="token bold"><span class="token punctuation">**</span><span class="token content">综合建议</span><span class="token punctuation">**</span></span>：当前配置权重建议提升至15%，止损位设于50日均线下方3%  <span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+
+    </div>
+  </article>
+</div>
+  </main>
+
+  <footer>
+    <p>
+      &copy; 2025 Shark Blog 
+      <a href="https://github.com/eddiehex/hexo-geek-source" target="_blank">
+        <i class="fab fa-github"></i>
+      </a>
+    </p>
+  </footer>
+
+  <script src="/js/search.js"></script>
+  <script src="/js/main.js"></script>
+  <script src="/js/copy-code.js"></script>
+  <script src="/js/prism.js"></script>
+  <script src="/js/toc-highlight.js"></script>
+  <script src="/js/mobile-menu.js"></script>
+</body>
+</html>

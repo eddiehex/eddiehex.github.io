@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Shark Blog</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/prism-code.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <link rel="icon" href="https://hexo.kygoho.win/upload/uploads/6e7cf36d-8cb2-40c6-831f-80ef7488cca4.png" type="image/x-icon">
+  <link rel="stylesheet" href="/css/toc.css">
+  
+  <!-- MathJax Configuration -->
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']],
+        processEscapes: true,
+        processEnvironments: true,
+        packages: ['base', 'ams', 'noerrors', 'noundefined']
+      },
+      options: {
+        ignoreHtmlClass: 'tex2jax_ignore',
+        processHtmlClass: 'tex2jax_process'
+      },
+      startup: {
+        ready() {
+          MathJax.startup.defaultReady();
+          // Re-render math when content changes
+          document.addEventListener('DOMContentLoaded', function() {
+            if (window.MathJax && window.MathJax.typesetPromise) {
+              window.MathJax.typesetPromise();
+            }
+          });
+        }
+      }
+    };
+  </script>
+  <script async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.min.js"></script>
+<meta name="generator" content="Hexo 6.3.0"></head>
+<body>
+  <header>
+    <nav>
+      <div class="nav-container">
+        <div class="logo"><a href="/">Shark Blog</a></div>
+        <div class="search-container">
+          <input type="text" id="search-input" placeholder="Search...">
+          <div id="search-results"></div>
+        </div>
+        <div class="menu-toggle">
+          <i class="fas fa-bars"></i>
+        </div>
+      </div>
+      <ul class="nav-links">
+        <li><a href="/">Posts</a></li>
+        <li><a href="/services">Services</a></li>
+        <li><a href="/archives">Archive</a></li>
+        <li><a href="/categories">Categories</a></li>
+        <li><a href="/about">About</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <div class="page-container">
+  
+    <div class="toc-card">
+      <div class="toc-content">
+        <ol class="toc"><li class="toc-item toc-level-4"><a class="toc-link" href="#docker%E5%88%9B%E5%BB%BAJupyter%E6%9C%8D%E5%8A%A1"><span class="toc-text">docker创建Jupyter服务</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%85%8D%E7%BD%AEnginx%E5%8F%8D%E5%90%91%E4%BB%A3%E7%90%86"><span class="toc-text">配置nginx反向代理</span></a></li></ol>
+      </div>
+    </div>
+  
+  
+  <article class="page-content">
+    <h1 class="page-title">使用docker创建Jupyter并配置Nginx反向代理</h1>
+    <div class="page-body">
+      <h4 id="docker创建Jupyter服务"><a href="#docker创建Jupyter服务" class="headerlink" title="docker创建Jupyter服务"></a>docker创建Jupyter服务</h4><pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token comment">#本地端创建相关文件夹</span>
+<span class="token function">mkdir</span> <span class="token parameter variable">-p</span> /opt/jupyter/jovyan
+<span class="token function">mkdir</span> <span class="token parameter variable">-p</span> /opt/jupyter/jovyan/.jupyter
+<span class="token function">chmod</span> <span class="token number">777</span> <span class="token parameter variable">-R</span> /opt/jupyter/jovyan
+<span class="token comment">#获取jupyter镜像</span>
+<span class="token function">docker</span> pull jupyter/base-notebook:notebook-5.7.8
+<span class="token comment">#创建jupyter容器</span>
+<span class="token function">docker</span> run <span class="token parameter variable">--name</span> vk-jupyter <span class="token parameter variable">-d</span> <span class="token punctuation">\</span>
+<span class="token parameter variable">-p</span> <span class="token number">8888</span>:8888 <span class="token punctuation">\</span>
+<span class="token parameter variable">-v</span> /opt/jupyter/jovyan:/home/jovyan <span class="token punctuation">\</span>
+jupyter/base-notebook:notebook-5.7.8
+<span class="token comment">#获取jupyter的token</span>
+<span class="token function">docker</span> <span class="token builtin class-name">exec</span> <span class="token parameter variable">-it</span> vk-jupyter jupyter notebook list
+<span class="token comment">#设置密码</span>
+<span class="token function">docker</span> <span class="token builtin class-name">exec</span> <span class="token parameter variable">-it</span> vk-jupyter jupyter notebook password
+<span class="token function">docker</span> restart vk-jupyter
+<span class="token comment">#安装插件</span>
+<span class="token function">docker</span> <span class="token builtin class-name">exec</span> <span class="token parameter variable">-it</span> vk-jupyter pip <span class="token function">install</span> ipywidgets
+<span class="token comment">#安装常用命令</span>
+<span class="token function">docker</span> <span class="token builtin class-name">exec</span> <span class="token parameter variable">--user</span> root <span class="token parameter variable">-it</span> vk-jupyter /bin/bash <span class="token comment">#使用管理员权限进入</span>
+<span class="token function">apt</span> update
+<span class="token function">apt</span> <span class="token function">install</span> <span class="token function">curl</span>
+<span class="token function">apt</span> <span class="token function">install</span> <span class="token function">unzip</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<h4 id="配置nginx反向代理"><a href="#配置nginx反向代理" class="headerlink" title="配置nginx反向代理"></a>配置nginx反向代理</h4><p>因为服务器中已存在多个应用，故使用服务器子地址路径实现域名访问notebook</p>
+<p>首先修改nginx_location配置文件</p>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">location /py <span class="token punctuation">&#123;</span>
+    proxy_set_header   Host             <span class="token variable">$host</span><span class="token punctuation">;</span>
+    proxy_set_header   X-Real-IP        <span class="token variable">$remote_addr</span><span class="token punctuation">;</span>
+    proxy_set_header  X-Forwarded-For  <span class="token variable">$proxy_add_x_forwarded_for</span><span class="token punctuation">;</span>
+
+    proxy_pass http://172.0.0.1:8888<span class="token punctuation">;</span>
+
+    <span class="token comment"># WebSocket support</span>
+    proxy_http_version <span class="token number">1.1</span><span class="token punctuation">;</span>
+    proxy_set_header Upgrade <span class="token variable">$http_upgrade</span><span class="token punctuation">;</span>
+    proxy_set_header Connection <span class="token string">"upgrade"</span><span class="token punctuation">;</span>
+<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>重启nginx -t &amp;&amp; nginx -s reload</p>
+<p>修改&#x2F;opt&#x2F;jupyter&#x2F;jovyan&#x2F;.jupyter&#x2F;jupyter_notebook_config.py 配置文件</p>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token punctuation">&#123;</span>
+  <span class="token string">"NotebookApp"</span><span class="token builtin class-name">:</span> <span class="token punctuation">&#123;</span>
+    <span class="token string">"password"</span><span class="token builtin class-name">:</span> <span class="token string">"your passwored"</span>,
+    <span class="token string">"base_url"</span><span class="token builtin class-name">:</span> <span class="token string">"/py"</span>
+  <span class="token punctuation">&#125;</span>
+<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>重启docker restart vk-jupyter</p>
+
+    </div>
+  </article>
+</div>
+  </main>
+
+  <footer>
+    <p>
+      &copy; 2025 Shark Blog 
+      <a href="https://github.com/eddiehex/hexo-geek-source" target="_blank">
+        <i class="fab fa-github"></i>
+      </a>
+    </p>
+  </footer>
+
+  <script src="/js/search.js"></script>
+  <script src="/js/main.js"></script>
+  <script src="/js/copy-code.js"></script>
+  <script src="/js/prism.js"></script>
+  <script src="/js/toc-highlight.js"></script>
+  <script src="/js/mobile-menu.js"></script>
+</body>
+</html>

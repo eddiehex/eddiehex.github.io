@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Shark Blog</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/prism-code.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <link rel="icon" href="https://hexo.kygoho.win/upload/uploads/6e7cf36d-8cb2-40c6-831f-80ef7488cca4.png" type="image/x-icon">
+  <link rel="stylesheet" href="/css/toc.css">
+  
+  <!-- MathJax Configuration -->
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']],
+        processEscapes: true,
+        processEnvironments: true,
+        packages: ['base', 'ams', 'noerrors', 'noundefined']
+      },
+      options: {
+        ignoreHtmlClass: 'tex2jax_ignore',
+        processHtmlClass: 'tex2jax_process'
+      },
+      startup: {
+        ready() {
+          MathJax.startup.defaultReady();
+          // Re-render math when content changes
+          document.addEventListener('DOMContentLoaded', function() {
+            if (window.MathJax && window.MathJax.typesetPromise) {
+              window.MathJax.typesetPromise();
+            }
+          });
+        }
+      }
+    };
+  </script>
+  <script async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.min.js"></script>
+<meta name="generator" content="Hexo 6.3.0"></head>
+<body>
+  <header>
+    <nav>
+      <div class="nav-container">
+        <div class="logo"><a href="/">Shark Blog</a></div>
+        <div class="search-container">
+          <input type="text" id="search-input" placeholder="Search...">
+          <div id="search-results"></div>
+        </div>
+        <div class="menu-toggle">
+          <i class="fas fa-bars"></i>
+        </div>
+      </div>
+      <ul class="nav-links">
+        <li><a href="/">Posts</a></li>
+        <li><a href="/services">Services</a></li>
+        <li><a href="/archives">Archive</a></li>
+        <li><a href="/categories">Categories</a></li>
+        <li><a href="/about">About</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <div class="page-container">
+  
+    <div class="toc-card">
+      <div class="toc-content">
+        <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#Configuration"><span class="toc-text">Configuration</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Application-Example-IPv6-Forwarding-with-Hysteia2"><span class="toc-text">Application Example: IPv6 Forwarding with Hysteia2</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Conclusion"><span class="toc-text">Conclusion</span></a></li></ol>
+      </div>
+    </div>
+  
+  
+  <article class="page-content">
+    <h1 class="page-title">Secure Your Socks5 Proxy with Gost Authentication</h1>
+    <div class="page-body">
+      <p>Today, I received an email about IP abuse, likely due to my open Socks5 service on the server.  Without any authentication, anyone with the IP address and port could connect. </p>
+<p>To enhance security, I’ve added authentication to my Gost service. </p>
+<h3 id="Configuration"><a href="#Configuration" class="headerlink" title="Configuration"></a>Configuration</h3><p>Here’s how I configured Gost for secure Socks5 proxying:</p>
+<p><strong>1. config.json:</strong></p>
+<pre class="line-numbers language-json" data-language="json"><code class="language-json"><span class="token punctuation">&#123;</span>
+    <span class="token property">"Debug"</span><span class="token operator">:</span> <span class="token boolean">true</span><span class="token punctuation">,</span>
+    <span class="token property">"ServeNodes"</span><span class="token operator">:</span> <span class="token punctuation">[</span>
+        <span class="token string">"socks5://username:password@0.0.0.0:port"</span>
+    <span class="token punctuation">]</span>
+<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p><strong>Replace the following:</strong></p>
+<ul>
+<li><code>username</code>: Your desired username</li>
+<li><code>password</code>: Your desired password</li>
+<li><code>port</code>: Your desired Socks5 port</li>
+</ul>
+<p><strong>2. docker-compose.yml:</strong></p>
+<pre class="line-numbers language-yaml" data-language="yaml"><code class="language-yaml"><span class="token key atrule">version</span><span class="token punctuation">:</span> <span class="token string">"3"</span>
+
+<span class="token key atrule">services</span><span class="token punctuation">:</span>
+  <span class="token key atrule">gost</span><span class="token punctuation">:</span>
+    <span class="token key atrule">image</span><span class="token punctuation">:</span> ginuerzh/gost
+    <span class="token key atrule">restart</span><span class="token punctuation">:</span> always
+    <span class="token key atrule">network_mode</span><span class="token punctuation">:</span> <span class="token string">"host"</span>
+    <span class="token key atrule">volumes</span><span class="token punctuation">:</span>
+      <span class="token punctuation">-</span> ./config.json<span class="token punctuation">:</span>/gost/config.json 
+    <span class="token key atrule">command</span><span class="token punctuation">:</span>
+      <span class="token punctuation">-</span> <span class="token string">"-C=/gost/config.json"</span> 
+    <span class="token key atrule">logging</span><span class="token punctuation">:</span>
+      <span class="token key atrule">driver</span><span class="token punctuation">:</span> <span class="token string">"json-file"</span>
+      <span class="token key atrule">options</span><span class="token punctuation">:</span>
+        <span class="token key atrule">max-size</span><span class="token punctuation">:</span> <span class="token string">"10m"</span>
+        <span class="token key atrule">max-file</span><span class="token punctuation">:</span> <span class="token string">"3"</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>This configuration launches a Gost container, mounts the <code>config.json</code>, and sets it to restart automatically.</p>
+<h3 id="Application-Example-IPv6-Forwarding-with-Hysteia2"><a href="#Application-Example-IPv6-Forwarding-with-Hysteia2" class="headerlink" title="Application Example: IPv6 Forwarding with Hysteia2"></a>Application Example: IPv6 Forwarding with Hysteia2</h3><p>One use case for a Socks5 proxy is forwarding IPv6 traffic for servers with only IPv4 connectivity. Here’s an example using Hysteia2:</p>
+<pre class="line-numbers language-yaml" data-language="yaml"><code class="language-yaml"><span class="token comment">#hysteia configuration</span>
+  <span class="token key atrule">-acl</span><span class="token punctuation">:</span> 
+  	<span class="token key atrule">inline</span><span class="token punctuation">:</span>
+				<span class="token punctuation">-</span> so(<span class="token punctuation">:</span><span class="token punctuation">:</span>/0)  
+				
+  <span class="token punctuation">-</span> <span class="token key atrule">name</span><span class="token punctuation">:</span> so
+    <span class="token key atrule">type</span><span class="token punctuation">:</span> socks5
+    <span class="token key atrule">socks5</span><span class="token punctuation">:</span>
+      <span class="token key atrule">addr</span><span class="token punctuation">:</span> your<span class="token punctuation">-</span>server<span class="token punctuation">-</span>ip<span class="token punctuation">:</span>your<span class="token punctuation">-</span>gost<span class="token punctuation">-</span>port
+      <span class="token key atrule">username</span><span class="token punctuation">:</span> your<span class="token punctuation">-</span>gost<span class="token punctuation">-</span>username
+      <span class="token key atrule">password</span><span class="token punctuation">:</span> your<span class="token punctuation">-</span>gost<span class="token punctuation">-</span>password<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p><strong>Replace the placeholders with your actual Gost server information.</strong></p>
+<h3 id="Conclusion"><a href="#Conclusion" class="headerlink" title="Conclusion"></a>Conclusion</h3><p>Adding authentication significantly improves the security of your Socks5 service.  After implementing it, I noticed several failed connection attempts from suspicious IPs in the Gost logs. </p>
+
+    </div>
+  </article>
+</div>
+  </main>
+
+  <footer>
+    <p>
+      &copy; 2025 Shark Blog 
+      <a href="https://github.com/eddiehex/hexo-geek-source" target="_blank">
+        <i class="fab fa-github"></i>
+      </a>
+    </p>
+  </footer>
+
+  <script src="/js/search.js"></script>
+  <script src="/js/main.js"></script>
+  <script src="/js/copy-code.js"></script>
+  <script src="/js/prism.js"></script>
+  <script src="/js/toc-highlight.js"></script>
+  <script src="/js/mobile-menu.js"></script>
+</body>
+</html>

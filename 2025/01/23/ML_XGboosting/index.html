@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Shark Blog</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/prism-code.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <link rel="icon" href="https://hexo.kygoho.win/upload/uploads/6e7cf36d-8cb2-40c6-831f-80ef7488cca4.png" type="image/x-icon">
+  <link rel="stylesheet" href="/css/toc.css">
+  
+  <!-- MathJax Configuration -->
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']],
+        processEscapes: true,
+        processEnvironments: true,
+        packages: ['base', 'ams', 'noerrors', 'noundefined']
+      },
+      options: {
+        ignoreHtmlClass: 'tex2jax_ignore',
+        processHtmlClass: 'tex2jax_process'
+      },
+      startup: {
+        ready() {
+          MathJax.startup.defaultReady();
+          // Re-render math when content changes
+          document.addEventListener('DOMContentLoaded', function() {
+            if (window.MathJax && window.MathJax.typesetPromise) {
+              window.MathJax.typesetPromise();
+            }
+          });
+        }
+      }
+    };
+  </script>
+  <script async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.min.js"></script>
+<meta name="generator" content="Hexo 6.3.0"></head>
+<body>
+  <header>
+    <nav>
+      <div class="nav-container">
+        <div class="logo"><a href="/">Shark Blog</a></div>
+        <div class="search-container">
+          <input type="text" id="search-input" placeholder="Search...">
+          <div id="search-results"></div>
+        </div>
+        <div class="menu-toggle">
+          <i class="fas fa-bars"></i>
+        </div>
+      </div>
+      <ul class="nav-links">
+        <li><a href="/">Posts</a></li>
+        <li><a href="/services">Services</a></li>
+        <li><a href="/archives">Archive</a></li>
+        <li><a href="/categories">Categories</a></li>
+        <li><a href="/about">About</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <div class="page-container">
+  
+    <div class="toc-card">
+      <div class="toc-content">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#XGBoost"><span class="toc-text">XGBoost</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E4%BB%80%E4%B9%88%E6%98%AFXGBoost%EF%BC%9F"><span class="toc-text">1. 什么是XGBoost？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E6%A0%B8%E5%BF%83%E6%80%9D%E8%B7%AF"><span class="toc-text">2. 核心思路</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E6%95%B0%E5%AD%A6%E5%85%AC%E5%BC%8F"><span class="toc-text">3. 数学公式</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-%E6%A8%A1%E5%9E%8B%E7%9B%AE%E6%A0%87%E5%87%BD%E6%95%B0"><span class="toc-text">(1) 模型目标函数</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-%E4%BA%8C%E9%98%B6%E8%BF%91%E4%BC%BC%E4%BC%98%E5%8C%96"><span class="toc-text">(2) 二阶近似优化</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-%E5%88%86%E8%A3%82%E5%A2%9E%E7%9B%8A%E8%AE%A1%E7%AE%97"><span class="toc-text">(3) 分裂增益计算</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4-%E5%8F%B6%E5%AD%90%E8%8A%82%E7%82%B9%E7%9A%84%E6%9D%83%E9%87%8D%E8%AE%A1%E7%AE%97"><span class="toc-text">(4) 叶子节点的权重计算</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-XGBoost%E7%9A%84%E4%BC%98%E7%82%B9"><span class="toc-text">4. XGBoost的优点</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-XGboost-Summary"><span class="toc-text">5. XGboost Summary</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-XGBoost%E7%9A%84%E5%8F%82%E6%95%B0%E8%AF%A6%E8%A7%A3"><span class="toc-text">6. XGBoost的参数详解</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-%E9%80%9A%E7%94%A8%E5%8F%82%E6%95%B0"><span class="toc-text">(1) 通用参数</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-%E6%A0%91%E5%8F%82%E6%95%B0"><span class="toc-text">(2) 树参数</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-%E5%AD%A6%E4%B9%A0%E7%9B%AE%E6%A0%87%E5%8F%82%E6%95%B0"><span class="toc-text">(3) 学习目标参数</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#7-%E4%BD%BF%E7%94%A8XGBoost%E7%9A%84%E6%AD%A5%E9%AA%A4"><span class="toc-text">7. 使用XGBoost的步骤</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-%E6%95%B0%E6%8D%AE%E9%A2%84%E5%A4%84%E7%90%86"><span class="toc-text">(1) 数据预处理</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-%E6%A8%A1%E5%9E%8B%E6%9E%84%E5%BB%BA"><span class="toc-text">(2) 模型构建</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-%E6%A8%A1%E5%9E%8B%E8%AE%AD%E7%BB%83"><span class="toc-text">(3) 模型训练</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4-%E6%A8%A1%E5%9E%8B%E8%AF%84%E4%BC%B0"><span class="toc-text">(4) 模型评估</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#5-%E6%A8%A1%E5%9E%8B%E8%B0%83%E4%BC%98"><span class="toc-text">(5) 模型调优</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#8-%E4%BB%A3%E7%A0%81%E7%A4%BA%E4%BE%8B"><span class="toc-text">8. 代码示例</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#9-%E7%BB%93%E8%AE%BA"><span class="toc-text">9. 结论</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#10-GBDT-%E5%92%8C-XGboost"><span class="toc-text">10 GBDT 和 XGboost</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E4%BC%98%E5%8C%96%EF%BC%9A%E5%BC%95%E5%85%A5%E4%BA%8C%E9%98%B6%E5%AF%BC%E6%95%B0%E4%BF%A1%E6%81%AF"><span class="toc-text">损失函数优化：引入二阶导数信息</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%AD%A3%E5%88%99%E5%8C%96%EF%BC%9A%E6%8E%A7%E5%88%B6%E6%A8%A1%E5%9E%8B%E5%A4%8D%E6%9D%82%E5%BA%A6%EF%BC%88%E9%98%B2%E6%AD%A2%E8%BF%87%E6%8B%9F%E5%90%88%EF%BC%89"><span class="toc-text">正则化：控制模型复杂度（防止过拟合）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%B9%B6%E8%A1%8C%E8%AE%A1%E7%AE%97%EF%BC%9A%E4%BC%98%E5%8C%96%E8%AE%AD%E7%BB%83%E6%95%88%E7%8E%87"><span class="toc-text">并行计算：优化训练效率</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%94%AF%E6%8C%81%E8%A1%8C-%E5%88%97%E9%87%87%E6%A0%B7"><span class="toc-text">支持行&#x2F;列采样</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%9F%BA%E4%BA%8E%E5%88%86%E8%A3%82%E7%9A%84%E5%81%9C%E6%AD%A2%E7%AD%96%E7%95%A5"><span class="toc-text">基于分裂的停止策略</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%94%AF%E6%8C%81%E7%A8%80%E7%96%8F%E7%89%B9%E5%BE%81%E7%9A%84%E5%A4%84%E7%90%86"><span class="toc-text">支持稀疏特征的处理</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%94%AF%E6%8C%81%E8%87%AA%E5%AE%9A%E4%B9%89%E7%9B%AE%E6%A0%87%E5%87%BD%E6%95%B0"><span class="toc-text">支持自定义目标函数</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%80%BB%E7%BB%93%EF%BC%9AXGBoost-%E5%AF%B9-GBDT-%E7%9A%84%E4%BC%98%E8%B6%8A%E6%80%A7"><span class="toc-text">总结：XGBoost 对 GBDT 的优越性</span></a></li></ol></li></ol></li></ol>
+      </div>
+    </div>
+  
+  
+  <article class="page-content">
+    <h1 class="page-title">Machine Leaning (XGBoost)</h1>
+    <div class="page-body">
+      <h2 id="XGBoost"><a href="#XGBoost" class="headerlink" title="XGBoost"></a>XGBoost</h2><p>XGBoost（Extreme Gradient Boosting）是一个高效的、可扩展的树模型实现，广泛用于结构化数据（表格数据）场景的机器学习任务，如分类和回归问题。它以其高性能、灵活性和优化的实现赢得了广泛使用，尤其是在Kaggle竞赛和工业应用中。</p>
+<h3 id="1-什么是XGBoost？"><a href="#1-什么是XGBoost？" class="headerlink" title="1. 什么是XGBoost？"></a>1. 什么是XGBoost？</h3><p>XGBoost是基于梯度提升（Gradient Boosting）算法优化后的提升树（Boosted Trees）模型。梯度提升是一种集成学习方法，它通过将多个弱学习器（比如决策树）串联起来，从而构建出一个强学习器。XGBoost对梯度提升进行了许多工程化、数学优化和高效实现，使其具有以下特点：</p>
+<ul>
+<li><strong>更高效的计算</strong>：通过增量式的优化，充分利用多线程和存储资源。</li>
+<li><strong>正则化</strong>：引入了L1和L2正则化，增加了控制过拟合的能力。</li>
+<li><strong>处理缺失值</strong>：自动处理缺失值，使其适用于更复杂的数据场景。</li>
+<li><strong>可并行计算</strong>：支持分布式计算，适合大规模数据集。</li>
+<li><strong>灵活性强</strong>：可用于分类、回归、排序（Ranking）等任务。</li>
+</ul>
+<hr>
+<h3 id="2-核心思路"><a href="#2-核心思路" class="headerlink" title="2. 核心思路"></a>2. 核心思路</h3><p>XGBoost基于梯度提升树（Gradient Boosting Decision Trees, GBDT），而梯度提升树的主要思想是通过迭代地优化一个损失函数，逐步构建出一组弱学习器（通常是决策树），每一棵树用于修正上一棵树的残差（预测误差）。XGBoost在此基础上进行了一系列增强：</p>
+<ol>
+<li><strong>加速计算</strong>：通过内存感知的块存储结构、高效分裂点查找、支持多线程等手段，提升训练速度。</li>
+<li><strong>自定义损失函数</strong>：可使用一阶梯度（原始梯度）和二阶梯度（Hessian矩阵）来优化目标函数，提高拟合准确性。</li>
+<li><strong>正则化</strong>：在目标函数中加入正则化项，从而控制模型复杂度。</li>
+<li><strong>独特的分裂节点优化</strong>：优先选择总增益最大的分裂点，同时适配加权数据。</li>
+<li><strong>处理稀疏数据</strong>：通过启发式的算法处理缺失值，同时支持稀疏输入矩阵。</li>
+</ol>
+<hr>
+<h3 id="3-数学公式"><a href="#3-数学公式" class="headerlink" title="3. 数学公式"></a>3. 数学公式</h3><h4 id="1-模型目标函数"><a href="#1-模型目标函数" class="headerlink" title="(1) 模型目标函数"></a>(1) 模型目标函数</h4><p>XGBoost的核心在于最小化目标函数 ( \mathcal{L} )，包括损失函数和正则化项：<br>$$<br>\mathcal{L} &#x3D; \sum_{i&#x3D;1}^n l(y_i, \hat{y}<em>i) + \sum</em>{k&#x3D;1}^K \Omega(f_k)<br>$$</p>
+<ul>
+<li><p>$l(y_i, \hat{y}_i)$ ：损失函数，用于衡量预测值与真实值之间的差距。</p>
+</li>
+<li><p>$\Omega(f_k)$ ：正则化项，用于控制树的复杂度。<br>  $$<br>  \Omega(f_k) &#x3D; \gamma T + \frac{1}{2} \lambda | w |^2<br>  $$</p>
+</li>
+<li><p>( $T$ )：树的叶节点数量。</p>
+</li>
+<li><p>( $w$ )：叶节点的权重。</p>
+</li>
+<li><p>( $\gamma, \lambda$ )：正则化系数，控制树的复杂度。</p>
+</li>
+</ul>
+<h4 id="2-二阶近似优化"><a href="#2-二阶近似优化" class="headerlink" title="(2) 二阶近似优化"></a>(2) 二阶近似优化</h4><p>XGBoost使用泰勒展开公式，对损失函数在当前模型处取二阶展开，从而更高效地找到最优分裂点：<br>$$<br>\mathcal{L}^{(t)} \approx \sum_{i&#x3D;1}^n \big[ g_i w_i + \frac{1}{2} h_i w_i^2 \big] + \Omega(f)<br>$$</p>
+<ul>
+<li>( $g_i &#x3D; \partial_{\hat{y}^{(t-1)}} l(y_i, \hat{y}^{(t-1)})$ )：一阶梯度 （梯度下降的方向）。</li>
+<li>( $h_i &#x3D; \partial^2_{\hat{y}^{(t-1)}} l(y_i, \hat{y}^{(t-1)})$ )：二阶梯度（梯度下降的变化率）。</li>
+</ul>
+<h4 id="3-分裂增益计算"><a href="#3-分裂增益计算" class="headerlink" title="(3) 分裂增益计算"></a>(3) 分裂增益计算</h4><p>伪装节点的分裂增益公式为：</p>
+<p>$Gain&#x3D;(分裂后损失的减少)&#x3D;(左子树的损失 + 右子树的损失) - 分裂前的总损失$<br>$$<br>\text{Gain} &#x3D; \frac{1}{2} \bigg[ \frac{G_L^2}{H_L + \lambda} + \frac{G_R^2}{H_R + \lambda} - \frac{(G_L+G_R)^2}{H_L + H_R + \lambda} \bigg] - \gamma<br>$$</p>
+<ul>
+<li>( G_L, G_R )：左、右子节点的一阶梯度和。</li>
+<li>( H_L, H_R )：左、右子节点的二阶梯度和。</li>
+<li>( $\lambda, \gamma$ )：正则化参数。</li>
+</ul>
+<p>​	<strong>实际操作过程</strong>：</p>
+<p>​	遍历所有特征的所有可能分裂点。</p>
+<p>​	在每个分裂点上计算分裂增益。</p>
+<p>​	选择增益最大的分裂点作为最佳分裂点。</p>
+<p>​	如果最大的增益 GainGain 小于 𝛾<em>γ</em>，则停止分裂。</p>
+<h4 id="4-叶子节点的权重计算"><a href="#4-叶子节点的权重计算" class="headerlink" title="(4) 叶子节点的权重计算"></a>(4) 叶子节点的权重计算</h4><ul>
+<li><p>XGBoost 为了计算各叶子节点的最终权重，使用以下公式：</p>
+<p>$$<br>w_j &#x3D; -\frac{\sum_{i \in j} g_i}{\sum_{i \in j} h_i + \lambda}<br>$$</p>
+<ul>
+<li>($j$)：表示某一个具体的叶子节点。</li>
+<li>($i \in j$)：指代所有分配到节点 (j) 的样本索引。</li>
+<li>($g_i$)：样本 (i) 对应的一阶梯度，代表模型的误差方向。</li>
+<li>($h_i$)：样本 (i) 对应的二阶梯度，衡量误差的曲率。</li>
+<li>($\lambda$)：L2 正则化参数，用于控制权重的大小，防止模型过拟合。</li>
+</ul>
+<p>这公式的含义是：通过优化一阶梯度（误差方向）的和，同时结合样本的二阶梯度（曲率），来决定当前叶子节点的最佳输出值。</p>
+</li>
+</ul>
+<hr>
+<h3 id="4-XGBoost的优点"><a href="#4-XGBoost的优点" class="headerlink" title="4. XGBoost的优点"></a>4. XGBoost的优点</h3><ol>
+<li><strong>速度快</strong>：利用多核、多线程、增量式的计算方法，训练效率极高。</li>
+<li><strong>性能优</strong>：通过正则化和对目标函数的高级优化，能有效控制过拟合。</li>
+<li><strong>灵活性高</strong>：支持分类、回归、排序、特定的自定义目标函数。</li>
+<li><strong>处理缺失值</strong>：可<strong>自动选择最优方向完成缺失值</strong>填充。</li>
+<li><strong>特征选择能力强</strong>：通过树模型的结构，能够有效识别重要特征。</li>
+<li><strong>支持分布式计算</strong>：具备良好的扩展性，适用大规模数据集。</li>
+</ol>
+<h3 id="5-XGboost-Summary"><a href="#5-XGboost-Summary" class="headerlink" title="5. XGboost Summary"></a>5. XGboost Summary</h3><ol>
+<li><strong>Start with an initial prediction (e.g., mean or prior values):</strong><br> Initialize the model predictions $𝑦^𝑖<em>y</em>^<em>i</em>$ with a base value, such as the average of the target variable in a regression task or the logarithmic odds in a classification task.</li>
+<li><strong>Calculate residuals:</strong><br> For each iteration, calculate the residuals or gradients that represent the model’s errors with respect to the current predictions.</li>
+<li><strong>Train a new tree to minimize residuals:</strong><br> Fit a new decision tree using the residuals&#x2F;gradients as the target variable. The tree learns how to correct the current errors in the prediction.</li>
+<li><strong>Adjust leaf weights based on gradients and second-order gradients:</strong><br> Once the structure of the tree is determined, calculate the weights for each leaf based on the gradients and second-order gradients for the samples falling into that leaf. The tree’s predictions are scaled by the learning rate and added to the cumulative predictions.</li>
+<li><strong>Update predictions iteratively:</strong><br> Repeat steps 2–4 iteratively, so that each new tree gradually improves the model’s overall prediction by correcting the previous residuals.</li>
+</ol>
+<hr>
+<h3 id="6-XGBoost的参数详解"><a href="#6-XGBoost的参数详解" class="headerlink" title="6. XGBoost的参数详解"></a>6. XGBoost的参数详解</h3><p>XGBoost的参数分为三类：<strong>通用参数</strong>、<strong>树参数</strong>、<strong>学习目标参数</strong>。</p>
+<h4 id="1-通用参数"><a href="#1-通用参数" class="headerlink" title="(1) 通用参数"></a>(1) 通用参数</h4><ul>
+<li><code>booster</code>：选择基础模型（默认值为<code>gbtree</code>），支持<code>gbtree</code>（树模型）、<code>gblinear</code>（线性模型）、<code>dart</code>（带Dropout的树模型）。</li>
+<li><code>nthread</code>：设置线程数。</li>
+</ul>
+<h4 id="2-树参数"><a href="#2-树参数" class="headerlink" title="(2) 树参数"></a>(2) 树参数</h4><ul>
+<li><code>max_depth</code>：树的最大深度，控制模型复杂性，默认值为6。</li>
+<li><code>eta</code>（Learning Rate）：学习率，控制每棵树对最终模型的贡献，默认值为<code>0.3</code>。</li>
+<li><code>min_child_weight</code>：最小叶节点样本权重和，用于防止过拟合，默认值为<code>1</code>。</li>
+<li><code>subsample</code>：训练数据的采样比例（默认值<code>1</code>）。</li>
+<li><code>colsample_bytree</code>：每棵树随机采样的特征比例，防止过拟合。</li>
+<li><code>lambda</code>：L2正则化系数，默认值<code>1</code>。</li>
+<li><code>gamma</code>：最小分裂增益，默认值<code>0</code>。</li>
+</ul>
+<h4 id="3-学习目标参数"><a href="#3-学习目标参数" class="headerlink" title="(3) 学习目标参数"></a>(3) 学习目标参数</h4><ul>
+<li><code>objective</code>：定义学习任务（如分类、回归、排序等）。<ul>
+<li><code>reg:linear</code>：线性回归。</li>
+<li><code>binary:logistic</code>：二分类问题。</li>
+<li><code>multi:softmax</code>：多分类，返回类别。</li>
+<li><code>multi:softprob</code>：多分类，返回类别概率。</li>
+</ul>
+</li>
+</ul>
+<h3 id="7-使用XGBoost的步骤"><a href="#7-使用XGBoost的步骤" class="headerlink" title="7. 使用XGBoost的步骤"></a>7. 使用XGBoost的步骤</h3><p>以下是典型的XGBoost建模流程：</p>
+<h4 id="1-数据预处理"><a href="#1-数据预处理" class="headerlink" title="(1) 数据预处理"></a>(1) 数据预处理</h4><ul>
+<li>清洗、处理缺失值和异常值。</li>
+<li>分割训练集和测试集。</li>
+<li>特征工程（如编码、归一化、特征选择）。</li>
+</ul>
+<h4 id="2-模型构建"><a href="#2-模型构建" class="headerlink" title="(2) 模型构建"></a>(2) 模型构建</h4><ul>
+<li>导入XGBoost库（如<code>xgboost</code>或<code>sklearn</code>接口）。</li>
+<li>定义超参数（包括树深、学习率等）。</li>
+<li>使用DMatrix数据格式加载输入特征和目标。</li>
+</ul>
+<h4 id="3-模型训练"><a href="#3-模型训练" class="headerlink" title="(3) 模型训练"></a>(3) 模型训练</h4><ul>
+<li>使用<code>xgb.train()</code>或<code>XGBClassifier</code>训练模型。</li>
+<li>定义早停条件（如<code>early_stopping_rounds</code>）。</li>
+</ul>
+<h4 id="4-模型评估"><a href="#4-模型评估" class="headerlink" title="(4) 模型评估"></a>(4) 模型评估</h4><ul>
+<li>使用交叉验证或测试集，评估性能指标（如AUC、F1-score）。</li>
+</ul>
+<h4 id="5-模型调优"><a href="#5-模型调优" class="headerlink" title="(5) 模型调优"></a>(5) 模型调优</h4><ul>
+<li>调整超参数（如<code>max_depth</code>、<code>min_child_weight</code>、<code>colsample_bytree</code>等）。</li>
+<li>结合网格搜索（Grid Search）或贝叶斯优化。</li>
+</ul>
+<hr>
+<h3 id="8-代码示例"><a href="#8-代码示例" class="headerlink" title="8. 代码示例"></a>8. 代码示例</h3><p>以下是一个简单的二分类任务的XGBoost示例：</p>
+<pre class="line-numbers language-python" data-language="python"><code class="language-python"><span class="token keyword">import</span> xgboost <span class="token keyword">as</span> xgb
+<span class="token keyword">from</span> sklearn<span class="token punctuation">.</span>datasets <span class="token keyword">import</span> load_breast_cancer
+<span class="token keyword">from</span> sklearn<span class="token punctuation">.</span>model_selection <span class="token keyword">import</span> train_test_split
+<span class="token keyword">from</span> sklearn<span class="token punctuation">.</span>metrics <span class="token keyword">import</span> roc_auc_score
+
+<span class="token comment"># 加载数据</span>
+data <span class="token operator">=</span> load_breast_cancer<span class="token punctuation">(</span><span class="token punctuation">)</span>
+X<span class="token punctuation">,</span> y <span class="token operator">=</span> data<span class="token punctuation">.</span>data<span class="token punctuation">,</span> data<span class="token punctuation">.</span>target
+X_train<span class="token punctuation">,</span> X_test<span class="token punctuation">,</span> y_train<span class="token punctuation">,</span> y_test <span class="token operator">=</span> train_test_split<span class="token punctuation">(</span>X<span class="token punctuation">,</span> y<span class="token punctuation">,</span> test_size<span class="token operator">=</span><span class="token number">0.2</span><span class="token punctuation">,</span> random_state<span class="token operator">=</span><span class="token number">42</span><span class="token punctuation">)</span>
+
+<span class="token comment"># 转换为XGBoost专用的DMatrix数据格式</span>
+dtrain <span class="token operator">=</span> xgb<span class="token punctuation">.</span>DMatrix<span class="token punctuation">(</span>X_train<span class="token punctuation">,</span> label<span class="token operator">=</span>y_train<span class="token punctuation">)</span>
+dtest <span class="token operator">=</span> xgb<span class="token punctuation">.</span>DMatrix<span class="token punctuation">(</span>X_test<span class="token punctuation">,</span> label<span class="token operator">=</span>y_test<span class="token punctuation">)</span>
+
+<span class="token comment"># 定义参数</span>
+params <span class="token operator">=</span> <span class="token punctuation">&#123;</span>
+    <span class="token string">'objective'</span><span class="token punctuation">:</span> <span class="token string">'binary:logistic'</span><span class="token punctuation">,</span>
+    <span class="token string">'max_depth'</span><span class="token punctuation">:</span> <span class="token number">6</span><span class="token punctuation">,</span>
+    <span class="token string">'eta'</span><span class="token punctuation">:</span> <span class="token number">0.1</span><span class="token punctuation">,</span>
+    <span class="token string">'eval_metric'</span><span class="token punctuation">:</span> <span class="token string">'auc'</span>
+<span class="token punctuation">&#125;</span>
+
+<span class="token comment"># 训练模型</span>
+evals <span class="token operator">=</span> <span class="token punctuation">[</span><span class="token punctuation">(</span>dtrain<span class="token punctuation">,</span> <span class="token string">'train'</span><span class="token punctuation">)</span><span class="token punctuation">,</span> <span class="token punctuation">(</span>dtest<span class="token punctuation">,</span> <span class="token string">'eval'</span><span class="token punctuation">)</span><span class="token punctuation">]</span>
+model <span class="token operator">=</span> xgb<span class="token punctuation">.</span>train<span class="token punctuation">(</span>params<span class="token punctuation">,</span> dtrain<span class="token punctuation">,</span> num_boost_round<span class="token operator">=</span><span class="token number">100</span><span class="token punctuation">,</span> evals<span class="token operator">=</span>evals<span class="token punctuation">,</span> early_stopping_rounds<span class="token operator">=</span><span class="token number">10</span><span class="token punctuation">)</span>
+
+<span class="token comment"># 预测</span>
+y_pred <span class="token operator">=</span> model<span class="token punctuation">.</span>predict<span class="token punctuation">(</span>dtest<span class="token punctuation">)</span>
+auc_score <span class="token operator">=</span> roc_auc_score<span class="token punctuation">(</span>y_test<span class="token punctuation">,</span> y_pred<span class="token punctuation">)</span>
+<span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string-interpolation"><span class="token string">f"AUC Score: </span><span class="token interpolation"><span class="token punctuation">&#123;</span>auc_score<span class="token punctuation">&#125;</span></span><span class="token string">"</span></span><span class="token punctuation">)</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<hr>
+<h3 id="9-结论"><a href="#9-结论" class="headerlink" title="9. 结论"></a>9. 结论</h3><p>XGBoost是一种强大的机器学习工具，特别适合梯度提升树模型的场景。通过优化计算方法、自定义目标函数、正则化和扩展性等特点，XGBoost在工业界与学术界均有卓越应用。掌握其原理和参数调优，能够有效提升数据科学项目的性能和效率。</p>
+<h3 id="10-GBDT-和-XGboost"><a href="#10-GBDT-和-XGboost" class="headerlink" title="10 GBDT 和 XGboost"></a>10 GBDT 和 XGboost</h3><p>XGBoost 是众多实现 <strong>Gradient Boosting Decision Tree</strong> (GBDT，梯度提升决策树) 的一种，但它在 GBDT 的基础上引入了多种优化和改进，使其在工程高效性、性能表现和鲁棒性方面超越了传统的 GBDT。下面我们来详细讲解 <strong>XGBoost 和传统 GBDT 的主要区别</strong>。</p>
+<h4 id="损失函数优化：引入二阶导数信息"><a href="#损失函数优化：引入二阶导数信息" class="headerlink" title="损失函数优化：引入二阶导数信息"></a><strong>损失函数优化：引入二阶导数信息</strong></h4><p><strong>传统 GBDT</strong>：</p>
+<ul>
+<li>仅使用目标函数的一阶梯度（即残差）来指导新树的生成。</li>
+<li>目标是基于一阶梯度，使模型不断逼近最优解。</li>
+</ul>
+<p><strong>XGBoost</strong>：</p>
+<ul>
+<li><strong>引入了二阶梯度（Hessian，目标函数的曲率）进行优化。</strong></li>
+<li>树节点的划分不仅依赖于一阶梯度，还考虑了二阶梯度（即损失函数的曲率特性），引入了更精确的梯度信息。</li>
+<li>二阶梯度进一步提升了分裂点计算的准确性和优化性，帮助模型更好地拟合复杂数据。</li>
+</ul>
+<p><strong>二阶信息的改进：</strong></p>
+<p>XGBoost 在目标函数中加入二阶梯度的累加项，分裂点决策时的公式为：<br>$\text{Gain} &#x3D; \frac{1}{2} \left( \frac{G_L^2}{H_L + \lambda} + \frac{G_R^2}{H_R + \lambda} - \frac{(G_P)^2}{H_P + \lambda} \right) - \gamma$</p>
+<ul>
+<li>( G )：一阶梯度的累加。</li>
+<li>( H )：二阶梯度的累加。</li>
+<li><strong>效果</strong>：比单纯基于一阶残差的传统 GBDT 提供更准确的分裂评估，同时二阶信息能更好地避免梯度方向过冲（Overstepping）。</li>
+</ul>
+<h4 id="正则化：控制模型复杂度（防止过拟合）"><a href="#正则化：控制模型复杂度（防止过拟合）" class="headerlink" title="正则化：控制模型复杂度（防止过拟合）"></a><strong>正则化：控制模型复杂度（防止过拟合）</strong></h4><p><strong>传统 GBDT：</strong></p>
+<ul>
+<li>通常没有明确的正则化项，较难控制模型的复杂度。</li>
+<li>因为迭代训练中如果树的深度很深或切分过多，传统 GBDT 往往容易过拟合。</li>
+</ul>
+<p><strong>XGBoost：</strong></p>
+<ul>
+<li>在目标函数中显式引入了正则化项，通过控制模型复杂度来防止过拟合：<br>[<br>$\mathcal{L}(q) &#x3D; -\frac{1}{2}(\text{目标函数中的一阶和二阶梯度优化}) + \Omega(f)$<br>]<br>正则化项：<br>[<br>$\Omega(f) &#x3D; \gamma T + \frac{\lambda}{2} \sum_j w_j^2$<br>]<ul>
+<li>( \gamma T )：控制叶子节点个数 (T) 的惩罚，用于限制树的深度；</li>
+<li>( \lambda \sum w_j^2 )：控制叶子节点权重 (w_j) 的惩罚，用于避免过大的权重值。</li>
+<li><strong>效果</strong>：正则化项可以防止模型在训练时过拟合，同时提升泛化能力。</li>
+</ul>
+</li>
+</ul>
+<h4 id="并行计算：优化训练效率"><a href="#并行计算：优化训练效率" class="headerlink" title="并行计算：优化训练效率"></a><strong>并行计算：优化训练效率</strong></h4><p><strong>传统 GBDT：</strong></p>
+<ul>
+<li>传统 GBDT 是 <strong>串行</strong> 的方法，即每棵树的训练必须依赖于上一棵树的输出，因此无法并行化。</li>
+<li>效率相对较低，尤其是在大规模数据集上，耗时较长。</li>
+</ul>
+<p><strong>XGBoost：</strong></p>
+<ul>
+<li><p><strong>全局搜索优化加并行化计算：</strong></p>
+<ol>
+<li>引入了 <strong>Block-wise 的分裂模型</strong>：<ul>
+<li>对于特定节点，XGBoost 使用直方图算法（Histogram）对特征值排序并离散化，计算每个分裂点的候选增益。</li>
+<li>一旦节点划分结束，其增益计算可以在多个线程间并行化。</li>
+</ul>
+</li>
+<li>将并行化落地到节点的分裂计算中：<ul>
+<li>特征按区块划分，增益计算可以在每个区块中同时完成，显著提高效率。</li>
+</ul>
+</li>
+<li>对特征子集或样本做随机分割（列采样和行采样），进一步提升计算效率。</li>
+</ol>
+</li>
+<li><p><strong>效果</strong>：通过支持并行化，XGBoost 在大量数据和高维场景中计算速度远超传统 GBDT。</p>
+</li>
+</ul>
+<h4 id="支持行-列采样"><a href="#支持行-列采样" class="headerlink" title="支持行&#x2F;列采样"></a><strong>支持行&#x2F;列采样</strong></h4><p><strong>传统 GBDT：</strong></p>
+<ul>
+<li>大多数 GBDT 实现（如 sklearn 中的 GradientBoosting）对特征不支持列采样，对数据行采样的支持也有限。</li>
+<li>只能依赖全部数据进行树分裂，容易导致过拟合，且计算成本高（因为所有列都要用于分裂）。</li>
+</ul>
+<p><strong>XGBoost：</strong></p>
+<ul>
+<li>支持 <strong>列采样（feature sampling）</strong>：随机选择部分特征用于分裂。<ul>
+<li>类似于随机森林的特征子集选择方法（列采样）。</li>
+<li>帮助进行降维，缓解数据中冗余特征的干扰，同时提升效率并增强模型的鲁棒性。</li>
+</ul>
+</li>
+<li>支持 <strong>行采样（row sampling）</strong>：对数据进行随机采样，这种方法类似于传统 Bagging 的原理，进一步减轻了过拟合的风险。</li>
+</ul>
+<h4 id="基于分裂的停止策略"><a href="#基于分裂的停止策略" class="headerlink" title="基于分裂的停止策略"></a><strong>基于分裂的停止策略</strong></h4><p><strong>传统 GBDT：</strong></p>
+<ul>
+<li>传统 GBDT 通常没有细化的停止策略，通常用树的固定深度或样本个数等简单规则来决定分裂是否停止。</li>
+<li>在某些场景下效果欠佳（可能过度分裂导致过拟合）。</li>
+</ul>
+<p><strong>XGBoost：</strong></p>
+<ul>
+<li>XGBoost 的分裂停止标准更加严格：<ul>
+<li>如果在某个节点进行分裂后的增益 ( \text{Gain} ) 小于阈值 ( \gamma )，则停止分裂，当前节点变为叶子节点。</li>
+<li>结合正则化项 ( \mathcal{L}(q) + \Omega(f) )，对分类叶子节点和树结构进行复杂度限制，从而显著减少树的冗余分裂。</li>
+</ul>
+</li>
+</ul>
+<h4 id="支持稀疏特征的处理"><a href="#支持稀疏特征的处理" class="headerlink" title="支持稀疏特征的处理"></a><strong>支持稀疏特征的处理</strong></h4><p><strong>传统 GBDT：</strong></p>
+<ul>
+<li>传统实现难以很好地处理稀疏数据（例如缺失值或很多特征值为零的场景），可能需要手动预处理。</li>
+</ul>
+<p><strong>XGBoost：</strong></p>
+<ul>
+<li>原生支持稀疏特征，通过使用默认方向（default direction）处理缺失值。<ul>
+<li>每次分裂时，模型会学习在特征缺失情况下样本的默认去向（是分到左子节点还是右子节点）。</li>
+</ul>
+</li>
+<li>提供对稀疏特征计算效率的优化，同时提升模型的鲁棒性。</li>
+</ul>
+<h4 id="支持自定义目标函数"><a href="#支持自定义目标函数" class="headerlink" title="支持自定义目标函数"></a><strong>支持自定义目标函数</strong></h4><p><strong>传统 GBDT：</strong></p>
+<ul>
+<li>大多数传统 GBDT 实现只支持少量固定的目标函数（如均方误差、二元对数损失）。</li>
+</ul>
+<p><strong>XGBoost：</strong></p>
+<ul>
+<li>提供接口支持自定义任意可微目标函数。<ul>
+<li>用户只需要提供 <strong>一阶导数</strong> 和 <strong>二阶导数</strong>，即可将不同任务（如排序、目标优化、回归等）套用到 XGBoost 中。</li>
+<li>如排序任务的 LambdaRank、Pairwise Ranking 等可以轻松整合到 XGBoost。</li>
+</ul>
+</li>
+</ul>
+<h4 id="总结：XGBoost-对-GBDT-的优越性"><a href="#总结：XGBoost-对-GBDT-的优越性" class="headerlink" title="总结：XGBoost 对 GBDT 的优越性"></a>总结：XGBoost 对 GBDT 的优越性</h4><table>
+<thead>
+<tr>
+<th><strong>特性</strong></th>
+<th><strong>传统 GBDT</strong></th>
+<th><strong>XGBoost</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>优化目标</strong></td>
+<td>一阶梯度</td>
+<td>一阶梯度 + 二阶梯度（目标函数曲率）</td>
+</tr>
+<tr>
+<td><strong>正则化</strong></td>
+<td>无显式正则化</td>
+<td>显式正则化（叶节点和树深度的惩罚）</td>
+</tr>
+<tr>
+<td><strong>并行化</strong></td>
+<td>不支持</td>
+<td>支持特征和样本的并行化处理</td>
+</tr>
+<tr>
+<td><strong>列&#x2F;行采样</strong></td>
+<td>不支持</td>
+<td>支持列采样和行采样，缓解过拟合并提升效率</td>
+</tr>
+<tr>
+<td><strong>稀疏数据处理</strong></td>
+<td>不支持</td>
+<td>支持稀疏特征，自动处理缺失值</td>
+</tr>
+<tr>
+<td><strong>分裂停止策略</strong></td>
+<td>简单停深条件</td>
+<td>自适应增益阈值 ( \gamma ) 用于分裂决策</td>
+</tr>
+<tr>
+<td><strong>自定义目标函数</strong></td>
+<td>不支持</td>
+<td>支持任意可微目标函数</td>
+</tr>
+<tr>
+<td><strong>工程优化和效率</strong></td>
+<td>慢（因为无并行和优化）</td>
+<td>快（支持并行化、缓存优化、大规模分布式训练）</td>
+</tr>
+</tbody></table>
+<p>可以总结为 <strong>XGBoost 是工程优化、正则化处理更强的 GBDT 版本</strong>，尤其在大规模数据、稀疏特征、有复杂任务需求时表现尤为突出。</p>
+
+    </div>
+  </article>
+</div>
+  </main>
+
+  <footer>
+    <p>
+      &copy; 2025 Shark Blog 
+      <a href="https://github.com/eddiehex/hexo-geek-source" target="_blank">
+        <i class="fab fa-github"></i>
+      </a>
+    </p>
+  </footer>
+
+  <script src="/js/search.js"></script>
+  <script src="/js/main.js"></script>
+  <script src="/js/copy-code.js"></script>
+  <script src="/js/prism.js"></script>
+  <script src="/js/toc-highlight.js"></script>
+  <script src="/js/mobile-menu.js"></script>
+</body>
+</html>

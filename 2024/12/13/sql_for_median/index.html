@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Shark Blog</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/prism-code.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <link rel="icon" href="https://hexo.kygoho.win/upload/uploads/6e7cf36d-8cb2-40c6-831f-80ef7488cca4.png" type="image/x-icon">
+  <link rel="stylesheet" href="/css/toc.css">
+  
+  <!-- MathJax Configuration -->
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']],
+        processEscapes: true,
+        processEnvironments: true,
+        packages: ['base', 'ams', 'noerrors', 'noundefined']
+      },
+      options: {
+        ignoreHtmlClass: 'tex2jax_ignore',
+        processHtmlClass: 'tex2jax_process'
+      },
+      startup: {
+        ready() {
+          MathJax.startup.defaultReady();
+          // Re-render math when content changes
+          document.addEventListener('DOMContentLoaded', function() {
+            if (window.MathJax && window.MathJax.typesetPromise) {
+              window.MathJax.typesetPromise();
+            }
+          });
+        }
+      }
+    };
+  </script>
+  <script async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.min.js"></script>
+<meta name="generator" content="Hexo 6.3.0"></head>
+<body>
+  <header>
+    <nav>
+      <div class="nav-container">
+        <div class="logo"><a href="/">Shark Blog</a></div>
+        <div class="search-container">
+          <input type="text" id="search-input" placeholder="Search...">
+          <div id="search-results"></div>
+        </div>
+        <div class="menu-toggle">
+          <i class="fas fa-bars"></i>
+        </div>
+      </div>
+      <ul class="nav-links">
+        <li><a href="/">Posts</a></li>
+        <li><a href="/services">Services</a></li>
+        <li><a href="/archives">Archive</a></li>
+        <li><a href="/categories">Categories</a></li>
+        <li><a href="/about">About</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <div class="page-container">
+  
+  
+  <article class="page-content">
+    <h1 class="page-title">Sql for Median</h1>
+    <div class="page-body">
+      <p>在 SQL 中求中位数稍微比求平均数复杂一些，因为中位数需要找到排序后中间的那个值（或者中间两个值的平均值）。不同的数据库系统提供了不同的方法来实现，这里我将介绍几种常用的方法，并针对不同的数据库给出示例。</p>
+<p><strong>核心思想：</strong></p>
+<ol>
+<li><strong>排序:</strong> 首先需要对数据进行排序。</li>
+<li><strong>确定中位数位置:</strong><ul>
+<li>如果数据量是奇数，中位数就是中间的那个值。</li>
+<li>如果数据量是偶数，中位数是中间两个值的平均值。</li>
+</ul>
+</li>
+</ol>
+<p><strong>方法和示例：</strong></p>
+<p><strong>1. 使用窗口函数 (适用于 SQL Server, PostgreSQL, Oracle, MySQL 8+):</strong></p>
+<p>   窗口函数可以方便地计算排序后的行号，然后根据行号来确定中位数。</p>
+   <pre class="line-numbers language-sql" data-language="sql"><code class="language-sql"><span class="token comment">-- 假设表名为 `your_table`，需要求中位数的列名为 `your_column`</span>
+<span class="token keyword">WITH</span> RankedData <span class="token keyword">AS</span> <span class="token punctuation">(</span>
+    <span class="token keyword">SELECT</span> 
+        your_column<span class="token punctuation">,</span>
+        ROW_NUMBER<span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token keyword">OVER</span> <span class="token punctuation">(</span><span class="token keyword">ORDER</span> <span class="token keyword">BY</span> your_column<span class="token punctuation">)</span> <span class="token keyword">AS</span> rn<span class="token punctuation">,</span>
+        <span class="token function">COUNT</span><span class="token punctuation">(</span><span class="token operator">*</span><span class="token punctuation">)</span> <span class="token keyword">OVER</span> <span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token keyword">AS</span> total_count
+    <span class="token keyword">FROM</span> your_table
+<span class="token punctuation">)</span>
+<span class="token keyword">SELECT</span>
+    <span class="token keyword">CASE</span>
+        <span class="token keyword">WHEN</span> total_count <span class="token operator">%</span> <span class="token number">2</span> <span class="token operator">=</span> <span class="token number">0</span> <span class="token keyword">THEN</span>  <span class="token comment">-- 偶数个数据</span>
+            <span class="token punctuation">(</span><span class="token keyword">SELECT</span> <span class="token function">AVG</span><span class="token punctuation">(</span>your_column<span class="token punctuation">)</span> <span class="token keyword">FROM</span> RankedData <span class="token keyword">WHERE</span> rn <span class="token operator">IN</span> <span class="token punctuation">(</span>total_count<span class="token operator">/</span><span class="token number">2</span><span class="token punctuation">,</span> total_count<span class="token operator">/</span><span class="token number">2</span> <span class="token operator">+</span> <span class="token number">1</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+        <span class="token keyword">ELSE</span>  <span class="token comment">-- 奇数个数据</span>
+            <span class="token punctuation">(</span><span class="token keyword">SELECT</span> your_column <span class="token keyword">FROM</span> RankedData <span class="token keyword">WHERE</span> rn <span class="token operator">=</span> <span class="token punctuation">(</span>total_count <span class="token operator">+</span> <span class="token number">1</span><span class="token punctuation">)</span><span class="token operator">/</span><span class="token number">2</span><span class="token punctuation">)</span>
+    <span class="token keyword">END</span> <span class="token keyword">AS</span> median
+<span class="token keyword">FROM</span> RankedData
+<span class="token keyword">LIMIT</span> <span class="token number">1</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>   <strong>解释:</strong></p>
+<ul>
+<li><code>ROW_NUMBER() OVER (ORDER BY your_column)</code>: 为每一行按照 <code>your_column</code> 的值排序并生成行号。</li>
+<li><code>COUNT(*) OVER ()</code>: 计算总共有多少行数据。</li>
+<li><code>CASE WHEN ... THEN ... ELSE ... END</code>: 根据数据总量是奇数还是偶数来选择不同的计算方式。</li>
+<li>偶数时，取中间两个行号的数值并计算平均值。</li>
+<li>奇数时，取中间行号的数值。</li>
+<li><code>LIMIT 1</code>: 因为所有行计算出的中位数是一样的，所以只需要返回一行。</li>
+</ul>
+<p><strong>2. 使用子查询和变量 (适用于 MySQL 5.x - 7.x, MariaDB):</strong></p>
+<p>   早期的 MySQL 版本没有窗口函数，需要使用变量来实现排序和行号计算。</p>
+   <pre class="line-numbers language-sql" data-language="sql"><code class="language-sql"><span class="token keyword">SET</span> <span class="token variable">@row_number</span> <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span>
+<span class="token keyword">SET</span> <span class="token variable">@total_count</span> <span class="token operator">=</span> <span class="token punctuation">(</span><span class="token keyword">SELECT</span> <span class="token function">COUNT</span><span class="token punctuation">(</span><span class="token operator">*</span><span class="token punctuation">)</span> <span class="token keyword">FROM</span> your_table<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token keyword">SELECT</span> 
+    <span class="token keyword">CASE</span>
+        <span class="token keyword">WHEN</span> <span class="token variable">@total_count</span> <span class="token operator">%</span> <span class="token number">2</span> <span class="token operator">=</span> <span class="token number">0</span> <span class="token keyword">THEN</span>  <span class="token comment">-- 偶数个数据</span>
+            <span class="token punctuation">(</span><span class="token keyword">SELECT</span> <span class="token function">AVG</span><span class="token punctuation">(</span>your_column<span class="token punctuation">)</span> 
+             <span class="token keyword">FROM</span> <span class="token punctuation">(</span><span class="token keyword">SELECT</span> <span class="token variable">@row_number</span> :<span class="token operator">=</span> <span class="token variable">@row_number</span> <span class="token operator">+</span> <span class="token number">1</span> <span class="token keyword">AS</span> rn<span class="token punctuation">,</span> your_column
+                   <span class="token keyword">FROM</span> your_table
+                   <span class="token keyword">ORDER</span> <span class="token keyword">BY</span> your_column<span class="token punctuation">)</span> <span class="token keyword">AS</span> t
+             <span class="token keyword">WHERE</span> t<span class="token punctuation">.</span>rn <span class="token operator">IN</span> <span class="token punctuation">(</span><span class="token variable">@total_count</span><span class="token operator">/</span><span class="token number">2</span><span class="token punctuation">,</span> <span class="token variable">@total_count</span><span class="token operator">/</span><span class="token number">2</span> <span class="token operator">+</span> <span class="token number">1</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+        <span class="token keyword">ELSE</span> <span class="token comment">-- 奇数个数据</span>
+            <span class="token punctuation">(</span><span class="token keyword">SELECT</span> your_column
+             <span class="token keyword">FROM</span> <span class="token punctuation">(</span><span class="token keyword">SELECT</span> <span class="token variable">@row_number</span> :<span class="token operator">=</span> <span class="token variable">@row_number</span> <span class="token operator">+</span> <span class="token number">1</span> <span class="token keyword">AS</span> rn<span class="token punctuation">,</span> your_column
+                   <span class="token keyword">FROM</span> your_table
+                   <span class="token keyword">ORDER</span> <span class="token keyword">BY</span> your_column<span class="token punctuation">)</span> <span class="token keyword">AS</span> t
+             <span class="token keyword">WHERE</span> t<span class="token punctuation">.</span>rn <span class="token operator">=</span> <span class="token punctuation">(</span><span class="token variable">@total_count</span> <span class="token operator">+</span> <span class="token number">1</span><span class="token punctuation">)</span><span class="token operator">/</span><span class="token number">2</span><span class="token punctuation">)</span>
+    <span class="token keyword">END</span> <span class="token keyword">AS</span> median<span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>   <strong>解释:</strong></p>
+<ul>
+<li><code>@row_number</code> 和 <code>@total_count</code>: 定义变量来存储行号和总行数。</li>
+<li><code>SELECT @row_number := @row_number + 1 AS rn</code>: 在子查询中计算行号。</li>
+<li>其余部分逻辑与使用窗口函数的版本类似。</li>
+</ul>
+<p><strong>3. 使用 <code>PERCENTILE_CONT</code> 或 <code>PERCENTILE_DISC</code> (适用于 PostgreSQL, Oracle):</strong></p>
+<p>   这些函数可以直接计算指定百分位数的值，中位数就是 50% 百分位数。</p>
+   <pre class="line-numbers language-sql" data-language="sql"><code class="language-sql"><span class="token comment">-- 使用 PERCENTILE_CONT (连续百分位数，结果可能是小数)</span>
+<span class="token keyword">SELECT</span> PERCENTILE_CONT<span class="token punctuation">(</span><span class="token number">0.5</span><span class="token punctuation">)</span> <span class="token keyword">WITHIN</span> <span class="token keyword">GROUP</span> <span class="token punctuation">(</span><span class="token keyword">ORDER</span> <span class="token keyword">BY</span> your_column<span class="token punctuation">)</span> <span class="token keyword">AS</span> median
+<span class="token keyword">FROM</span> your_table<span class="token punctuation">;</span>
+
+<span class="token comment">-- 使用 PERCENTILE_DISC (离散百分位数，结果是实际数据中的值)</span>
+<span class="token keyword">SELECT</span> PERCENTILE_DISC<span class="token punctuation">(</span><span class="token number">0.5</span><span class="token punctuation">)</span> <span class="token keyword">WITHIN</span> <span class="token keyword">GROUP</span> <span class="token punctuation">(</span><span class="token keyword">ORDER</span> <span class="token keyword">BY</span> your_column<span class="token punctuation">)</span> <span class="token keyword">AS</span> median
+<span class="token keyword">FROM</span> your_table<span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>   <strong>解释:</strong></p>
+<ul>
+<li><code>PERCENTILE_CONT(0.5)</code>: 返回一个连续的 50% 百分位数，如果结果落在两个值之间，它会进行插值计算。</li>
+<li><code>PERCENTILE_DISC(0.5)</code>: 返回一个离散的 50% 百分位数，它会返回排序后实际存在的值。</li>
+</ul>
+<p><strong>选择哪种方法？</strong></p>
+<ul>
+<li><strong>推荐使用窗口函数:</strong> 简单易懂，性能通常也比较好，适用于支持窗口函数的数据库。</li>
+<li><strong>MySQL 5.x - 7.x 和 MariaDB 用户:</strong> 只能使用变量和子查询的方式。</li>
+<li><strong>如果数据库支持 <code>PERCENTILE_CONT</code> 或 <code>PERCENTILE_DISC</code>:</strong>  使用这些函数是最简洁的方法。</li>
+</ul>
+<p><strong>注意事项:</strong></p>
+<ul>
+<li><strong>性能:</strong>  对于大型数据集，排序操作可能会比较耗时，需要根据实际情况进行优化。</li>
+<li><strong>空值:</strong>  需要考虑空值 (<code>NULL</code>) 的处理，通常在排序时会将其放在最前或最后，可以根据需求调整。</li>
+<li><strong>数据类型:</strong> 确保需要求中位数的列是数值类型。</li>
+</ul>
+<p><strong>总结：</strong></p>
+<p>SQL 中求中位数有多种方法，选择哪种取决于你使用的数据库系统以及你的偏好。理解核心思想（排序和确定中位数位置）是关键。希望这些示例和解释能帮助你开始在 SQL 中求中位数。记得根据你使用的具体数据库系统选择相应的方法。</p>
+
+    </div>
+  </article>
+</div>
+  </main>
+
+  <footer>
+    <p>
+      &copy; 2025 Shark Blog 
+      <a href="https://github.com/eddiehex/hexo-geek-source" target="_blank">
+        <i class="fab fa-github"></i>
+      </a>
+    </p>
+  </footer>
+
+  <script src="/js/search.js"></script>
+  <script src="/js/main.js"></script>
+  <script src="/js/copy-code.js"></script>
+  <script src="/js/prism.js"></script>
+  <script src="/js/toc-highlight.js"></script>
+  <script src="/js/mobile-menu.js"></script>
+</body>
+</html>

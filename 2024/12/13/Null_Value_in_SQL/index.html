@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Shark Blog</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/prism-code.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <link rel="icon" href="https://hexo.kygoho.win/upload/uploads/6e7cf36d-8cb2-40c6-831f-80ef7488cca4.png" type="image/x-icon">
+  <link rel="stylesheet" href="/css/toc.css">
+  
+  <!-- MathJax Configuration -->
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']],
+        processEscapes: true,
+        processEnvironments: true,
+        packages: ['base', 'ams', 'noerrors', 'noundefined']
+      },
+      options: {
+        ignoreHtmlClass: 'tex2jax_ignore',
+        processHtmlClass: 'tex2jax_process'
+      },
+      startup: {
+        ready() {
+          MathJax.startup.defaultReady();
+          // Re-render math when content changes
+          document.addEventListener('DOMContentLoaded', function() {
+            if (window.MathJax && window.MathJax.typesetPromise) {
+              window.MathJax.typesetPromise();
+            }
+          });
+        }
+      }
+    };
+  </script>
+  <script async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.min.js"></script>
+<meta name="generator" content="Hexo 6.3.0"></head>
+<body>
+  <header>
+    <nav>
+      <div class="nav-container">
+        <div class="logo"><a href="/">Shark Blog</a></div>
+        <div class="search-container">
+          <input type="text" id="search-input" placeholder="Search...">
+          <div id="search-results"></div>
+        </div>
+        <div class="menu-toggle">
+          <i class="fas fa-bars"></i>
+        </div>
+      </div>
+      <ul class="nav-links">
+        <li><a href="/">Posts</a></li>
+        <li><a href="/services">Services</a></li>
+        <li><a href="/archives">Archive</a></li>
+        <li><a href="/categories">Categories</a></li>
+        <li><a href="/about">About</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <div class="page-container">
+  
+  
+  <article class="page-content">
+    <h1 class="page-title">Null Value in SQL</h1>
+    <div class="page-body">
+      <p>在 SQL 中处理 <code>NULL</code> 值需要格外小心，因为 <code>NULL</code> 代表“未知”或“缺失”，它的行为与其他值不同，可能会导致意想不到的结果。以下是一些在 SQL 中处理 <code>NULL</code> 值时需要注意的关键事项：</p>
+<p><strong>1. <code>NULL</code> 值与比较运算符：</strong></p>
+<ul>
+<li><strong><code>NULL</code> 与任何值的比较（包括 <code>NULL</code> 本身）都返回 <code>UNKNOWN</code>，而不是 <code>TRUE</code> 或 <code>FALSE</code>。</strong></li>
+<li>这意味着：<ul>
+<li><code>NULL = NULL</code>  返回 <code>UNKNOWN</code></li>
+<li><code>NULL &lt;&gt; NULL</code> 返回 <code>UNKNOWN</code></li>
+<li><code>NULL &gt; 10</code>  返回 <code>UNKNOWN</code></li>
+<li><code>NULL &lt; 10</code>  返回 <code>UNKNOWN</code></li>
+<li><code>NULL = &#39;abc&#39;</code> 返回 <code>UNKNOWN</code></li>
+</ul>
+</li>
+<li>因此，<strong>不能使用 <code>=</code> 或 <code>&lt;&gt;</code> 来直接判断一个值是否为 <code>NULL</code>。</strong></li>
+</ul>
+<p><strong>2. <code>IS NULL</code> 和 <code>IS NOT NULL</code> 操作符：</strong></p>
+<ul>
+<li><strong>使用 <code>IS NULL</code> 来判断一个值是否为 <code>NULL</code>：</strong> <pre class="line-numbers language-sql" data-language="sql"><code class="language-sql"><span class="token keyword">SELECT</span> <span class="token operator">*</span> <span class="token keyword">FROM</span> your_table <span class="token keyword">WHERE</span> your_column <span class="token operator">IS</span> <span class="token boolean">NULL</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre></li>
+<li><strong>使用 <code>IS NOT NULL</code> 来判断一个值是否不为 <code>NULL</code>：</strong> <pre class="line-numbers language-sql" data-language="sql"><code class="language-sql"><span class="token keyword">SELECT</span> <span class="token operator">*</span> <span class="token keyword">FROM</span> your_table <span class="token keyword">WHERE</span> your_column <span class="token operator">IS</span> <span class="token operator">NOT</span> <span class="token boolean">NULL</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre></li>
+</ul>
+<p><strong>3. <code>NULL</code> 值在聚合函数中的行为：</strong></p>
+<ul>
+<li><strong>大多数聚合函数（如 <code>COUNT</code>, <code>SUM</code>, <code>AVG</code>, <code>MAX</code>, <code>MIN</code>）都会忽略 <code>NULL</code> 值。</strong></li>
+<li><strong><code>COUNT(*)</code> 会计算所有行数，包括包含 <code>NULL</code> 值的行，而 <code>COUNT(column_name)</code> 只计算非 <code>NULL</code> 值的行。</strong></li>
+<li>例如：<ul>
+<li><code>SUM(your_column)</code> 只会对 <code>your_column</code> 中非 <code>NULL</code> 的值求和。</li>
+<li><code>AVG(your_column)</code> 只会对 <code>your_column</code> 中非 <code>NULL</code> 的值求平均值。</li>
+</ul>
+</li>
+<li><strong>如果 <code>MAX</code> 或 <code>MIN</code> 的所有值都是 <code>NULL</code>，则结果也是 <code>NULL</code>。</strong></li>
+<li><strong><code>COUNT(DISTINCT column_name)</code> 不会统计 <code>NULL</code> 值。</strong></li>
+</ul>
+<p><strong>4. <code>NULL</code> 值在 <code>WHERE</code> 子句中的影响：</strong></p>
+<ul>
+<li><strong><code>WHERE</code> 子句的条件必须返回 <code>TRUE</code> 才能选择对应的行。由于 <code>NULL</code> 与比较运算符的结果为 <code>UNKNOWN</code>，因此 <code>WHERE</code> 条件中包含 <code>NULL</code> 的表达式通常不会返回 <code>TRUE</code>，导致对应的行被过滤掉。</strong></li>
+<li>例如： <pre class="line-numbers language-sql" data-language="sql"><code class="language-sql"><span class="token comment">-- 假设 your_column 中存在 NULL 值</span>
+<span class="token keyword">SELECT</span> <span class="token operator">*</span> <span class="token keyword">FROM</span> your_table <span class="token keyword">WHERE</span> your_column <span class="token operator">=</span> <span class="token number">10</span><span class="token punctuation">;</span>  <span class="token comment">-- 不会选择 your_column 为 NULL 的行</span>
+<span class="token keyword">SELECT</span> <span class="token operator">*</span> <span class="token keyword">FROM</span> your_table <span class="token keyword">WHERE</span> your_column <span class="token operator">&lt;></span> <span class="token number">10</span><span class="token punctuation">;</span> <span class="token comment">-- 同样不会选择 your_column 为 NULL 的行</span>
+<span class="token keyword">SELECT</span> <span class="token operator">*</span> <span class="token keyword">FROM</span> your_table <span class="token keyword">WHERE</span> your_column <span class="token operator">=</span> <span class="token boolean">NULL</span><span class="token punctuation">;</span> <span class="token comment">-- 不会选择任何行</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre></li>
+<li><strong>要选择 <code>NULL</code> 值的行，必须使用 <code>IS NULL</code>。</strong></li>
+</ul>
+<p><strong>5. <code>COALESCE</code> 和 <code>IFNULL</code> 函数：</strong></p>
+<ul>
+<li><strong><code>COALESCE(value1, value2, value3, ...)</code>：返回第一个非 <code>NULL</code> 值。</strong></li>
+<li><strong><code>IFNULL(value1, value2)</code> (MySQL, MariaDB): 如果 <code>value1</code> 为 <code>NULL</code>，则返回 <code>value2</code>，否则返回 <code>value1</code>。</strong></li>
+<li>这两个函数可以用来替换 <code>NULL</code> 值，例如： <pre class="line-numbers language-sql" data-language="sql"><code class="language-sql"><span class="token keyword">SELECT</span> <span class="token keyword">COALESCE</span><span class="token punctuation">(</span>your_column<span class="token punctuation">,</span> <span class="token number">0</span><span class="token punctuation">)</span> <span class="token keyword">AS</span> column_with_default <span class="token keyword">FROM</span> your_table<span class="token punctuation">;</span> <span class="token comment">-- 将 NULL 替换为 0</span>
+<span class="token keyword">SELECT</span> IFNULL<span class="token punctuation">(</span>your_column<span class="token punctuation">,</span> <span class="token string">'N/A'</span><span class="token punctuation">)</span> <span class="token keyword">AS</span> column_with_na <span class="token keyword">FROM</span> your_table<span class="token punctuation">;</span> <span class="token comment">-- 将 NULL 替换为 'N/A'</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre></li>
+<li><strong><code>COALESCE</code> 更通用，因为它接受多个参数。</strong></li>
+</ul>
+<p><strong>6. <code>NULL</code> 值在连接操作中的影响：</strong></p>
+<ul>
+<li><strong><code>JOIN</code> 操作默认情况下会排除连接列中包含 <code>NULL</code> 值的行。</strong></li>
+<li><strong>可以使用 <code>LEFT JOIN</code>, <code>RIGHT JOIN</code> 或 <code>FULL OUTER JOIN</code> 来包含 <code>NULL</code> 值相关的行。</strong></li>
+<li>例如，如果两个表连接的列中存在 <code>NULL</code> 值，<code>INNER JOIN</code> 将会排除这些行，而 <code>LEFT JOIN</code> 会保留左表的行，右表不匹配的行则填充为 <code>NULL</code>。</li>
+</ul>
+<p><strong>7. 数据库特定的 <code>NULL</code> 值处理：</strong></p>
+<ul>
+<li>不同的数据库系统可能在某些细节上对 <code>NULL</code> 值的处理有所不同，请参考具体的数据库文档。</li>
+</ul>
+<p><strong>8. 设计数据库时对 <code>NULL</code> 值的考虑：</strong></p>
+<ul>
+<li><strong>应该仔细考虑哪些列允许 <code>NULL</code> 值，哪些列必须有值。</strong></li>
+<li><strong>尽量避免在关键列中使用 <code>NULL</code> 值，因为这可能会导致数据不一致和查询问题。</strong></li>
+<li><strong>可以使用约束 (constraints) 来强制某些列不允许 <code>NULL</code> 值。</strong></li>
+<li><strong>在文档中明确说明哪些列可能包含 <code>NULL</code> 值，以及 <code>NULL</code> 值在业务逻辑中的含义。</strong></li>
+</ul>
+<p><strong>总结：</strong></p>
+<ul>
+<li><code>NULL</code> 值在 SQL 中是一种特殊的值，代表未知或缺失。</li>
+<li>不能使用 <code>=</code> 或 <code>&lt;&gt;</code> 直接与 <code>NULL</code> 值进行比较，应使用 <code>IS NULL</code> 或 <code>IS NOT NULL</code>。</li>
+<li>大多数聚合函数会忽略 <code>NULL</code> 值。</li>
+<li><code>WHERE</code> 子句中包含 <code>NULL</code> 值的表达式通常不会返回 <code>TRUE</code>。</li>
+<li>可以使用 <code>COALESCE</code> 或 <code>IFNULL</code> 函数来处理 <code>NULL</code> 值。</li>
+<li>在设计数据库时，需要仔细考虑 <code>NULL</code> 值的用法。</li>
+</ul>
+<p>理解 <code>NULL</code> 值的行为并正确处理它们对于编写可靠的 SQL 查询至关重要。</p>
+
+    </div>
+  </article>
+</div>
+  </main>
+
+  <footer>
+    <p>
+      &copy; 2025 Shark Blog 
+      <a href="https://github.com/eddiehex/hexo-geek-source" target="_blank">
+        <i class="fab fa-github"></i>
+      </a>
+    </p>
+  </footer>
+
+  <script src="/js/search.js"></script>
+  <script src="/js/main.js"></script>
+  <script src="/js/copy-code.js"></script>
+  <script src="/js/prism.js"></script>
+  <script src="/js/toc-highlight.js"></script>
+  <script src="/js/mobile-menu.js"></script>
+</body>
+</html>

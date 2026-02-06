@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Shark Blog</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/prism-code.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <link rel="icon" href="https://hexo.kygoho.win/upload/uploads/6e7cf36d-8cb2-40c6-831f-80ef7488cca4.png" type="image/x-icon">
+  <link rel="stylesheet" href="/css/toc.css">
+  
+  <!-- MathJax Configuration -->
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']],
+        processEscapes: true,
+        processEnvironments: true,
+        packages: ['base', 'ams', 'noerrors', 'noundefined']
+      },
+      options: {
+        ignoreHtmlClass: 'tex2jax_ignore',
+        processHtmlClass: 'tex2jax_process'
+      },
+      startup: {
+        ready() {
+          MathJax.startup.defaultReady();
+          // Re-render math when content changes
+          document.addEventListener('DOMContentLoaded', function() {
+            if (window.MathJax && window.MathJax.typesetPromise) {
+              window.MathJax.typesetPromise();
+            }
+          });
+        }
+      }
+    };
+  </script>
+  <script async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.min.js"></script>
+<meta name="generator" content="Hexo 6.3.0"></head>
+<body>
+  <header>
+    <nav>
+      <div class="nav-container">
+        <div class="logo"><a href="/">Shark Blog</a></div>
+        <div class="search-container">
+          <input type="text" id="search-input" placeholder="Search...">
+          <div id="search-results"></div>
+        </div>
+        <div class="menu-toggle">
+          <i class="fas fa-bars"></i>
+        </div>
+      </div>
+      <ul class="nav-links">
+        <li><a href="/">Posts</a></li>
+        <li><a href="/services">Services</a></li>
+        <li><a href="/archives">Archive</a></li>
+        <li><a href="/categories">Categories</a></li>
+        <li><a href="/about">About</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <div class="page-container">
+  
+    <div class="toc-card">
+      <div class="toc-content">
+        <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%83%8C%E6%99%AF"><span class="toc-text">背景</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%96%B9%E6%A1%88"><span class="toc-text">方案</span></a></li></ol>
+      </div>
+    </div>
+  
+  
+  <article class="page-content">
+    <h1 class="page-title">qBittorrent下载完成后自动上传</h1>
+    <div class="page-body">
+      <h3 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h3><p>为了合理化对于PT爱好的投入，在storage-vps的支出偏低，选择了<a target="_blank" rel="noopener" href="https://my.hostbrr.com/order/main/packages/storage/?group_id=27">Host-bb</a>的IPV4 NAT 1T的版本，再加上手上还有一台<a target="_blank" rel="noopener" href="https://cloud.v6node.com/plans">V6node</a>16G的服务器，所以打算将两者组合起来一个下载一个保存。在A服务器下载完成后需要尽快将其转移到B服务器，手动处理起来过于频繁。</p>
+<h3 id="方案"><a href="#方案" class="headerlink" title="方案"></a>方案</h3><p>通过webdav+rclone+shell+qBittorrent实现自动化转存。</p>
+<ul>
+<li>qBittorrent标签处理，通过标签实现命令触达</li>
+</ul>
+<pre class="line-numbers language-none"><code class="language-none">unfinished_tag&#x3D;&quot;【待上传云端】&quot; # 这个是手动设置某些tag，因为有用才上传
+uploading_tag&#x3D;&quot;【正在上传】&quot;
+finished_tag&#x3D;&quot;【结束】&quot;
+noupload_tag&#x3D;&quot;无效-不上传&quot;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
+
+<ul>
+<li>代码来自</li>
+</ul>
+<pre class="line-numbers language-none"><code class="language-none">https:&#x2F;&#x2F;www.dboke.com&#x2F;article&#x2F;b1b4d8fc-c3b3-42a9-b306-4ec141357c01
+https:&#x2F;&#x2F;hostloc.com&#x2F;thread-639215-1-2.html<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+
+
+
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token shebang important">#!/bin/bash</span>
+
+<span class="token assign-left variable">qb_version</span><span class="token operator">=</span><span class="token string">"4.6.4"</span> <span class="token comment"># 改：改为你的实际qb的版本号</span>
+<span class="token assign-left variable">qb_username</span><span class="token operator">=</span><span class="token string">"admin"</span> <span class="token comment"># 改：该为你的qb登录用户名</span>
+<span class="token assign-left variable">qb_password</span><span class="token operator">=</span><span class="token string">"Psd"</span> <span class="token comment"># 改：改为你qb登录的密码</span>
+<span class="token assign-left variable">qb_web_url</span><span class="token operator">=</span><span class="token string">"http://127.0.0.1:8080"</span> <span class="token comment"># 查：改为qb的登录地址，一般可以不改</span>
+<span class="token assign-left variable">log_dir</span><span class="token operator">=</span><span class="token string">"/root/script/autoUpload"</span> <span class="token comment"># 改：改为你日志运行的路径</span>
+<span class="token assign-left variable">rclone_dest</span><span class="token operator">=</span><span class="token string">"pt:"</span> <span class="token comment"># 运行rclone config查看name字段即可；格式就是"XX:"</span>
+<span class="token assign-left variable">from_dc_tag</span><span class="token operator">=</span><span class="token string">"/baoZ"</span> <span class="token comment"># 改：上传后的相对根目录，可为空</span>
+<span class="token assign-left variable">rclone_parallel</span><span class="token operator">=</span><span class="token string">"32"</span> <span class="token comment"># rclone上传线程 默认4</span>
+
+<span class="token comment"># 下面的也可以自定义，但是推荐不改动</span>
+<span class="token assign-left variable">unfinished_tag</span><span class="token operator">=</span><span class="token string">"【待上传云端】"</span> <span class="token comment"># 这个是手动设置某些tag，因为有用才上传</span>
+<span class="token assign-left variable">uploading_tag</span><span class="token operator">=</span><span class="token string">"【正在上传】"</span>
+<span class="token assign-left variable">finished_tag</span><span class="token operator">=</span><span class="token string">"【结束】"</span>
+<span class="token assign-left variable">noupload_tag</span><span class="token operator">=</span><span class="token string">"无效-不上传"</span>
+
+
+<span class="token keyword">if</span> <span class="token punctuation">[</span> <span class="token operator">!</span> <span class="token parameter variable">-d</span> <span class="token variable">$&#123;log_dir&#125;</span> <span class="token punctuation">]</span>
+<span class="token keyword">then</span>
+	<span class="token function">mkdir</span> <span class="token parameter variable">-p</span> <span class="token variable">$&#123;log_dir&#125;</span>
+<span class="token keyword">fi</span>
+
+<span class="token assign-left variable">version</span><span class="token operator">=</span><span class="token variable"><span class="token variable">$(</span><span class="token builtin class-name">echo</span> $<span class="token punctuation">&#123;</span>qb_version<span class="token punctuation">&#125;</span> <span class="token operator">|</span> <span class="token function">grep</span> <span class="token parameter variable">-P</span> <span class="token parameter variable">-o</span> <span class="token string">"([0-9]\.)&#123;2&#125;[0-9]"</span> <span class="token operator">|</span> <span class="token function">sed</span> s/<span class="token punctuation">\</span><span class="token punctuation">\</span>.//g<span class="token variable">)</span></span>
+<span class="token assign-left variable">startPat</span><span class="token operator">=</span><span class="token variable"><span class="token variable">`</span><span class="token function">date</span> +<span class="token string">'%Y-%m-%d %H:%M:%S'</span><span class="token variable">`</span></span>  <span class="token comment"># 时间计算方案</span>
+<span class="token assign-left variable">start_seconds</span><span class="token operator">=</span><span class="token variable"><span class="token variable">$(</span><span class="token function">date</span> <span class="token parameter variable">--date</span><span class="token operator">=</span><span class="token string">"<span class="token variable">$startPat</span>"</span> +%s<span class="token variable">)</span></span><span class="token punctuation">;</span>
+
+<span class="token keyword">function</span> <span class="token function-name function">qb_login</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">&#123;</span>
+	<span class="token keyword">if</span> <span class="token punctuation">[</span> <span class="token variable">$&#123;version&#125;</span> <span class="token parameter variable">-gt</span> <span class="token number">404</span> <span class="token punctuation">]</span>
+	<span class="token keyword">then</span>
+		<span class="token assign-left variable">qb_v</span><span class="token operator">=</span><span class="token string">"1"</span>
+		<span class="token assign-left variable">cookie</span><span class="token operator">=</span><span class="token variable"><span class="token variable">$(</span><span class="token function">curl</span> <span class="token parameter variable">-i</span> <span class="token parameter variable">--header</span> <span class="token string">"Referer: <span class="token variable">$&#123;qb_web_url&#125;</span>"</span> <span class="token parameter variable">--data</span> <span class="token string">"username=<span class="token variable">$&#123;qb_username&#125;</span>&amp;password=<span class="token variable">$&#123;qb_password&#125;</span>"</span> <span class="token string">"<span class="token variable">$&#123;qb_web_url&#125;</span>/api/v2/auth/login"</span> <span class="token operator">|</span> <span class="token function">grep</span> <span class="token parameter variable">-P</span> <span class="token parameter variable">-o</span> <span class="token string">'SID=\S&#123;32&#125;'</span><span class="token variable">)</span></span>
+		<span class="token keyword">if</span> <span class="token punctuation">[</span> <span class="token parameter variable">-n</span> <span class="token variable">$&#123;cookie&#125;</span> <span class="token punctuation">]</span>
+		<span class="token keyword">then</span>
+			<span class="token builtin class-name">echo</span> <span class="token string">"[<span class="token variable"><span class="token variable">$(</span><span class="token function">date</span> <span class="token string">'+%Y-%m-%d %H:%M:%S'</span><span class="token variable">)</span></span>] 登录成功！cookie:<span class="token variable">$&#123;cookie&#125;</span>"</span>
+
+		<span class="token keyword">else</span>
+			<span class="token builtin class-name">echo</span> <span class="token string">"[<span class="token variable"><span class="token variable">$(</span><span class="token function">date</span> <span class="token string">'+%Y-%m-%d %H:%M:%S'</span><span class="token variable">)</span></span>] 登录失败！"</span>
+		<span class="token keyword">fi</span>
+	<span class="token keyword">elif</span> <span class="token punctuation">[</span><span class="token punctuation">[</span> <span class="token variable">$&#123;version&#125;</span> <span class="token parameter variable">-le</span> <span class="token number">404</span> <span class="token operator">&amp;&amp;</span> <span class="token variable">$&#123;version&#125;</span> <span class="token parameter variable">-ge</span> <span class="token number">320</span> <span class="token punctuation">]</span><span class="token punctuation">]</span>
+	<span class="token keyword">then</span>
+		<span class="token assign-left variable">qb_v</span><span class="token operator">=</span><span class="token string">"2"</span>
+		<span class="token assign-left variable">cookie</span><span class="token operator">=</span><span class="token variable"><span class="token variable">$(</span><span class="token function">curl</span> <span class="token parameter variable">-i</span> <span class="token parameter variable">--header</span> <span class="token string">"Referer: <span class="token variable">$&#123;qb_web_url&#125;</span>"</span> <span class="token parameter variable">--data</span> <span class="token string">"username=<span class="token variable">$&#123;qb_username&#125;</span>&amp;password=<span class="token variable">$&#123;qb_password&#125;</span>"</span> <span class="token string">"<span class="token variable">$&#123;qb_web_url&#125;</span>/login"</span> <span class="token operator">|</span> <span class="token function">grep</span> <span class="token parameter variable">-P</span> <span class="token parameter variable">-o</span> <span class="token string">'SID=\S&#123;32&#125;'</span><span class="token variable">)</span></span>
+		<span class="token keyword">if</span> <span class="token punctuation">[</span> <span class="token parameter variable">-n</span> <span class="token variable">$&#123;cookie&#125;</span> <span class="token punctuation">]</span>
+		<span class="token keyword">then</span>
+			<span class="token builtin class-name">echo</span> <span class="token string">"[<span class="token variable"><span class="token variable">$(</span><span class="token function">date</span> <span class="token string">'+%Y-%m-%d %H:%M:%S'</span><span class="token variable">)</span></span>] 登录成功！cookie:<span class="token variable">$&#123;cookie&#125;</span>"</span>
+		<span class="token keyword">else</span>
+			<span class="token builtin class-name">echo</span> <span class="token string">"[<span class="token variable"><span class="token variable">$(</span><span class="token function">date</span> <span class="token string">'+%Y-%m-%d %H:%M:%S'</span><span class="token variable">)</span></span>] 登录失败"</span>
+		<span class="token keyword">fi</span>
+	<span class="token keyword">elif</span> <span class="token punctuation">[</span><span class="token punctuation">[</span> <span class="token variable">$&#123;version&#125;</span> <span class="token parameter variable">-ge</span> <span class="token number">310</span> <span class="token operator">&amp;&amp;</span> <span class="token variable">$&#123;version&#125;</span> <span class="token parameter variable">-lt</span> <span class="token number">320</span> <span class="token punctuation">]</span><span class="token punctuation">]</span>
+	<span class="token keyword">then</span>
+		<span class="token assign-left variable">qb_v</span><span class="token operator">=</span><span class="token string">"3"</span>
+		<span class="token builtin class-name">echo</span> <span class="token string">"陈年老版本，请及时升级"</span>
+		<span class="token builtin class-name">exit</span>
+	<span class="token keyword">else</span>
+		<span class="token assign-left variable">qb_v</span><span class="token operator">=</span><span class="token string">"0"</span>
+		<span class="token builtin class-name">exit</span>
+	<span class="token keyword">fi</span>
+<span class="token punctuation">&#125;</span>
+
+<span class="token comment"># 先移除指定tag，后增加自己的tag</span>
+<span class="token keyword">function</span> <span class="token function-name function">qb_change_hash_tag</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">&#123;</span>
+    <span class="token assign-left variable">file_hash</span><span class="token operator">=</span><span class="token variable">$1</span>
+    <span class="token assign-left variable">fromTag</span><span class="token operator">=</span><span class="token variable">$2</span>
+    <span class="token assign-left variable">toTag</span><span class="token operator">=</span><span class="token variable">$3</span>
+    <span class="token keyword">if</span> <span class="token punctuation">[</span> <span class="token variable">$&#123;qb_v&#125;</span> <span class="token operator">==</span> <span class="token string">"1"</span> <span class="token punctuation">]</span>
+    <span class="token keyword">then</span> <span class="token comment"># 这里是添加某些tag的方法</span>
+		<span class="token function">curl</span> <span class="token parameter variable">-s</span> <span class="token parameter variable">-X</span> POST <span class="token parameter variable">-d</span> <span class="token string">"hashes=<span class="token variable">$&#123;file_hash&#125;</span>&amp;tags=<span class="token variable">$&#123;fromTag&#125;</span>"</span> <span class="token string">"<span class="token variable">$&#123;qb_web_url&#125;</span>/api/v2/torrents/removeTags"</span> <span class="token parameter variable">--cookie</span> <span class="token string">"<span class="token variable">$&#123;cookie&#125;</span>"</span>
+        <span class="token function">curl</span> <span class="token parameter variable">-s</span> <span class="token parameter variable">-X</span> POST <span class="token parameter variable">-d</span> <span class="token string">"hashes=<span class="token variable">$&#123;file_hash&#125;</span>&amp;tags=<span class="token variable">$&#123;toTag&#125;</span>"</span> <span class="token string">"<span class="token variable">$&#123;qb_web_url&#125;</span>/api/v2/torrents/addTags"</span> <span class="token parameter variable">--cookie</span> <span class="token string">"<span class="token variable">$&#123;cookie&#125;</span>"</span>
+    <span class="token keyword">elif</span> <span class="token punctuation">[</span> <span class="token variable">$&#123;qb_v&#125;</span> <span class="token operator">==</span> <span class="token string">"2"</span> <span class="token punctuation">]</span>
+    <span class="token keyword">then</span>
+        <span class="token function">curl</span> <span class="token parameter variable">-s</span> <span class="token parameter variable">-X</span> POST <span class="token parameter variable">-d</span> <span class="token string">"hashes=<span class="token variable">$&#123;file_hash&#125;</span>&amp;category=<span class="token variable">$&#123;fromTag&#125;</span>"</span> <span class="token string">"<span class="token variable">$&#123;qb_web_url&#125;</span>/command/removeCategories"</span> <span class="token parameter variable">--cookie</span> <span class="token variable">$&#123;cookie&#125;</span>
+        <span class="token function">curl</span> <span class="token parameter variable">-s</span> <span class="token parameter variable">-X</span> POST <span class="token parameter variable">-d</span> <span class="token string">"hashes=<span class="token variable">$&#123;file_hash&#125;</span>&amp;category=<span class="token variable">$&#123;toTag&#125;</span>"</span> <span class="token string">"<span class="token variable">$&#123;qb_web_url&#125;</span>/command/setCategory"</span> <span class="token parameter variable">--cookie</span> <span class="token variable">$&#123;cookie&#125;</span>
+    <span class="token keyword">else</span>
+        <span class="token builtin class-name">echo</span> <span class="token string">"qb_v=<span class="token variable">$&#123;qb_v&#125;</span>"</span>
+    <span class="token keyword">fi</span>
+<span class="token punctuation">&#125;</span>
+
+<span class="token keyword">function</span> <span class="token function-name function">rclone_copy</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">&#123;</span>
+    <span class="token assign-left variable">torrent_name</span><span class="token operator">=</span><span class="token variable">$1</span>
+    <span class="token assign-left variable">torrent_hash</span><span class="token operator">=</span><span class="token variable">$2</span>
+    <span class="token assign-left variable">torrent_path</span><span class="token operator">=</span><span class="token variable">$3</span>
+
+    <span class="token builtin class-name">echo</span> <span class="token string">"<span class="token variable">$&#123;torrent_name&#125;</span>"</span>  <span class="token operator">>></span> <span class="token variable">$&#123;log_dir&#125;</span>/qb.log
+    <span class="token builtin class-name">echo</span> <span class="token string">"<span class="token variable">$&#123;torrent_hash&#125;</span>"</span>  <span class="token operator">>></span> <span class="token variable">$&#123;log_dir&#125;</span>/qb.log
+    <span class="token builtin class-name">echo</span> <span class="token string">"<span class="token variable">$&#123;torrent_path&#125;</span>"</span>  <span class="token operator">>></span> <span class="token variable">$&#123;log_dir&#125;</span>/qb.log
+
+    <span class="token comment"># tag = 待上传</span>
+    <span class="token comment"># 这里执行上传程序</span>
+    <span class="token keyword">if</span> <span class="token punctuation">[</span> <span class="token parameter variable">-f</span> <span class="token string">"<span class="token variable">$&#123;torrent_path&#125;</span>"</span> <span class="token punctuation">]</span>
+    <span class="token keyword">then</span>
+       <span class="token builtin class-name">echo</span> <span class="token string">"[<span class="token variable"><span class="token variable">$(</span><span class="token function">date</span> <span class="token string">'+%Y-%m-%d %H:%M:%S'</span><span class="token variable">)</span></span>] 类型：文件"</span>
+       <span class="token builtin class-name">echo</span> <span class="token string">"[<span class="token variable"><span class="token variable">$(</span><span class="token function">date</span> <span class="token string">'+%Y-%m-%d %H:%M:%S'</span><span class="token variable">)</span></span>] 类型：文件"</span> <span class="token operator">>></span> <span class="token variable">$&#123;log_dir&#125;</span>/qb.log
+       <span class="token assign-left variable">type</span><span class="token operator">=</span><span class="token string">"file"</span>
+    <span class="token keyword">elif</span> <span class="token punctuation">[</span> <span class="token parameter variable">-d</span> <span class="token string">"<span class="token variable">$&#123;torrent_path&#125;</span>"</span> <span class="token punctuation">]</span>
+    <span class="token keyword">then</span>
+       <span class="token builtin class-name">echo</span> <span class="token string">"[<span class="token variable"><span class="token variable">$(</span><span class="token function">date</span> <span class="token string">'+%Y-%m-%d %H:%M:%S'</span><span class="token variable">)</span></span>] 类型：目录"</span>
+       <span class="token builtin class-name">echo</span> <span class="token string">"[<span class="token variable"><span class="token variable">$(</span><span class="token function">date</span> <span class="token string">'+%Y-%m-%d %H:%M:%S'</span><span class="token variable">)</span></span>] 类型：目录"</span> <span class="token operator">>></span> <span class="token variable">$&#123;log_dir&#125;</span>/qb.log
+       <span class="token assign-left variable">type</span><span class="token operator">=</span><span class="token string">"dir"</span>
+    <span class="token keyword">else</span>
+       <span class="token builtin class-name">echo</span> <span class="token string">"[<span class="token variable"><span class="token variable">$(</span><span class="token function">date</span> <span class="token string">'+%Y-%m-%d %H:%M:%S'</span><span class="token variable">)</span></span>] 未知类型，取消上传"</span>
+       <span class="token builtin class-name">echo</span> <span class="token string">"[<span class="token variable"><span class="token variable">$(</span><span class="token function">date</span> <span class="token string">'+%Y-%m-%d %H:%M:%S'</span><span class="token variable">)</span></span>] 未知类型，取消上传"</span> <span class="token operator">>></span> <span class="token variable">$&#123;log_dir&#125;</span>/qb.log
+       <span class="token comment"># tag = 不上传</span>
+       qb_change_hash_tag <span class="token variable">$&#123;torrent_hash&#125;</span> <span class="token variable">$&#123;unfinished_tag&#125;</span> <span class="token variable">$&#123;noupload_tag&#125;</span>
+       <span class="token builtin class-name">return</span>
+    <span class="token keyword">fi</span>
+    <span class="token comment"># tag = 上传中</span>
+    qb_change_hash_tag <span class="token variable">$&#123;torrent_hash&#125;</span> <span class="token variable">$&#123;unfinished_tag&#125;</span> <span class="token variable">$&#123;uploading_tag&#125;</span>
+    <span class="token comment"># 执行上传</span>
+    <span class="token keyword">if</span> <span class="token punctuation">[</span> <span class="token variable">$&#123;type&#125;</span> <span class="token operator">==</span> <span class="token string">"file"</span> <span class="token punctuation">]</span>
+    <span class="token keyword">then</span> <span class="token comment"># 这里是rclone上传的方法</span>
+        <span class="token assign-left variable">rclone_copy_cmd</span><span class="token operator">=</span><span class="token variable"><span class="token variable">$(</span>rclone <span class="token parameter variable">-v</span> copy <span class="token parameter variable">--transfers</span> $<span class="token punctuation">&#123;</span>rclone_parallel<span class="token punctuation">&#125;</span> --log-file  $<span class="token punctuation">&#123;</span>log_dir<span class="token punctuation">&#125;</span>/qbauto_copy.log <span class="token string">"<span class="token variable">$&#123;torrent_path&#125;</span>"</span> $<span class="token punctuation">&#123;</span>rclone_dest<span class="token punctuation">&#125;</span>/$<span class="token punctuation">&#123;</span>from_dc_tag<span class="token punctuation">&#125;</span><span class="token variable">)</span></span>
+    <span class="token keyword">elif</span> <span class="token punctuation">[</span> <span class="token variable">$&#123;type&#125;</span> <span class="token operator">==</span> <span class="token string">"dir"</span> <span class="token punctuation">]</span>
+    <span class="token keyword">then</span>
+		<span class="token assign-left variable">rclone_copy_cmd</span><span class="token operator">=</span><span class="token variable"><span class="token variable">$(</span>rclone <span class="token parameter variable">-v</span> copy <span class="token parameter variable">--transfers</span> $<span class="token punctuation">&#123;</span>rclone_parallel<span class="token punctuation">&#125;</span> --log-file $<span class="token punctuation">&#123;</span>log_dir<span class="token punctuation">&#125;</span>/qbauto_copy.log <span class="token string">"<span class="token variable">$&#123;torrent_path&#125;</span>"</span>/ $<span class="token punctuation">&#123;</span>rclone_dest<span class="token punctuation">&#125;</span>/$<span class="token punctuation">&#123;</span>from_dc_tag<span class="token punctuation">&#125;</span>/<span class="token string">"<span class="token variable">$&#123;torrent_name&#125;</span>"</span><span class="token variable">)</span></span>
+    <span class="token keyword">fi</span>
+
+    <span class="token comment"># tag = 已上传</span>
+    qb_change_hash_tag <span class="token variable">$&#123;torrent_hash&#125;</span> <span class="token variable">$&#123;uploading_tag&#125;</span> <span class="token variable">$&#123;finished_tag&#125;</span>
+
+    <span class="token assign-left variable">endPat</span><span class="token operator">=</span><span class="token variable"><span class="token variable">`</span><span class="token function">date</span> +<span class="token string">'%Y-%m-%d %H:%M:%S'</span><span class="token variable">`</span></span>
+    <span class="token assign-left variable">end_seconds</span><span class="token operator">=</span><span class="token variable"><span class="token variable">$(</span><span class="token function">date</span> <span class="token parameter variable">--date</span><span class="token operator">=</span><span class="token string">"<span class="token variable">$endPat</span>"</span> +%s<span class="token variable">)</span></span><span class="token punctuation">;</span>
+    <span class="token assign-left variable">use_seconds</span><span class="token operator">=</span><span class="token variable"><span class="token variable">$((</span>end_seconds<span class="token operator">-</span>start_seconds<span class="token variable">))</span></span><span class="token punctuation">;</span>
+    <span class="token assign-left variable">use_min</span><span class="token operator">=</span><span class="token variable"><span class="token variable">$((</span>use_seconds<span class="token operator">/</span><span class="token number">60</span><span class="token variable">))</span></span><span class="token punctuation">;</span>
+    <span class="token assign-left variable">use_sec</span><span class="token operator">=</span><span class="token variable"><span class="token variable">$((</span>use_seconds<span class="token operator">%</span><span class="token number">60</span><span class="token variable">))</span></span><span class="token punctuation">;</span>
+    <span class="token builtin class-name">echo</span> <span class="token string">"上传完成-耗时:<span class="token variable">$&#123;use_min&#125;</span>分<span class="token variable">$&#123;use_sec&#125;</span>秒"</span>
+<span class="token punctuation">&#125;</span>
+
+<span class="token keyword">function</span> <span class="token function-name function">file_lock</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">&#123;</span>
+    <span class="token variable"><span class="token variable">$(</span><span class="token function">touch</span> qbup.lock<span class="token variable">)</span></span>
+<span class="token punctuation">&#125;</span>
+<span class="token keyword">function</span> <span class="token function-name function">can_go_lock</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">&#123;</span>
+    <span class="token assign-left variable">lockStatus</span><span class="token operator">=</span><span class="token variable"><span class="token variable">$(</span><span class="token function">ls</span> <span class="token operator">|</span> <span class="token function">grep</span> qbup.lock<span class="token variable">)</span></span>
+    <span class="token keyword">if</span> <span class="token punctuation">[</span> <span class="token parameter variable">-z</span> <span class="token string">"<span class="token variable">$&#123;lockStatus&#125;</span>"</span> <span class="token punctuation">]</span>
+    <span class="token keyword">then</span>
+        <span class="token assign-left variable">noLock</span><span class="token operator">=</span><span class="token string">"1"</span>
+        <span class="token builtin class-name">return</span>
+    <span class="token keyword">fi</span>
+    <span class="token assign-left variable">noLock</span><span class="token operator">=</span><span class="token string">"0"</span>
+<span class="token punctuation">&#125;</span>
+<span class="token keyword">function</span> <span class="token function-name function">file_unlock</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">&#123;</span>
+    <span class="token variable"><span class="token variable">$(</span><span class="token function">rm</span> <span class="token parameter variable">-rf</span> qbup.lock<span class="token variable">)</span></span>
+<span class="token punctuation">&#125;</span>
+
+<span class="token keyword">function</span> <span class="token function-name function">doUpload</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">&#123;</span>
+    <span class="token assign-left variable">torrentInfo</span><span class="token operator">=</span><span class="token variable">$1</span>
+    <span class="token assign-left variable">i</span><span class="token operator">=</span><span class="token variable">$2</span>
+    <span class="token builtin class-name">echo</span> <span class="token variable">$2</span>
+    <span class="token builtin class-name">echo</span> <span class="token variable">$&#123;i&#125;</span>
+
+    <span class="token comment"># IFS保存，因为名字中可能出现多个空格</span>
+	<span class="token assign-left variable">OLD_IFS</span><span class="token operator">=</span><span class="token environment constant">$IFS</span>
+	<span class="token assign-left variable"><span class="token environment constant">IFS</span></span><span class="token operator">=</span><span class="token string">"<span class="token entity" title="\n">\n</span>"</span>
+
+    <span class="token assign-left variable">torrent_name</span><span class="token operator">=</span><span class="token variable"><span class="token variable">$(</span><span class="token builtin class-name">echo</span> <span class="token string">"<span class="token variable">$&#123;torrentInfo&#125;</span>"</span> <span class="token operator">|</span> jq <span class="token string">".[<span class="token variable">$i</span>] | .name"</span> <span class="token operator">|</span> <span class="token function">sed</span> s/<span class="token punctuation">\</span>"//g<span class="token variable">)</span></span>
+    <span class="token assign-left variable">torrent_hash</span><span class="token operator">=</span><span class="token variable"><span class="token variable">$(</span><span class="token builtin class-name">echo</span> <span class="token string">"<span class="token variable">$&#123;torrentInfo&#125;</span>"</span> <span class="token operator">|</span> jq <span class="token string">".[<span class="token variable">$i</span>] | .hash"</span> <span class="token operator">|</span> <span class="token function">sed</span> s/<span class="token punctuation">\</span>"//g<span class="token variable">)</span></span>
+    <span class="token assign-left variable">save_path</span><span class="token operator">=</span><span class="token variable"><span class="token variable">$(</span><span class="token builtin class-name">echo</span> <span class="token string">"<span class="token variable">$&#123;torrentInfo&#125;</span>"</span> <span class="token operator">|</span> jq <span class="token string">".[<span class="token variable">$i</span>] | .save_path"</span> <span class="token operator">|</span> <span class="token function">sed</span> s/<span class="token punctuation">\</span>"//g<span class="token variable">)</span></span>
+
+    <span class="token assign-left variable"><span class="token environment constant">IFS</span></span><span class="token operator">=</span><span class="token variable">$OLD_IFS</span>
+    
+    <span class="token builtin class-name">echo</span> <span class="token string">"<span class="token variable">$&#123;torrent_name&#125;</span>"</span><span class="token punctuation">;</span>
+
+    <span class="token keyword">if</span> <span class="token punctuation">[</span><span class="token punctuation">[</span> <span class="token variable">$save_path</span> <span class="token operator">!=</span> /* <span class="token punctuation">]</span><span class="token punctuation">]</span>
+    <span class="token keyword">then</span>
+		<span class="token assign-left variable">save_path</span><span class="token operator">=</span><span class="token string">"/mnt<span class="token variable">$&#123;save_path&#125;</span>"</span>
+    <span class="token keyword">fi</span>
+
+    <span class="token assign-left variable">torrent_path</span><span class="token operator">=</span><span class="token string">"/mnt<span class="token variable">$&#123;save_path&#125;</span>/<span class="token variable">$&#123;torrent_name&#125;</span>"</span> <span class="token comment"># 这里就是他的本地实际路径，尝试将这里上传上去</span>
+
+    can_go_lock
+    <span class="token keyword">if</span> <span class="token punctuation">[</span><span class="token punctuation">[</span> <span class="token variable">$&#123;noLock&#125;</span> <span class="token operator">==</span> <span class="token string">"1"</span> <span class="token punctuation">]</span><span class="token punctuation">]</span> <span class="token comment"># 厕所门能开</span>
+    <span class="token keyword">then</span>
+        file_lock <span class="token comment"># 锁上厕所门</span>
+        <span class="token builtin class-name">echo</span> <span class="token string">'执行上传没事的~~~'</span><span class="token punctuation">;</span>
+        <span class="token builtin class-name">echo</span> <span class="token variable">$&#123;torrent_name&#125;</span>
+        <span class="token builtin class-name">echo</span> <span class="token variable">$&#123;torrent_hash&#125;</span>
+        <span class="token builtin class-name">echo</span> <span class="token variable">$&#123;torrent_path&#125;</span>
+        rclone_copy <span class="token string">"<span class="token variable">$&#123;torrent_name&#125;</span>"</span> <span class="token string">"<span class="token variable">$&#123;torrent_hash&#125;</span>"</span> <span class="token string">"<span class="token variable">$&#123;torrent_path&#125;</span>"</span>
+    <span class="token keyword">else</span>
+        <span class="token builtin class-name">echo</span> <span class="token string">'已有程序在上传，退出'</span>
+        <span class="token builtin class-name">return</span> <span class="token comment"># 打不开门，换个时间来</span>
+    <span class="token keyword">fi</span>
+    file_unlock <span class="token comment"># 打开厕所门，出去</span>
+<span class="token punctuation">&#125;</span>
+
+<span class="token comment"># 每次只查询一条数据，！！上传一条数据！！</span>
+<span class="token keyword">function</span> <span class="token function-name function">qb_get_status</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">&#123;</span>
+	qb_login
+	<span class="token keyword">if</span> <span class="token punctuation">[</span> <span class="token variable">$&#123;qb_v&#125;</span> <span class="token operator">==</span> <span class="token string">"1"</span> <span class="token punctuation">]</span>
+	<span class="token keyword">then</span>
+		<span class="token assign-left variable">completed_torrents_num</span><span class="token operator">=</span><span class="token variable"><span class="token variable">$(</span><span class="token function">curl</span> <span class="token parameter variable">-s</span> <span class="token string">"<span class="token variable">$&#123;qb_web_url&#125;</span>/api/v2/torrents/info?filter=completed"</span> <span class="token parameter variable">--cookie</span> <span class="token string">"<span class="token variable">$&#123;cookie&#125;</span>"</span> <span class="token operator">|</span> jq <span class="token string">'.[] | length'</span> <span class="token operator">|</span> <span class="token function">wc</span> <span class="token parameter variable">-l</span><span class="token variable">)</span></span>
+		<span class="token builtin class-name">echo</span> <span class="token string">"任务数："</span><span class="token builtin class-name">.</span><span class="token variable">$&#123;completed_torrents_num&#125;</span>
+		<span class="token keyword">for</span><span class="token variable"><span class="token punctuation">((</span>i<span class="token operator">=</span><span class="token number">0</span><span class="token punctuation">;</span>i<span class="token operator">&lt;</span>$&#123;completed_torrents_num&#125;<span class="token punctuation">;</span>i<span class="token operator">++</span><span class="token punctuation">))</span></span><span class="token punctuation">;</span>
+		<span class="token keyword">do</span>
+			<span class="token assign-left variable">curtag</span><span class="token operator">=</span><span class="token variable"><span class="token variable">$(</span><span class="token function">curl</span> <span class="token parameter variable">-s</span> <span class="token string">"<span class="token variable">$&#123;qb_web_url&#125;</span>/api/v2/torrents/info?filter=completed"</span> <span class="token parameter variable">--cookie</span> <span class="token string">"<span class="token variable">$&#123;cookie&#125;</span>"</span> <span class="token operator">|</span> jq <span class="token string">".[<span class="token variable">$i</span>] | .tags"</span> <span class="token operator">|</span> <span class="token function">sed</span> s/<span class="token punctuation">\</span>"//g <span class="token operator">|</span> <span class="token function">grep</span> <span class="token parameter variable">-P</span> <span class="token parameter variable">-o</span> <span class="token string">"<span class="token variable">$&#123;unfinished_tag&#125;</span>"</span><span class="token variable">)</span></span>
+			<span class="token keyword">if</span> <span class="token punctuation">[</span> <span class="token parameter variable">-z</span> <span class="token string">"<span class="token variable">$&#123;curtag&#125;</span>"</span> <span class="token punctuation">]</span>
+			<span class="token keyword">then</span>
+				<span class="token assign-left variable">curtag</span><span class="token operator">=</span><span class="token string">"null"</span>
+			<span class="token keyword">fi</span>
+			<span class="token keyword">if</span> <span class="token punctuation">[</span> <span class="token variable">$&#123;curtag&#125;</span> <span class="token operator">==</span> <span class="token string">"<span class="token variable">$&#123;unfinished_tag&#125;</span>"</span> <span class="token punctuation">]</span>
+			<span class="token keyword">then</span>
+			    <span class="token assign-left variable">torrentInfo</span><span class="token operator">=</span><span class="token variable"><span class="token variable">$(</span><span class="token function">curl</span> <span class="token parameter variable">-s</span> <span class="token string">"<span class="token variable">$&#123;qb_web_url&#125;</span>/api/v2/torrents/info?filter=completed"</span> <span class="token parameter variable">--cookie</span> <span class="token string">"<span class="token variable">$&#123;cookie&#125;</span>"</span><span class="token variable">)</span></span>
+
+				doUpload <span class="token string">"<span class="token variable">$&#123;torrentInfo&#125;</span>"</span> <span class="token variable">$&#123;i&#125;</span>
+                <span class="token comment"># 每次只上传一个数据，否则的话，可能会导致多线程的争用问题</span>
+                <span class="token builtin class-name">break</span>
+			<span class="token keyword">fi</span>
+		<span class="token keyword">done</span>
+	<span class="token keyword">elif</span> <span class="token punctuation">[</span> <span class="token variable">$&#123;qb_v&#125;</span> <span class="token operator">==</span> <span class="token string">"2"</span> <span class="token punctuation">]</span>
+	<span class="token keyword">then</span>
+		<span class="token assign-left variable">completed_torrents_num</span><span class="token operator">=</span><span class="token variable"><span class="token variable">$(</span><span class="token function">curl</span> <span class="token parameter variable">-s</span> <span class="token string">"<span class="token variable">$&#123;qb_web_url&#125;</span>/query/torrents?filter=completed"</span> <span class="token parameter variable">--cookie</span> <span class="token string">"<span class="token variable">$&#123;cookie&#125;</span>"</span> <span class="token operator">|</span> jq <span class="token string">'.[] | length'</span> <span class="token operator">|</span> <span class="token function">wc</span> <span class="token parameter variable">-l</span><span class="token variable">)</span></span>
+		<span class="token keyword">for</span><span class="token variable"><span class="token punctuation">((</span>i<span class="token operator">=</span><span class="token number">0</span><span class="token punctuation">;</span>i<span class="token operator">&lt;</span>$&#123;completed_torrents_num&#125;<span class="token punctuation">;</span>i<span class="token operator">++</span><span class="token punctuation">))</span></span><span class="token punctuation">;</span>
+		<span class="token keyword">do</span>
+			<span class="token assign-left variable">curtag</span><span class="token operator">=</span><span class="token variable"><span class="token variable">$(</span><span class="token function">curl</span> <span class="token parameter variable">-s</span> <span class="token string">"<span class="token variable">$&#123;qb_web_url&#125;</span>/query/torrents?filter=completed"</span> <span class="token parameter variable">--cookie</span> <span class="token string">"<span class="token variable">$&#123;cookie&#125;</span>"</span> <span class="token operator">|</span> jq <span class="token string">".[<span class="token variable">$i</span>] | .category"</span> <span class="token operator">|</span> <span class="token function">sed</span> s/<span class="token punctuation">\</span>"//g<span class="token variable">)</span></span>
+			<span class="token keyword">if</span> <span class="token punctuation">[</span> <span class="token parameter variable">-z</span> <span class="token string">"<span class="token variable">$&#123;curtag&#125;</span>"</span> <span class="token punctuation">]</span>
+			<span class="token keyword">then</span>
+				<span class="token assign-left variable">curtag</span><span class="token operator">=</span><span class="token string">"null"</span>
+			<span class="token keyword">fi</span>
+			<span class="token keyword">if</span> <span class="token punctuation">[</span> <span class="token variable">$&#123;curtag&#125;</span> <span class="token operator">==</span> <span class="token string">"<span class="token variable">$&#123;unfinished_tag&#125;</span>"</span> <span class="token punctuation">]</span>
+			<span class="token keyword">then</span>
+				<span class="token assign-left variable">torrentInfo</span><span class="token operator">=</span><span class="token variable"><span class="token variable">$(</span><span class="token function">curl</span> <span class="token parameter variable">-s</span> <span class="token string">"<span class="token variable">$&#123;qb_web_url&#125;</span>/query/torrents?filter=completed"</span> <span class="token parameter variable">--cookie</span> <span class="token string">"<span class="token variable">$&#123;cookie&#125;</span>"</span><span class="token variable">)</span></span>
+
+                doUpload <span class="token string">"<span class="token variable">$&#123;torrentInfo&#125;</span>"</span> <span class="token variable">$&#123;i&#125;</span>
+                <span class="token comment"># 每次只上传一个数据，否则的话，可能会导致多线程的争用问题</span>
+                <span class="token builtin class-name">break</span>
+			<span class="token keyword">fi</span>
+		<span class="token keyword">done</span>
+		<span class="token builtin class-name">echo</span> <span class="token string">"啥事都不干"</span><span class="token punctuation">;</span>
+	<span class="token keyword">else</span>
+		<span class="token builtin class-name">echo</span> <span class="token string">"获取错误"</span>
+		<span class="token builtin class-name">echo</span> <span class="token string">"qb_v=<span class="token variable">$&#123;qb_v&#125;</span>"</span>
+	<span class="token keyword">fi</span>
+<span class="token punctuation">&#125;</span>
+
+qb_get_status
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+
+    </div>
+  </article>
+</div>
+  </main>
+
+  <footer>
+    <p>
+      &copy; 2025 Shark Blog 
+      <a href="https://github.com/eddiehex/hexo-geek-source" target="_blank">
+        <i class="fab fa-github"></i>
+      </a>
+    </p>
+  </footer>
+
+  <script src="/js/search.js"></script>
+  <script src="/js/main.js"></script>
+  <script src="/js/copy-code.js"></script>
+  <script src="/js/prism.js"></script>
+  <script src="/js/toc-highlight.js"></script>
+  <script src="/js/mobile-menu.js"></script>
+</body>
+</html>

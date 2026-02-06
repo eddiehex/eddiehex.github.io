@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Shark Blog</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/prism-code.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <link rel="icon" href="https://hexo.kygoho.win/upload/uploads/6e7cf36d-8cb2-40c6-831f-80ef7488cca4.png" type="image/x-icon">
+  <link rel="stylesheet" href="/css/toc.css">
+  
+  <!-- MathJax Configuration -->
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']],
+        processEscapes: true,
+        processEnvironments: true,
+        packages: ['base', 'ams', 'noerrors', 'noundefined']
+      },
+      options: {
+        ignoreHtmlClass: 'tex2jax_ignore',
+        processHtmlClass: 'tex2jax_process'
+      },
+      startup: {
+        ready() {
+          MathJax.startup.defaultReady();
+          // Re-render math when content changes
+          document.addEventListener('DOMContentLoaded', function() {
+            if (window.MathJax && window.MathJax.typesetPromise) {
+              window.MathJax.typesetPromise();
+            }
+          });
+        }
+      }
+    };
+  </script>
+  <script async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.min.js"></script>
+<meta name="generator" content="Hexo 6.3.0"></head>
+<body>
+  <header>
+    <nav>
+      <div class="nav-container">
+        <div class="logo"><a href="/">Shark Blog</a></div>
+        <div class="search-container">
+          <input type="text" id="search-input" placeholder="Search...">
+          <div id="search-results"></div>
+        </div>
+        <div class="menu-toggle">
+          <i class="fas fa-bars"></i>
+        </div>
+      </div>
+      <ul class="nav-links">
+        <li><a href="/">Posts</a></li>
+        <li><a href="/services">Services</a></li>
+        <li><a href="/archives">Archive</a></li>
+        <li><a href="/categories">Categories</a></li>
+        <li><a href="/about">About</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <div class="page-container">
+  
+    <div class="toc-card">
+      <div class="toc-content">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%95%B0%E4%BB%93%E5%BB%BA%E6%A8%A1%E7%9A%84%E6%84%8F%E4%B9%89"><span class="toc-text">数仓建模的意义</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%86%E5%B1%82%E7%9A%84%E6%84%8F%E4%B9%89"><span class="toc-text">分层的意义</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%95%B0%E6%8D%AE%E4%BB%93%E5%BA%93%E7%9A%84ETL%E6%93%8D%E4%BD%9C"><span class="toc-text">数据仓库的ETL操作</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%86%E5%B1%82%E7%9A%84%E8%AF%AF%E5%8C%BA"><span class="toc-text">分层的误区</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%8A%80%E6%9C%AF%E6%9E%B6%E6%9E%84"><span class="toc-text">技术架构</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%95%B0%E6%8D%AE%E5%88%86%E5%B1%82%E6%9E%B6%E6%9E%84"><span class="toc-text">数据分层架构</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%B4%B4%E6%BA%90%E5%B1%82%EF%BC%88ODS-Operational-Data-Store"><span class="toc-text">贴源层（ODS, Operational Data Store)</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%95%B0%E4%BB%93%E5%B1%82%EF%BC%88DW-data-warehouse%EF%BC%89"><span class="toc-text">数仓层（DW, data warehouse）</span></a></li></ol></li></ol></li></ol>
+      </div>
+    </div>
+  
+  
+  <article class="page-content">
+    <h1 class="page-title">Data Warehouse Architecture Knowledge</h1>
+    <div class="page-body">
+      <h2 id="数仓建模的意义"><a href="#数仓建模的意义" class="headerlink" title="数仓建模的意义"></a>数仓建模的意义</h2><h3 id="分层的意义"><a href="#分层的意义" class="headerlink" title="分层的意义"></a>分层的意义</h3><ul>
+<li>清晰数据结构：每一层都有各自的作用域</li>
+<li>数据血缘关系追踪：快速定位数据问题</li>
+<li>数据复用，减少重复开发：通过中间层极大减少重复计算，统一口径</li>
+<li>复杂问题简化：每一层只做单一处理，且便于数据维护当口径调整仅需调整底层字段</li>
+<li>屏蔽原始数据影响，屏蔽业务的影响：业务系统发生调整，不必改一次系统就需要重新接入数据</li>
+<li>屏蔽源头业务系统的复杂性：源头系统可能极为复杂，通过<code>DW</code> 来实现规范化</li>
+<li>数据仓库的可维护性：分层使得某层的问题只需解决该层问题，不会影响到下层的代码和逻辑</li>
+</ul>
+<h3 id="数据仓库的ETL操作"><a href="#数据仓库的ETL操作" class="headerlink" title="数据仓库的ETL操作"></a>数据仓库的ETL操作</h3><p>ETL(Extraction-Transformation-Loading) 负责将分散的、异构数据源中的数据抽取到临时中间层后进行操作加载到目标仓库和数据集市中。</p>
+<ul>
+<li>数据抽取：包括数据初始化装载和数据刷新，初始化装载即如何基于业务系统来构建维度表和事实表，并将数据装载在这些表中；数据刷新即设定定时任务来监听和触发源数据的变动从而对相应的数据表进行更新维护</li>
+<li>数据清洗：针对源系统数据库中出现的重复、不完整、违反业务逻辑等问题数据进行统一处理</li>
+<li>数据转换：主要是将数据清洗后的数据转换成数仓所需的数据：规范统一字段命名提供统一的数据字典和格式</li>
+<li>数据加载：将处理完后的数据导入对应存储空间中</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>步骤</th>
+<th>组件</th>
+<th>功能描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>数据抽取</td>
+<td>Flume</td>
+<td>收集、聚合和移动大量日志数据。</td>
+</tr>
+<tr>
+<td></td>
+<td>Sqoop</td>
+<td>在Hadoop和关系型数据库之间传输数据。</td>
+</tr>
+<tr>
+<td>数据清洗</td>
+<td>Hive</td>
+<td>提供SQL-like查询语言，进行数据清洗和转换。</td>
+</tr>
+<tr>
+<td></td>
+<td>Pig</td>
+<td>提供类似SQL的语言（Pig Latin），编写复杂的ETL流程。</td>
+</tr>
+<tr>
+<td>数据转换</td>
+<td>Spark</td>
+<td>高效地进行数据转换。</td>
+</tr>
+<tr>
+<td></td>
+<td>MapReduce</td>
+<td>批处理数据转换任务。</td>
+</tr>
+<tr>
+<td>数据加载</td>
+<td>HDFS</td>
+<td>存储处理后的数据。</td>
+</tr>
+<tr>
+<td></td>
+<td>HBase</td>
+<td>对于需要实时访问的数据，使用HBase进行存储。</td>
+</tr>
+<tr>
+<td>任务调度</td>
+<td>Oozie</td>
+<td>流程编排和工作流管理，支持Flume、Sqoop、Hive、Pig、Spark等任务调度。</td>
+</tr>
+<tr>
+<td></td>
+<td>Apache Airflow</td>
+<td>强大的工作流管理平台，支持复杂的工作流编排和监控。</td>
+</tr>
+</tbody></table>
+<h3 id="分层的误区"><a href="#分层的误区" class="headerlink" title="分层的误区"></a>分层的误区</h3><p>数仓的划分不是为了分层而分层，更多是为了解决ETL任务及工作流的组织、数据的流向、读取权限的控制。</p>
+<p>通常基础分层为三层 <code>ODS-DW-AD</code> 其中<code>DW</code> 可根据公司业务需求进行细分为 <code>DWD</code> <code>DWT</code> <code>DWS</code> <code>DIM</code> <code>DM</code> </p>
+<h2 id="技术架构"><a href="#技术架构" class="headerlink" title="技术架构"></a>技术架构</h2><p><img src="http://hexo.kygoho.win/upload/uploads/2a070c70-b57d-4e82-8b1c-2d8b8e4faca8.png" alt="image-20250119143046124"></p>
+<p><img src="http://hexo.kygoho.win/upload/uploads/dfb6d6a6-b9ad-4a28-9661-a892eb408287.png" alt="image-20250119143129904"></p>
+<p>数据中台包含的内容：</p>
+<ul>
+<li>系统架构：以Hadoop、Spark等组件为中心的架构体系</li>
+<li>数据架构：顶层设计、主题域划分、分层设计</li>
+<li>数据建模：维度建模，业务过程-确定粒度-维度-事实表</li>
+<li>数据管理：资产管理，元数据管理、质量管理、主数据管理、数据标准、数据安全管理</li>
+<li>辅助系统：调度系统、ETL系统、监控系统</li>
+<li>数据服务：数据门户、机器学习数据挖掘、可视化系统、数据交换分享下载</li>
+</ul>
+<h2 id="数据分层架构"><a href="#数据分层架构" class="headerlink" title="数据分层架构"></a>数据分层架构</h2><p>一些架构：</p>
+<p><img src="http://hexo.kygoho.win/upload/uploads/10f093ec-73ac-41c9-96f1-47b472672857.png" alt="image-20250119151429188"></p>
+<p><img src="http://hexo.kygoho.win/upload/uploads/6f450469-c0f1-4bb5-aea6-c0f58136f388.png" alt="image-20250119151443257"></p>
+<p><img src="http://hexo.kygoho.win/upload/uploads/4674bcb9-e92c-4273-966a-6ebd5e9923fd.png" alt="image-20250119151459600"></p>
+<p><img src="http://hexo.kygoho.win/upload/uploads/13ec3f56-ffca-4310-a02d-72a2f80345a5.png" alt="image-20250119151905866"></p>
+<h4 id="贴源层（ODS-Operational-Data-Store"><a href="#贴源层（ODS-Operational-Data-Store" class="headerlink" title="贴源层（ODS, Operational Data Store)"></a>贴源层（ODS, Operational Data Store)</h4><p><img src="http://hexo.kygoho.win/upload/uploads/5656dcd6-de83-482b-8191-efd739ec894f.png" alt="image-20250119152504650"></p>
+<p>数据引入层又称数据基础层，将原始数据几乎无处理存放在该层，结构与源系统保持一致，是准备区，主要职责是将基础<strong>数据同步和存储</strong>。</p>
+<p>一般来说<code>ODS</code> 和源系统数据是同构的，主要是简化后续数据加工处理工作。从数据粒度上来说是最细的。对于历史数据的存留一般保存3-6个月后需要清楚，以节省空间。根据不同的需要采取不同生命周期管理措施。</p>
+<p>注意：这一层除数据接入，还会考虑一定的数据清洗，比如异常字段处理、字段命名规范花、时间字段的统一。</p>
+<ul>
+<li><p>数据分区：按照时间进行分区，维度表按照快照时间、事实表按照业务时间</p>
+</li>
+<li><p>数据处理：对于离线数据，每日定时任务跑批，通过<code>Sqoop</code> 来进行数据抽取；对于实时数据一般利用Spark streaming，Flink 来进行处理入库</p>
+</li>
+<li><p>数据存储策略：</p>
+<p>1） 增量存储</p>
+<p>2） 全量存储</p>
+<p>3） 拉链存储 </p>
+</li>
+<li><p>Hive外部表：存放数据的文件可以不是在hive的hdfs默认的位置，并且hive对应的表删除时相应的数据文件并不会删除，可以防止误删除而将数据删除。</p>
+</li>
+</ul>
+<h4 id="数仓层（DW-data-warehouse）"><a href="#数仓层（DW-data-warehouse）" class="headerlink" title="数仓层（DW, data warehouse）"></a>数仓层（DW, data warehouse）</h4><p>数据仓库层时核心层，将从<code>ODS</code> 层中的数据按照主题建立数据模型，每一个数据模型对应一个宏观分析的领域，DW层会保存永久的存量的数据。</p>
+<p>DW层存放明细事实数据，维表数据以及公共指标汇总数据。其中，明细事实数据、维表数据一般根据ODS层数据加工生成。公共指标数据汇总一般根据维表数据和明细事实数据加工生成。</p>
+<p>DW层又可以细分维度层<code>DIM</code>  ，明细数据层<code>DWD</code> 汇总数据层 <code>DWS</code> ，采用维度建模方法作为理论基础，可以定义为度模型主键与事实模型中外键关系，减少数据冗余，提高明细数据表的易用性。在汇总数据层同样可以关联复用统计粒度中的为度，采取更多的宽表化手段来构建公共指标数据层，提升指标复用性。</p>
+<p>维度层（DIM，Dimension）：以维度作为建模驱动，基于每个维度的业务含义，通过添加维度属性，关联维度等。为了避免在维度模型中冗余关联维度的属性，基于雪花模型构建维度表。</p>
+<p>明细数据层（DWD，Data Warehouse Detail）：以业务过程作为建模驱动，基于每个具体业务过程特点，构建最细粒度的明细事实表。可将某些重要属性字段适当冗余，也即宽表化处理。</p>
+<p>汇总数据层（DWD，Data Warehouse Summary）：以分析的主题对象作为建模驱动，基于上层的应用和产品的指标需求，构建公共粒度的汇总指标表。以宽表化手段物理化模型，构建统一命名规范、口径统一的统计指标，为上层提供公共指标，建立汇总宽表、明细事实表。</p>
+<p>主题域：面向业务过程，将业务活动事件进行抽象集合。针对DWD层</p>
+<p>数据域：面向业务分析，将业务过程或者维度进行抽象集合。针对DWS层</p>
+<p><strong>DWD 层是以业务过程为驱动；DWS是以需求为驱动。</strong></p>
+<ul>
+<li>公共维度层（DIM）</li>
+</ul>
+<p>由维表构成。维度是逻辑概念，是衡量和观察业务的角度。维表是根据维度及其物理属性来物理化的表，采用宽表设计原则。因此，构建公共维度汇总层首先要定义维度。他贯穿整个DW层</p>
+<p>高基数维度数据：用户信息、商品信息，数量级为千万或者上亿级别。</p>
+<p>低基数维度数据：一般是配置表，如日期维表。</p>
+<p>维表设计：</p>
+<p>避免过于频繁的更新维表的数据：缓慢变化维-拉链表</p>
+<p>维度建模步骤：</p>
+<p><strong>维度建模</strong>是数据仓库设计中的核心方法之一，它通过将业务数据组织为事实表和维度表来支持高效的查询和分析。常见的维度建模方式有<strong>星型模型（Star Schema）</strong>和<strong>雪花模型（Snowflake Schema）</strong> </p>
+<p>1）确定业务过程</p>
+<p>2）选择与业务事实相关的主维度</p>
+<p>3）识别主维度中可以进一步拆分的子维度</p>
+<p>关于主题：</p>
+<p>数据仓库都是面向主题组织的，主题在一个较高层次上将企业信息数据进行综合、归类和分析利用。每一个主题对应一个宏观的分析领域。</p>
+<ul>
+<li>数据明细层（DWD，Data Warehouse detail）</li>
+</ul>
+<p><img src="http://hexo.kygoho.win/upload/uploads/35dd50ec-33aa-4c5c-ad90-ddcdb891a25c.png" alt="image-20250119183318981"></p>
+<p>DWD是业务层与数据仓库的隔离层， 这⼀层主要解决⼀些数据质量问题和数据的完整度问题。</p>
+<p>明细表用于存储ODS层原始表转换过来的明细数据，DWD层的数据是经过清洗、规范、维度退化后的数据。</p>
+<p>明细粒度事实层（DWD）：<strong>以业务过程作为建模驱动</strong>，基于每个具体的业务过程特点，构建最细粒度的明细层事实表。可以结合企业的数据使⽤特点，将明细事实表的某些重要维度属性字段做适当冗余，即宽表化处理。明细粒度事实层的表通常也被称为逻辑事实表。</p>
+<p>维度退化：对于一些特殊维度如订单ID无法在仓库中找出与其相关联的其他内容则可对他进行维度退化将该维度退化至事实表中。</p>
+<p>DWD层做了哪些事：</p>
+<p>数据清洗过滤-数据映射转换-数据规范-维度退化-日期规范化</p>
+<p>明细表设计原则：</p>
+<p><strong>一个明细粒度事实表仅和一个维度关联。</strong><br><strong>尽可能包含所有与业务过程相关的事实。</strong><br><strong>只选择与业务过程相关的事实。</strong><br><strong>解不可加性事实为可加的组件。</strong><br><strong>在选择维度和事实之前必须先声明粒度。</strong><br><strong>在同一个事实表中不能有多种不同粒度的事实。</strong><br><strong>事实的单位要保持一致。粒度</strong><br><strong>谨慎处理Null值。</strong><br><strong>使用退化维度提高事实表的易用性。</strong></p>
+<ul>
+<li>数据汇总层（DWS，Data Warehouse Summary）</li>
+</ul>
+<p><img src="http://hexo.kygoho.win/upload/uploads/2c194214-a4f6-464d-96b6-2a49b2719dda.png" alt="image-20250119190812666"></p>
+<p>基于DWD层的明细数据，可以按照一些场景、分析实体去组织数据，构成一些分主题的汇总层数据层DWS</p>
+<p>明细粒度 &#x3D;&#x3D;&#x3D;&#x3D;》汇总粒度</p>
+<p>DWS层（数据汇总层）宽表，面向主题汇总，维度相对来说比较少，DWS根据DWD层的基础数据按照各个维度ID进行粗粒度汇总聚合，如按照交易来源、交易类型汇总。整合汇总成分析某一个主题域的服务数据，一般是宽表。</p>
+<blockquote>
+<p>宽表建模 (Wide Table Modeling)，也称为扁平化建模或反规范化建模，是一种数据建模技术，旨在通过将多个相关表中的数据合并到一个单一的、宽大的表中来简化数据查询和分析。 这个宽表通常包含大量列，其中每一列代表来自不同源表中的一个属性。</p>
+</blockquote>
+<p>以DWD为基础，按天轻度汇总。统计各个主题对象的当天行为，（例如，购买行为，统计商品复购率）</p>
+<p>该层数据表会相对比较少，基本都是宽表（一张表会涵盖比较多的业务内容，表中的字段比较多）按照主题划分，如订单、用户等，用于后续的业务查询，OLAP分析，数据分发等。</p>
+<p>DWS层做了哪些：</p>
+<p>DWS将DWD层的数据按照主题进行汇总，每个主题构建1-3张宽表：按照主题建模、维度建模</p>
+<p>1）DWS层每个主题1-3张宽表（处理100-200个指标覆盖70%以上的需求）</p>
+<p>2）最大的宽表：用户行为宽表。大概60-200个字段</p>
+<p>3）行为宽表包括的指标：评论、打赏、收藏、关注、分享</p>
+<p>4）分析过的指标：日活、月活、新增、留存、转化率、流失、活跃</p>
+<ul>
+<li>数据应用层（ADS，Application Data Store）</li>
+</ul>
+<p><img src="http://hexo.kygoho.win/upload/uploads/16b18695-9c6a-45ad-8c07-fd683a05839c.png" alt="image-20250120161541380"></p>
+<p>ADS存放数据产品个性化的统计指标数据，报表数据。主要是提供给数据产品和数据分析使用的数据，通常根据业务需求划分成流量、订单、用户等，生成字段较多的宽表，用于提供后续的业务查询主要目的是满足用户分析的需求。所以数据存储的一般是近几年，但在数据广度上来说覆盖了所有的业务数据。</p>
+<p>业务⽅或者部⻔基于DWD和DWS建⽴的数据集市(Data Market, DM)，⼀般来说应⽤层的数据来源于DW层，⽽且相对于DW层，应⽤层只包含部⻔或者业务⽅⾯⾃⼰关⼼的明细层和汇总层的数据。</p>
+
+    </div>
+  </article>
+</div>
+  </main>
+
+  <footer>
+    <p>
+      &copy; 2025 Shark Blog 
+      <a href="https://github.com/eddiehex/hexo-geek-source" target="_blank">
+        <i class="fab fa-github"></i>
+      </a>
+    </p>
+  </footer>
+
+  <script src="/js/search.js"></script>
+  <script src="/js/main.js"></script>
+  <script src="/js/copy-code.js"></script>
+  <script src="/js/prism.js"></script>
+  <script src="/js/toc-highlight.js"></script>
+  <script src="/js/mobile-menu.js"></script>
+</body>
+</html>

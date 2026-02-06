@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Shark Blog</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/prism-code.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <link rel="icon" href="https://hexo.kygoho.win/upload/uploads/6e7cf36d-8cb2-40c6-831f-80ef7488cca4.png" type="image/x-icon">
+  <link rel="stylesheet" href="/css/toc.css">
+  
+  <!-- MathJax Configuration -->
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']],
+        processEscapes: true,
+        processEnvironments: true,
+        packages: ['base', 'ams', 'noerrors', 'noundefined']
+      },
+      options: {
+        ignoreHtmlClass: 'tex2jax_ignore',
+        processHtmlClass: 'tex2jax_process'
+      },
+      startup: {
+        ready() {
+          MathJax.startup.defaultReady();
+          // Re-render math when content changes
+          document.addEventListener('DOMContentLoaded', function() {
+            if (window.MathJax && window.MathJax.typesetPromise) {
+              window.MathJax.typesetPromise();
+            }
+          });
+        }
+      }
+    };
+  </script>
+  <script async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.min.js"></script>
+<meta name="generator" content="Hexo 6.3.0"></head>
+<body>
+  <header>
+    <nav>
+      <div class="nav-container">
+        <div class="logo"><a href="/">Shark Blog</a></div>
+        <div class="search-container">
+          <input type="text" id="search-input" placeholder="Search...">
+          <div id="search-results"></div>
+        </div>
+        <div class="menu-toggle">
+          <i class="fas fa-bars"></i>
+        </div>
+      </div>
+      <ul class="nav-links">
+        <li><a href="/">Posts</a></li>
+        <li><a href="/services">Services</a></li>
+        <li><a href="/archives">Archive</a></li>
+        <li><a href="/categories">Categories</a></li>
+        <li><a href="/about">About</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <div class="page-container">
+  
+    <div class="toc-card">
+      <div class="toc-content">
+        <ol class="toc"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%AE%89%E8%A3%85"><span class="toc-text">安装</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%8E%B7%E5%8F%96%E9%95%9C%E5%83%8F"><span class="toc-text">获取镜像</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%BF%90%E8%A1%8C"><span class="toc-text">运行</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%97%E5%87%BA%E9%95%9C%E5%83%8F"><span class="toc-text">列出镜像</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%95%9C%E5%83%8F%E4%BD%93%E7%A7%AF"><span class="toc-text">镜像体积</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%A0%E9%99%A4%E6%9C%AC%E5%9C%B0%E9%95%9C%E5%83%8F"><span class="toc-text">删除本地镜像</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#dockerfile%E5%AE%9A%E5%88%B6%E9%95%9C%E5%83%8F"><span class="toc-text">dockerfile定制镜像</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#run%E6%89%A7%E8%A1%8C%E5%91%BD%E4%BB%A4"><span class="toc-text">run执行命令</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#copy%E5%A4%8D%E5%88%B6%E6%96%87%E4%BB%B6"><span class="toc-text">copy复制文件</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#add%E6%9B%B4%E9%AB%98%E7%BA%A7%E7%9A%84%E5%A4%8D%E5%88%B6%E6%96%87%E4%BB%B6"><span class="toc-text">add更高级的复制文件</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#docker-compose"><span class="toc-text">docker compose</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#docker-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4"><span class="toc-text">docker 常用命令</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#docker-%E5%AE%9E%E6%88%98wordpress"><span class="toc-text">docker 实战wordpress</span></a></li></ol>
+      </div>
+    </div>
+  
+  
+  <article class="page-content">
+    <h1 class="page-title">docker 知识</h1>
+    <div class="page-body">
+      <h4 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h4><pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token comment"># 安装依赖包</span>
+yum <span class="token function">install</span> <span class="token parameter variable">-y</span> yum-utils
+<span class="token comment"># 加 yum 软件源</span>
+yum-config-manager <span class="token punctuation">\</span>
+     --add-repo <span class="token punctuation">\</span>
+     https://download.docker.com/linux/centos/docker-ce.repo
+<span class="token comment"># 更新 yum 软件源缓存，并安装 docker-ce</span>
+yum <span class="token function">install</span> docker-ce docker-ce-cli containerd.io<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token comment"># FirewallBackend=nftables 关闭防火墙</span>
+<span class="token assign-left variable">FirewallBackend</span><span class="token operator">=</span>iptables
+<span class="token comment"># 启动</span>
+systemctl <span class="token builtin class-name">enable</span> <span class="token function">docker</span>
+systemctl start <span class="token function">docker</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+
+
+<h4 id="获取镜像"><a href="#获取镜像" class="headerlink" title="获取镜像"></a>获取镜像</h4><pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token comment"># docker pull --help</span>
+<span class="token comment"># docker pull 应用名：【标签】</span>
+<span class="token function">docker</span> pull <span class="token punctuation">[</span>选项<span class="token punctuation">]</span> <span class="token punctuation">[</span>Docker Registry 地址<span class="token punctuation">[</span>:端口号<span class="token punctuation">]</span>/<span class="token punctuation">]</span>仓库名<span class="token punctuation">[</span>:标签<span class="token punctuation">]</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+
+
+
+<h4 id="运行"><a href="#运行" class="headerlink" title="运行"></a>运行</h4><pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"> <span class="token function">docker</span> run <span class="token parameter variable">-it</span> <span class="token parameter variable">--rm</span> ubuntu:18.04 <span class="token function">bash</span>
+ <span class="token function">docker</span> <span class="token builtin class-name">exec</span> <span class="token parameter variable">-it</span> nginx /bin/bash
+<span class="token comment"># -it:这是两个参数，一个是 -i：交互式操作，一个是 -t 终端。我们这里打算进入 bash 执行一些命令并查看返回结果，因此我们需要交互式终端。</span>
+<span class="token comment"># --rm：这个参数是说容器退出后随之将其删除。默认情况下，为了排障需求，退出的容器并不会立即删除，除非手动 docker rm。我们这里只是随便执行个命令，看看结果，不需要排障和保留结果，因此使用 --rm 可以避免浪费空间。</span>
+<span class="token comment"># ubuntu:18.04：这是指用 ubuntu:18.04 镜像为基础来启动容器</span>
+<span class="token comment"># bash：放在镜像名后的是 命令，这里我们希望有个交互式 Shell，因此用的是 bash</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<h4 id="列出镜像"><a href="#列出镜像" class="headerlink" title="列出镜像"></a>列出镜像</h4><pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">$ <span class="token function">docker</span> image <span class="token function">ls</span>
+REPOSITORY           TAG                 IMAGE ID            CREATED             SIZE
+redis                latest              5f515359c7f8        <span class="token number">5</span> days ago          <span class="token number">183</span> MB
+nginx                latest              05a60462f8ba        <span class="token number">5</span> days ago          <span class="token number">181</span> MB
+mongo                <span class="token number">3.2</span>                 fe9198c04d62        <span class="token number">5</span> days ago          <span class="token number">342</span> MB
+<span class="token operator">&lt;</span>none<span class="token operator">></span>               <span class="token operator">&lt;</span>none<span class="token operator">></span>              00285df0df87        <span class="token number">5</span> days ago          <span class="token number">342</span> MB
+ubuntu               <span class="token number">18.04</span>               329ed837d508        <span class="token number">3</span> days ago          <span class="token number">63</span>.3MB
+ubuntu               bionic              329ed837d508        <span class="token number">3</span> days ago          <span class="token number">63</span>.3MB<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<blockquote>
+<p>列表包含了 <code>仓库名</code>、<code>标签</code>、<code>镜像 ID</code>、<code>创建时间</code> 以及 <code>所占用的空间</code>。</p>
+<p>其中仓库名、标签在之前的基础概念章节已经介绍过了。<strong>镜像 ID</strong> 则是镜像的唯一标识，一个镜像可以对应多个 <strong>标签</strong>。因此，在上面的例子中，我们可以看到 <code>ubuntu:18.04</code> 和 <code>ubuntu:bionic</code> 拥有相同的 ID，因为它们对应的是同一个镜像。</p>
+</blockquote>
+<h4 id="镜像体积"><a href="#镜像体积" class="headerlink" title="镜像体积"></a>镜像体积</h4><pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token comment">#镜像、容器、数据卷所占用的空间</span>
+$ <span class="token function">docker</span> system <span class="token function">df</span>
+
+TYPE                TOTAL               ACTIVE              SIZE                RECLAIMABLE
+Images              <span class="token number">24</span>                  <span class="token number">0</span>                   <span class="token number">1</span>.992GB             <span class="token number">1</span>.992GB <span class="token punctuation">(</span><span class="token number">100</span>%<span class="token punctuation">)</span>
+Containers          <span class="token number">1</span>                   <span class="token number">0</span>                   <span class="token number">62</span>.82MB             <span class="token number">62</span>.82MB <span class="token punctuation">(</span><span class="token number">100</span>%<span class="token punctuation">)</span>
+Local Volumes       <span class="token number">9</span>                   <span class="token number">0</span>                   <span class="token number">652</span>.2MB             <span class="token number">652</span>.2MB <span class="token punctuation">(</span><span class="token number">100</span>%<span class="token punctuation">)</span>
+Build Cache                                                 0B                  0B<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<h4 id="删除本地镜像"><a href="#删除本地镜像" class="headerlink" title="删除本地镜像"></a>删除本地镜像</h4><pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token comment">#先将运行容器暂停删除才能删除镜像</span>
+<span class="token function">docker</span> stop <span class="token variable"><span class="token variable">$(</span><span class="token function">docker</span> <span class="token function">ps</span> <span class="token parameter variable">-aq</span><span class="token variable">)</span></span>
+<span class="token function">docker</span> <span class="token function">rm</span> <span class="token variable"><span class="token variable">$(</span><span class="token function">docker</span> <span class="token function">ps</span> <span class="token parameter variable">-aq</span><span class="token variable">)</span></span>
+<span class="token function">docker</span> image <span class="token function">rm</span> <span class="token variable"><span class="token variable">$(</span><span class="token function">docker</span> images<span class="token variable">)</span></span>
+$ <span class="token function">docker</span> image <span class="token function">rm</span> <span class="token punctuation">[</span>选项<span class="token punctuation">]</span> <span class="token operator">&lt;</span>镜像<span class="token operator"><span class="token file-descriptor important">1</span>></span> <span class="token punctuation">[</span><span class="token operator">&lt;</span>镜像<span class="token operator"><span class="token file-descriptor important">2</span>></span> <span class="token punctuation">..</span>.<span class="token punctuation">]</span>
+<span class="token comment"># 我们需要删除所有仓库名为 redis 的镜像</span>
+$ <span class="token function">docker</span> image <span class="token function">rm</span> <span class="token variable"><span class="token variable">$(</span><span class="token function">docker</span> image <span class="token function">ls</span> <span class="token parameter variable">-q</span> redis<span class="token variable">)</span></span>
+<span class="token comment"># 删除所有在 mongo:3.2 之前的镜像</span>
+$ <span class="token function">docker</span> image <span class="token function">rm</span> <span class="token variable"><span class="token variable">$(</span><span class="token function">docker</span> image <span class="token function">ls</span> <span class="token parameter variable">-q</span> <span class="token parameter variable">-f</span> <span class="token assign-left variable">before</span><span class="token operator">=</span>mongo:3.2<span class="token variable">)</span></span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<h4 id="dockerfile定制镜像"><a href="#dockerfile定制镜像" class="headerlink" title="dockerfile定制镜像"></a>dockerfile定制镜像</h4><pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">$ <span class="token function">mkdir</span> mynginx
+$ <span class="token builtin class-name">cd</span> mynginx
+$ <span class="token function">touch</span> Dockerfile
+<span class="token function">vi</span> Dockerfile
+<span class="token comment">#dockerfile 文件内容</span>
+FROM nginx
+RUN <span class="token builtin class-name">echo</span> <span class="token string">'&lt;h1>Hello, Docker!&lt;/h1>'</span> <span class="token operator">></span> /usr/share/nginx/html/index.html
+<span class="token comment">#构建镜像</span>
+build <span class="token parameter variable">-t</span> nginx:v3 <span class="token builtin class-name">.</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>docker还能通过git、tar压缩包进行构建相应的镜像</p>
+<h4 id="run执行命令"><a href="#run执行命令" class="headerlink" title="run执行命令"></a>run执行命令</h4><ul>
+<li><em>shell</em> 格式：<code>RUN &lt;命令&gt;</code>，就像直接在命令行中输入的命令一样。刚才写的 Dockerfile 中的 <code>RUN</code> 指令就是这种格式。</li>
+<li><em>exec</em> 格式：<code>RUN [&quot;可执行文件&quot;, &quot;参数1&quot;, &quot;参数2&quot;]</code>，这更像是函数调用中的格式。</li>
+</ul>
+<h4 id="copy复制文件"><a href="#copy复制文件" class="headerlink" title="copy复制文件"></a>copy复制文件</h4><ul>
+<li><code>COPY [--chown=&lt;user&gt;:&lt;group&gt;] &lt;源路径&gt;... &lt;目标路径&gt;</code></li>
+<li><code>COPY [--chown=&lt;user&gt;:&lt;group&gt;] [&quot;&lt;源路径1&gt;&quot;,... &quot;&lt;目标路径&gt;&quot;]</code></li>
+</ul>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">COPY hom* /mydir/
+COPY hom?.txt /mydir/<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+
+<p><code>&lt;目标路径&gt;</code> 可以是容器内的绝对路径，也可以是相对于工作目录的相对路径（工作目录可以用 <code>WORKDIR</code> 指令来指定）。目标路径不需要事先创建，如果目录不存在会在复制文件前先行创建缺失目录。</p>
+<p>此外，还需要注意一点，使用 <code>COPY</code> 指令，源文件的各种元数据都会保留。比如读、写、执行权限、文件变更时间等。这个特性对于镜像定制很有用。特别是构建相关文件都在使用 Git 进行管理的时候。</p>
+<h4 id="add更高级的复制文件"><a href="#add更高级的复制文件" class="headerlink" title="add更高级的复制文件"></a>add更高级的复制文件</h4><h4 id="docker-compose"><a href="#docker-compose" class="headerlink" title="docker compose"></a>docker compose</h4><pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token comment">#二进制安装</span>
+<span class="token function">curl</span> <span class="token parameter variable">-L</span> https://github.com/docker/compose/releases/download/1.27.4/docker-compose-<span class="token variable"><span class="token variable">`</span><span class="token function">uname</span> <span class="token parameter variable">-s</span><span class="token variable">`</span></span>-<span class="token variable"><span class="token variable">`</span><span class="token function">uname</span> <span class="token parameter variable">-m</span><span class="token variable">`</span></span> <span class="token operator">></span> /usr/local/bin/docker-compose
+
+<span class="token comment"># 国内用户可以使用以下方式加快下载</span>
+ <span class="token function">curl</span> <span class="token parameter variable">-L</span> https://download.fastgit.org/docker/compose/releases/download/1.27.4/docker-compose-<span class="token variable"><span class="token variable">`</span><span class="token function">uname</span> <span class="token parameter variable">-s</span><span class="token variable">`</span></span>-<span class="token variable"><span class="token variable">`</span><span class="token function">uname</span> <span class="token parameter variable">-m</span><span class="token variable">`</span></span> <span class="token operator">></span> /usr/local/bin/docker-compose
+
+ <span class="token function">chmod</span> +x /usr/local/bin/docker-compose<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+
+
+<h2 id="docker-常用命令"><a href="#docker-常用命令" class="headerlink" title="docker 常用命令"></a>docker 常用命令</h2><pre class="line-numbers language-shel" data-language="shel"><code class="language-shel">docker stop $(docker ps -q)
+docker rm $(docker ps -aq)<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+
+<h4 id="docker-实战wordpress"><a href="#docker-实战wordpress" class="headerlink" title="docker 实战wordpress"></a>docker 实战wordpress</h4><pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">version: <span class="token string">"3"</span>
+services:
+
+   db:
+     image: mysql:8.0
+     command:
+      - <span class="token parameter variable">--default_authentication_plugin</span><span class="token operator">=</span>mysql_native_password
+      - --character-set-server<span class="token operator">=</span>utf8mb4
+      - --collation-server<span class="token operator">=</span>utf8mb4_unicode_ci
+     volumes:
+       - db_data:/var/lib/mysql
+     restart: always
+     environment:
+       MYSQL_ROOT_PASSWORD: <span class="token number">123456</span>
+       MYSQL_DATABASE: wordpress
+       MYSQL_USER: wordpress
+       MYSQL_PASSWORD: wordpress
+
+   wordpress:
+     depends_on:
+       - db
+     image: wordpress:latest
+     ports:
+       - <span class="token string">"8000:80"</span>
+     restart: always
+     volumes:
+       - wp_data:/var/www/html
+     environment:
+       WORDPRESS_DB_HOST: db:3306
+       WORDPRESS_DB_USER: wordpress
+       WORDPRESS_DB_PASSWORD: wordpress
+   nginx:
+     depends_on:
+       - wordpress
+     image: nginx:latest
+     ports:
+       - <span class="token string">"80:80"</span>
+       - <span class="token string">"443:443"</span>
+     restart: always
+     volumes:
+       - ng_data:/etc/nginx
+volumes:
+    db_data:
+    ng_data:
+    wp_data:<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token function">docker-compose</span> up <span class="token parameter variable">-d</span>
+<span class="token comment">#后台执行</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+
+    </div>
+  </article>
+</div>
+  </main>
+
+  <footer>
+    <p>
+      &copy; 2025 Shark Blog 
+      <a href="https://github.com/eddiehex/hexo-geek-source" target="_blank">
+        <i class="fab fa-github"></i>
+      </a>
+    </p>
+  </footer>
+
+  <script src="/js/search.js"></script>
+  <script src="/js/main.js"></script>
+  <script src="/js/copy-code.js"></script>
+  <script src="/js/prism.js"></script>
+  <script src="/js/toc-highlight.js"></script>
+  <script src="/js/mobile-menu.js"></script>
+</body>
+</html>

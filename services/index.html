@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Shark Blog</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/prism-code.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <link rel="icon" href="https://hexo.kygoho.win/upload/uploads/6e7cf36d-8cb2-40c6-831f-80ef7488cca4.png" type="image/x-icon">
+  <link rel="stylesheet" href="/css/toc.css">
+  
+  <!-- MathJax Configuration -->
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']],
+        processEscapes: true,
+        processEnvironments: true,
+        packages: ['base', 'ams', 'noerrors', 'noundefined']
+      },
+      options: {
+        ignoreHtmlClass: 'tex2jax_ignore',
+        processHtmlClass: 'tex2jax_process'
+      },
+      startup: {
+        ready() {
+          MathJax.startup.defaultReady();
+          // Re-render math when content changes
+          document.addEventListener('DOMContentLoaded', function() {
+            if (window.MathJax && window.MathJax.typesetPromise) {
+              window.MathJax.typesetPromise();
+            }
+          });
+        }
+      }
+    };
+  </script>
+  <script async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.min.js"></script>
+<meta name="generator" content="Hexo 6.3.0"></head>
+<body>
+  <header>
+    <nav>
+      <div class="nav-container">
+        <div class="logo"><a href="/">Shark Blog</a></div>
+        <div class="search-container">
+          <input type="text" id="search-input" placeholder="Search...">
+          <div id="search-results"></div>
+        </div>
+        <div class="menu-toggle">
+          <i class="fas fa-bars"></i>
+        </div>
+      </div>
+      <ul class="nav-links">
+        <li><a href="/">Posts</a></li>
+        <li><a href="/services">Services</a></li>
+        <li><a href="/archives">Archive</a></li>
+        <li><a href="/categories">Categories</a></li>
+        <li><a href="/about">About</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <div class="services-container">
+  <div class="services-header">
+    <h1 class="services-title">Services</h1>
+    <div class="services-intro">
+      
+    </div>
+  </div>
+
+  <div class="services-grid">
+    
+      <a href="https://bed.423327.xyz/" class="service-card" target="_blank">
+        <div class="service-icon">
+          <i class="fas fa-upload"></i>
+        </div>
+        <h3 class="service-name">Temporary Image</h3>
+        <p class="service-description">My personal Image bed</p>
+      </a>
+    
+      <a href="https://hexo.kygoho.win/py" class="service-card" target="_blank">
+        <div class="service-icon">
+          <i class="fas fa-book"></i>
+        </div>
+        <h3 class="service-name">Jupyter</h3>
+        <p class="service-description">Online Jupyter-notebook</p>
+      </a>
+    
+      <a href="https://alist.009100.xyz/" class="service-card" target="_blank">
+        <div class="service-icon">
+          <i class="fas fa-cloud"></i>
+        </div>
+        <h3 class="service-name">Alist</h3>
+        <p class="service-description">My personal storage manager</p>
+      </a>
+    
+      <a href="https://rss.009100.xyz" class="service-card" target="_blank">
+        <div class="service-icon">
+          <i class="fas fa-rss"></i>
+        </div>
+        <h3 class="service-name">RSS</h3>
+        <p class="service-description">RSS online reader</p>
+      </a>
+    
+      <a href="https://cloud.kygoho.win/server/" class="service-card" target="_blank">
+        <div class="service-icon">
+          <i class="fas fa-desktop"></i>
+        </div>
+        <h3 class="service-name">Monitor</h3>
+        <p class="service-description">Service Monitor Panel</p>
+      </a>
+    
+      <a href="https://up.423327.xyz" class="service-card" target="_blank">
+        <div class="service-icon">
+          <i class="fas fa-cloud-upload-alt"></i>
+        </div>
+        <h3 class="service-name">Image Hosting</h3>
+        <p class="service-description">Image Hosting Service</p>
+      </a>
+    
+      <a href="https://cloud.kygoho.win" class="service-card" target="_blank">
+        <div class="service-icon">
+          <i class="fas fa-seedling"></i>
+        </div>
+        <h3 class="service-name">Pod's Garden</h3>
+        <p class="service-description">Blog of my friend Pod</p>
+      </a>
+    
+  </div>
+</div>
+  </main>
+
+  <footer>
+    <p>
+      &copy; 2025 Shark Blog 
+      <a href="https://github.com/eddiehex/hexo-geek-source" target="_blank">
+        <i class="fab fa-github"></i>
+      </a>
+    </p>
+  </footer>
+
+  <script src="/js/search.js"></script>
+  <script src="/js/main.js"></script>
+  <script src="/js/copy-code.js"></script>
+  <script src="/js/prism.js"></script>
+  <script src="/js/toc-highlight.js"></script>
+  <script src="/js/mobile-menu.js"></script>
+</body>
+</html>

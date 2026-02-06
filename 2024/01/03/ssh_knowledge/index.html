@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Shark Blog</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/prism-code.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <link rel="icon" href="https://hexo.kygoho.win/upload/uploads/6e7cf36d-8cb2-40c6-831f-80ef7488cca4.png" type="image/x-icon">
+  <link rel="stylesheet" href="/css/toc.css">
+  
+  <!-- MathJax Configuration -->
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']],
+        processEscapes: true,
+        processEnvironments: true,
+        packages: ['base', 'ams', 'noerrors', 'noundefined']
+      },
+      options: {
+        ignoreHtmlClass: 'tex2jax_ignore',
+        processHtmlClass: 'tex2jax_process'
+      },
+      startup: {
+        ready() {
+          MathJax.startup.defaultReady();
+          // Re-render math when content changes
+          document.addEventListener('DOMContentLoaded', function() {
+            if (window.MathJax && window.MathJax.typesetPromise) {
+              window.MathJax.typesetPromise();
+            }
+          });
+        }
+      }
+    };
+  </script>
+  <script async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.min.js"></script>
+<meta name="generator" content="Hexo 6.3.0"></head>
+<body>
+  <header>
+    <nav>
+      <div class="nav-container">
+        <div class="logo"><a href="/">Shark Blog</a></div>
+        <div class="search-container">
+          <input type="text" id="search-input" placeholder="Search...">
+          <div id="search-results"></div>
+        </div>
+        <div class="menu-toggle">
+          <i class="fas fa-bars"></i>
+        </div>
+      </div>
+      <ul class="nav-links">
+        <li><a href="/">Posts</a></li>
+        <li><a href="/services">Services</a></li>
+        <li><a href="/archives">Archive</a></li>
+        <li><a href="/categories">Categories</a></li>
+        <li><a href="/about">About</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <div class="page-container">
+  
+    <div class="toc-card">
+      <div class="toc-content">
+        <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%99%BB%E9%99%86%E6%9C%8D%E5%8A%A1%E5%99%A8%E5%90%8E"><span class="toc-text">登陆服务器后</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%BB%BA%E7%AB%8B%E5%85%B1%E9%92%A5"><span class="toc-text">建立共钥</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%B3%E9%97%AD%E5%AF%86%E7%A0%81%E7%99%BB%E9%99%86%E6%9D%83%E9%99%90"><span class="toc-text">关闭密码登陆权限</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%8B%E8%BD%BD%E7%A7%81%E9%92%A5"><span class="toc-text">下载私钥</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%99%BB%E9%99%86%E6%9C%8D%E5%8A%A1%E5%99%A8"><span class="toc-text">登陆服务器</span></a></li></ol>
+      </div>
+    </div>
+  
+  
+  <article class="page-content">
+    <h1 class="page-title">ssh 密钥登陆服务器</h1>
+    <div class="page-body">
+      <h3 id="登陆服务器后"><a href="#登陆服务器后" class="headerlink" title="登陆服务器后"></a>登陆服务器后</h3><pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token punctuation">[</span>root@host ~<span class="token punctuation">]</span>$ ssh-keygen  <span class="token operator">&lt;=</span><span class="token operator">=</span> 建立密钥对
+Generating public/private rsa key pair.
+Enter <span class="token function">file</span> <span class="token keyword">in</span> <span class="token function">which</span> to save the key <span class="token punctuation">(</span>/root/.ssh/id_rsa<span class="token punctuation">)</span>: <span class="token operator">&lt;=</span><span class="token operator">=</span> 按 Enter
+Created directory <span class="token string">'/root/.ssh'</span><span class="token builtin class-name">.</span>
+Enter passphrase <span class="token punctuation">(</span>empty <span class="token keyword">for</span> no passphrase<span class="token punctuation">)</span>: <span class="token operator">&lt;=</span><span class="token operator">=</span> 输入密钥锁码，或直接按 Enter 留空
+Enter same passphrase again: <span class="token operator">&lt;=</span><span class="token operator">=</span> 再输入一遍密钥锁码
+Your identification has been saved <span class="token keyword">in</span> /root/.ssh/id_rsa. <span class="token operator">&lt;=</span><span class="token operator">=</span> 私钥
+Your public key has been saved <span class="token keyword">in</span> /root/.ssh/id_rsa.pub. <span class="token operator">&lt;=</span><span class="token operator">=</span> 公钥
+The key fingerprint is:
+0f:d3:e7:1a:1c:bd:5c:03:f1:19:f1:22:df:9b:cc:08 root@host<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<h3 id="建立共钥"><a href="#建立共钥" class="headerlink" title="建立共钥"></a>建立共钥</h3><pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token punctuation">[</span>root@host ~<span class="token punctuation">]</span>$ <span class="token builtin class-name">cd</span> .ssh
+<span class="token punctuation">[</span>root@host .ssh<span class="token punctuation">]</span>$ <span class="token function">cat</span> id_rsa.pub <span class="token operator">>></span> authorized_keys
+-- 更改权限
+<span class="token punctuation">[</span>root@host .ssh<span class="token punctuation">]</span>$ <span class="token function">chmod</span> <span class="token number">600</span> authorized_keys
+<span class="token punctuation">[</span>root@host .ssh<span class="token punctuation">]</span>$ <span class="token function">chmod</span> <span class="token number">700</span> ~/.ssh<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<h3 id="关闭密码登陆权限"><a href="#关闭密码登陆权限" class="headerlink" title="关闭密码登陆权限"></a>关闭密码登陆权限</h3><pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token function">vi</span> /etc/ssh/sshd_config<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">PasswordAuthentication no<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<h3 id="下载私钥"><a href="#下载私钥" class="headerlink" title="下载私钥"></a>下载私钥</h3><pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token function">cat</span> root/.ssh/id_rsa
+-- 直接复制，粘贴到文本编辑器中保存为无格式 <span class="token builtin class-name">shift</span> + cmd +T
+-- 本地更改私钥权限
+<span class="token function">chmod</span> <span class="token number">600</span> id_rsa<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
+
+<h3 id="登陆服务器"><a href="#登陆服务器" class="headerlink" title="登陆服务器"></a>登陆服务器</h3><pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token function">ssh</span> root@ip <span class="token parameter variable">-p</span> aaa <span class="token parameter variable">-i</span> /Users/eddieho/documents/hk666<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+    </div>
+  </article>
+</div>
+  </main>
+
+  <footer>
+    <p>
+      &copy; 2025 Shark Blog 
+      <a href="https://github.com/eddiehex/hexo-geek-source" target="_blank">
+        <i class="fab fa-github"></i>
+      </a>
+    </p>
+  </footer>
+
+  <script src="/js/search.js"></script>
+  <script src="/js/main.js"></script>
+  <script src="/js/copy-code.js"></script>
+  <script src="/js/prism.js"></script>
+  <script src="/js/toc-highlight.js"></script>
+  <script src="/js/mobile-menu.js"></script>
+</body>
+</html>

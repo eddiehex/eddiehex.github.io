@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Shark Blog</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/prism-code.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <link rel="icon" href="https://hexo.kygoho.win/upload/uploads/6e7cf36d-8cb2-40c6-831f-80ef7488cca4.png" type="image/x-icon">
+  <link rel="stylesheet" href="/css/toc.css">
+  
+  <!-- MathJax Configuration -->
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']],
+        processEscapes: true,
+        processEnvironments: true,
+        packages: ['base', 'ams', 'noerrors', 'noundefined']
+      },
+      options: {
+        ignoreHtmlClass: 'tex2jax_ignore',
+        processHtmlClass: 'tex2jax_process'
+      },
+      startup: {
+        ready() {
+          MathJax.startup.defaultReady();
+          // Re-render math when content changes
+          document.addEventListener('DOMContentLoaded', function() {
+            if (window.MathJax && window.MathJax.typesetPromise) {
+              window.MathJax.typesetPromise();
+            }
+          });
+        }
+      }
+    };
+  </script>
+  <script async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.min.js"></script>
+<meta name="generator" content="Hexo 6.3.0"></head>
+<body>
+  <header>
+    <nav>
+      <div class="nav-container">
+        <div class="logo"><a href="/">Shark Blog</a></div>
+        <div class="search-container">
+          <input type="text" id="search-input" placeholder="Search...">
+          <div id="search-results"></div>
+        </div>
+        <div class="menu-toggle">
+          <i class="fas fa-bars"></i>
+        </div>
+      </div>
+      <ul class="nav-links">
+        <li><a href="/">Posts</a></li>
+        <li><a href="/services">Services</a></li>
+        <li><a href="/archives">Archive</a></li>
+        <li><a href="/categories">Categories</a></li>
+        <li><a href="/about">About</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <div class="page-container">
+  
+    <div class="toc-card">
+      <div class="toc-content">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%83%8C%E6%99%AF"><span class="toc-text">背景</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%9E%E7%8E%B0"><span class="toc-text">实现</span></a></li></ol>
+      </div>
+    </div>
+  
+  
+  <article class="page-content">
+    <h1 class="page-title">利用 API 自动获取汇率并实时通知</h1>
+    <div class="page-body">
+      <h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><blockquote>
+<p>by chat-gpt3.5</p>
+</blockquote>
+<p>在国际贸易和金融交流中，汇率是一个至关重要的因素，直接影响着货币之间的兑换关系。为了方便地获取汇率信息并实时通知，我们可以利用 Python 编写一个脚本，通过 API 自动获取汇率数据，并将结果保存到 CSV 文件中。本文将介绍如何使用 ExchangeRate-API 提供的接口，获取土耳其里拉（TRY）、美元（USD）对人民币（CNY）的汇率，并额外获取美元对新加坡元（SGD）的汇率。</p>
+<h2 id="实现"><a href="#实现" class="headerlink" title="实现"></a>实现</h2><p>首先，我们使用 <code>requests</code> 库发送 HTTP 请求，获取 ExchangeRate-API 提供的最新汇率数据。以下是获取汇率的函数：</p>
+<pre class="line-numbers language-python" data-language="python"><code class="language-python"><span class="token keyword">import</span> requests
+<span class="token keyword">import</span> json
+<span class="token keyword">import</span> schedule
+<span class="token keyword">import</span> time
+<span class="token keyword">import</span> csv
+
+<span class="token keyword">def</span> <span class="token function">get_exchange_rate_by_api</span><span class="token punctuation">(</span>currency<span class="token punctuation">,</span> currency_to<span class="token punctuation">)</span><span class="token punctuation">:</span>
+    url <span class="token operator">=</span> <span class="token string">"https://api.exchangerate-api.com/v4/latest/"</span> <span class="token operator">+</span> currency
+    response <span class="token operator">=</span> requests<span class="token punctuation">.</span>get<span class="token punctuation">(</span>url<span class="token punctuation">)</span>
+    data <span class="token operator">=</span> response<span class="token punctuation">.</span>json<span class="token punctuation">(</span><span class="token punctuation">)</span>
+    exchange_rate <span class="token operator">=</span> data<span class="token punctuation">[</span><span class="token string">"rates"</span><span class="token punctuation">]</span><span class="token punctuation">[</span>currency_to<span class="token punctuation">]</span>
+    <span class="token keyword">return</span> exchange_rate<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>接下来，我们通过调度get_exchange_rate_by_api，每天执行获取汇率的操作，并将结果保存到 CSV 文件中：</p>
+<pre class="line-numbers language-python" data-language="python"><code class="language-python"><span class="token keyword">def</span> <span class="token function">job</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
+    rate_try <span class="token operator">=</span> get_exchange_rate_by_api<span class="token punctuation">(</span><span class="token string">"TRY"</span><span class="token punctuation">,</span> <span class="token string">"CNY"</span><span class="token punctuation">)</span>
+    rate_usd <span class="token operator">=</span> get_exchange_rate_by_api<span class="token punctuation">(</span><span class="token string">"USD"</span><span class="token punctuation">,</span> <span class="token string">"CNY"</span><span class="token punctuation">)</span>
+    rate_sgd <span class="token operator">=</span> get_exchange_rate_by_api<span class="token punctuation">(</span><span class="token string">"USD"</span><span class="token punctuation">,</span> <span class="token string">"SGD"</span><span class="token punctuation">)</span>
+
+    today <span class="token operator">=</span> time<span class="token punctuation">.</span>strftime<span class="token punctuation">(</span><span class="token string">"%Y-%m-%d"</span><span class="token punctuation">,</span> time<span class="token punctuation">.</span>localtime<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+
+    <span class="token keyword">with</span> <span class="token builtin">open</span><span class="token punctuation">(</span><span class="token string">'exchange_rates.csv'</span><span class="token punctuation">,</span> <span class="token string">'a'</span><span class="token punctuation">,</span> newline<span class="token operator">=</span><span class="token string">''</span><span class="token punctuation">)</span> <span class="token keyword">as</span> <span class="token builtin">file</span><span class="token punctuation">:</span>
+        writer <span class="token operator">=</span> csv<span class="token punctuation">.</span>writer<span class="token punctuation">(</span><span class="token builtin">file</span><span class="token punctuation">)</span>
+        writer<span class="token punctuation">.</span>writerow<span class="token punctuation">(</span><span class="token punctuation">[</span>today<span class="token punctuation">,</span> <span class="token string">"TRY"</span><span class="token punctuation">,</span> <span class="token string">"CNY"</span><span class="token punctuation">,</span> rate_try<span class="token punctuation">]</span><span class="token punctuation">)</span>
+        writer<span class="token punctuation">.</span>writerow<span class="token punctuation">(</span><span class="token punctuation">[</span>today<span class="token punctuation">,</span> <span class="token string">"USD"</span><span class="token punctuation">,</span> <span class="token string">"CNY"</span><span class="token punctuation">,</span> rate_usd<span class="token punctuation">]</span><span class="token punctuation">)</span>
+        writer<span class="token punctuation">.</span>writerow<span class="token punctuation">(</span><span class="token punctuation">[</span>today<span class="token punctuation">,</span> <span class="token string">"USD"</span><span class="token punctuation">,</span> <span class="token string">"SGD"</span><span class="token punctuation">,</span> rate_sgd<span class="token punctuation">]</span><span class="token punctuation">)</span>
+
+    notice_text <span class="token operator">=</span> <span class="token string-interpolation"><span class="token string">f"今日</span><span class="token interpolation"><span class="token punctuation">&#123;</span>today<span class="token punctuation">&#125;</span></span><span class="token string">，土耳其里拉对人民币的汇率为：</span><span class="token interpolation"><span class="token punctuation">&#123;</span>rate_try<span class="token punctuation">&#125;</span></span><span class="token string">，美元对人民币的汇率为：</span><span class="token interpolation"><span class="token punctuation">&#123;</span>rate_usd<span class="token punctuation">&#125;</span></span><span class="token string">，美元对新加坡元的汇率为：</span><span class="token interpolation"><span class="token punctuation">&#123;</span>rate_sgd<span class="token punctuation">&#125;</span></span><span class="token string">"</span></span>
+    notice<span class="token punctuation">(</span>notice_text<span class="token punctuation">)</span>
+
+    <span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string-interpolation"><span class="token string">f"执行完成，</span><span class="token interpolation"><span class="token punctuation">&#123;</span>today<span class="token punctuation">&#125;</span></span><span class="token string">"</span></span><span class="token punctuation">)</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>最后，我们定义通知函数 <code>notice</code>，通过 Telegram Bot API 将获取到的汇率信息发送到指定的聊天群：</p>
+<pre class="line-numbers language-python" data-language="python"><code class="language-python"><span class="token keyword">def</span> <span class="token function">notice</span><span class="token punctuation">(</span>text<span class="token punctuation">)</span><span class="token punctuation">:</span>
+    api_url <span class="token operator">=</span> <span class="token string">"https://domain.com/api/send_notification"</span>
+    data <span class="token operator">=</span> <span class="token punctuation">&#123;</span>
+        <span class="token string">"chat_id"</span><span class="token punctuation">:</span> <span class="token string">"&#123;chat_id&#125;"</span><span class="token punctuation">,</span>
+        <span class="token string">"text"</span><span class="token punctuation">:</span> text
+    <span class="token punctuation">&#125;</span>
+
+    response <span class="token operator">=</span> requests<span class="token punctuation">.</span>post<span class="token punctuation">(</span>api_url<span class="token punctuation">,</span> json<span class="token operator">=</span>data<span class="token punctuation">)</span>
+
+    <span class="token keyword">if</span> response<span class="token punctuation">.</span>status_code <span class="token operator">==</span> <span class="token number">200</span><span class="token punctuation">:</span>
+        <span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string">"通知成功"</span><span class="token punctuation">)</span>
+    <span class="token keyword">else</span><span class="token punctuation">:</span>
+        <span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string">"通知失败"</span><span class="token punctuation">)</span>
+    <span class="token keyword">return</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>在主程序中，我们通过 <code>if __name__ == &#39;__main__&#39;:</code> 判断脚本是否直接运行，如果是，则执行 <code>job()</code> 函数，</p>
+<p>再通过cron任务实现每天早上 9 点自动获取并通知汇率信息。</p>
+<p>通过这样的自动化脚本，我们可以方便地获取最新的汇率数据，并及时了解货币兑换情况。</p>
+
+    </div>
+  </article>
+</div>
+  </main>
+
+  <footer>
+    <p>
+      &copy; 2025 Shark Blog 
+      <a href="https://github.com/eddiehex/hexo-geek-source" target="_blank">
+        <i class="fab fa-github"></i>
+      </a>
+    </p>
+  </footer>
+
+  <script src="/js/search.js"></script>
+  <script src="/js/main.js"></script>
+  <script src="/js/copy-code.js"></script>
+  <script src="/js/prism.js"></script>
+  <script src="/js/toc-highlight.js"></script>
+  <script src="/js/mobile-menu.js"></script>
+</body>
+</html>

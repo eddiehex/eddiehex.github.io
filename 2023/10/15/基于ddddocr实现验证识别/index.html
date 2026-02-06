@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Shark Blog</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/prism-code.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <link rel="icon" href="https://hexo.kygoho.win/upload/uploads/6e7cf36d-8cb2-40c6-831f-80ef7488cca4.png" type="image/x-icon">
+  <link rel="stylesheet" href="/css/toc.css">
+  
+  <!-- MathJax Configuration -->
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']],
+        processEscapes: true,
+        processEnvironments: true,
+        packages: ['base', 'ams', 'noerrors', 'noundefined']
+      },
+      options: {
+        ignoreHtmlClass: 'tex2jax_ignore',
+        processHtmlClass: 'tex2jax_process'
+      },
+      startup: {
+        ready() {
+          MathJax.startup.defaultReady();
+          // Re-render math when content changes
+          document.addEventListener('DOMContentLoaded', function() {
+            if (window.MathJax && window.MathJax.typesetPromise) {
+              window.MathJax.typesetPromise();
+            }
+          });
+        }
+      }
+    };
+  </script>
+  <script async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.min.js"></script>
+<meta name="generator" content="Hexo 6.3.0"></head>
+<body>
+  <header>
+    <nav>
+      <div class="nav-container">
+        <div class="logo"><a href="/">Shark Blog</a></div>
+        <div class="search-container">
+          <input type="text" id="search-input" placeholder="Search...">
+          <div id="search-results"></div>
+        </div>
+        <div class="menu-toggle">
+          <i class="fas fa-bars"></i>
+        </div>
+      </div>
+      <ul class="nav-links">
+        <li><a href="/">Posts</a></li>
+        <li><a href="/services">Services</a></li>
+        <li><a href="/archives">Archive</a></li>
+        <li><a href="/categories">Categories</a></li>
+        <li><a href="/about">About</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <div class="page-container">
+  
+    <div class="toc-card">
+      <div class="toc-content">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%83%8C%E6%99%AF"><span class="toc-text">背景</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BE%9D%E8%B5%96%E5%87%86%E5%A4%87"><span class="toc-text">依赖准备</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#ddddocr-%E4%BD%BF%E7%94%A8"><span class="toc-text">ddddocr 使用</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%9E%E7%8E%B0"><span class="toc-text">实现</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%85%B6%E4%BB%96"><span class="toc-text">其他</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Truecaptcha"><span class="toc-text">Truecaptcha</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#telegram%E4%BA%A4%E4%BA%92"><span class="toc-text">telegram交互</span></a></li></ol></li></ol>
+      </div>
+    </div>
+  
+  
+  <article class="page-content">
+    <h1 class="page-title">基于ddddocr库的验证码识别</h1>
+    <div class="page-body">
+      <h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>Ebay公益服的持续使用往往需要通过签到赚取积分来维持，偶尔因忙于他事容易忘记，故在翻阅他人资料后着手开发。</p>
+<h2 id="依赖准备"><a href="#依赖准备" class="headerlink" title="依赖准备"></a>依赖准备</h2><ul>
+<li>ddddocr 用于验证码识别</li>
+<li>telethon 同telegram交互</li>
+<li>asyncio 异步任务处理</li>
+<li>requests 通知请求</li>
+</ul>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token comment"># 安装</span>
+pip <span class="token function">install</span> ddddocr
+<span class="token comment"># 安装时发生了报错</span>
+AttributeError: module <span class="token string">'PIL.Image'</span> has no attribute <span class="token string">'ANTIALIAS'</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>在github上发现有<a target="_blank" rel="noopener" href="https://github.com/sml2h3/ddddocr/issues/139">issue</a>解决方案</p>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token comment">#按照方案二处理，降级Pillow的版本，比如使用9.5.0版本（先卸载，再重新安装）</span>
+pip uninstall <span class="token parameter variable">-y</span> Pillow
+pip <span class="token function">install</span> <span class="token assign-left variable">Pillow</span><span class="token operator">==</span><span class="token number">9.5</span>.0<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+
+<p>其他正常安装即可</p>
+<h2 id="ddddocr-使用"><a href="#ddddocr-使用" class="headerlink" title="ddddocr 使用"></a>ddddocr 使用</h2><pre class="line-numbers language-python" data-language="python"><code class="language-python"><span class="token keyword">import</span> ddddocr
+
+ocr <span class="token operator">=</span> ddddocr<span class="token punctuation">.</span>DdddOcr<span class="token punctuation">(</span>beta<span class="token operator">=</span><span class="token boolean">True</span><span class="token punctuation">,</span>show_ad<span class="token operator">=</span><span class="token boolean">False</span><span class="token punctuation">)</span> <span class="token comment">#开启测试版 关闭广告</span>
+
+<span class="token keyword">with</span> <span class="token builtin">open</span><span class="token punctuation">(</span><span class="token string">"test.jpg"</span><span class="token punctuation">,</span> <span class="token string">'rb'</span><span class="token punctuation">)</span> <span class="token keyword">as</span> f<span class="token punctuation">:</span>
+    image <span class="token operator">=</span> f<span class="token punctuation">.</span>read<span class="token punctuation">(</span><span class="token punctuation">)</span>
+
+res <span class="token operator">=</span> ocr<span class="token punctuation">.</span>classification<span class="token punctuation">(</span>image<span class="token punctuation">)</span>
+<span class="token keyword">print</span><span class="token punctuation">(</span>res<span class="token punctuation">)</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>图片示例：</p>
+<p><img src="https://od.wadaho.cf/api/raw/?path=/picture/blog/2023-11-13%2012.54.05.jpg" alt="识别图片示例"></p>
+<p>其他一些<a target="_blank" rel="noopener" href="https://github.com/sml2h3/ddddocr#readme">用法</a></p>
+<h2 id="实现"><a href="#实现" class="headerlink" title="实现"></a>实现</h2><p>实现路径为</p>
+<ul>
+<li>通过与telegram交互发送签到&#x2F;checkin 命令，</li>
+<li>获取验证码，</li>
+<li>通过captcha_solver识别验证码，</li>
+<li>最后交互发送识别结果，</li>
+<li>判断结果信息，失败重试。</li>
+</ul>
+<pre class="line-numbers language-python" data-language="python"><code class="language-python"><span class="token comment"># -*- coding: utf-8 -*-</span>
+<span class="token keyword">import</span> os
+<span class="token keyword">import</span> time
+<span class="token keyword">from</span> telethon <span class="token keyword">import</span> TelegramClient<span class="token punctuation">,</span> events
+<span class="token keyword">import</span> ddddocr
+<span class="token keyword">import</span> asyncio
+<span class="token keyword">import</span> requests
+<span class="token keyword">def</span> <span class="token function">notice</span><span class="token punctuation">(</span>text<span class="token punctuation">)</span><span class="token punctuation">:</span>
+    api_url <span class="token operator">=</span> <span class="token string">"https://noticurl.com/send_notification"</span>
+    data <span class="token operator">=</span> <span class="token punctuation">&#123;</span>
+        <span class="token string">"chat_id"</span><span class="token punctuation">:</span> <span class="token string">"&#123;chat_id&#125;"</span><span class="token punctuation">,</span>
+        <span class="token string">"text"</span><span class="token punctuation">:</span> text
+    <span class="token punctuation">&#125;</span>
+    response <span class="token operator">=</span> requests<span class="token punctuation">.</span>post<span class="token punctuation">(</span>api_url<span class="token punctuation">,</span> json<span class="token operator">=</span>data<span class="token punctuation">)</span>
+    <span class="token keyword">return</span> <span class="token keyword">print</span><span class="token punctuation">(</span>response<span class="token punctuation">.</span>json<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+
+<span class="token keyword">def</span> <span class="token function">captcha_solver</span><span class="token punctuation">(</span>f<span class="token punctuation">)</span><span class="token punctuation">:</span>
+    <span class="token keyword">with</span> <span class="token builtin">open</span><span class="token punctuation">(</span>f<span class="token punctuation">,</span> <span class="token string">'rb'</span><span class="token punctuation">)</span> <span class="token keyword">as</span> image_file<span class="token punctuation">:</span> 
+        image_bytes <span class="token operator">=</span> image_file<span class="token punctuation">.</span>read<span class="token punctuation">(</span><span class="token punctuation">)</span>
+        ocr <span class="token operator">=</span> ddddocr<span class="token punctuation">.</span>DdddOcr<span class="token punctuation">(</span>beta<span class="token operator">=</span><span class="token boolean">True</span><span class="token punctuation">,</span> show_ad<span class="token operator">=</span><span class="token boolean">False</span><span class="token punctuation">)</span>
+        res <span class="token operator">=</span> ocr<span class="token punctuation">.</span>classification<span class="token punctuation">(</span>image_bytes<span class="token punctuation">)</span>
+    <span class="token keyword">return</span> res
+
+<span class="token keyword">async</span> <span class="token keyword">def</span> <span class="token function">tg_qd</span><span class="token punctuation">(</span>client<span class="token punctuation">,</span> tg_bot<span class="token punctuation">,</span> tg_command<span class="token punctuation">)</span><span class="token punctuation">:</span>
+    <span class="token keyword">await</span> client<span class="token punctuation">.</span>send_message<span class="token punctuation">(</span>tg_bot<span class="token punctuation">,</span> tg_command<span class="token punctuation">)</span>
+    <span class="token keyword">await</span> asyncio<span class="token punctuation">.</span>sleep<span class="token punctuation">(</span><span class="token number">5</span><span class="token punctuation">)</span>  <span class="token comment"># 使用 asyncio.sleep 代替 time.sleep</span>
+    messages <span class="token operator">=</span> <span class="token keyword">await</span> client<span class="token punctuation">.</span>get_messages<span class="token punctuation">(</span>tg_bot<span class="token punctuation">)</span>
+    <span class="token keyword">await</span> messages<span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span><span class="token punctuation">.</span>download_media<span class="token punctuation">(</span><span class="token builtin">file</span><span class="token operator">=</span><span class="token string">"1.jpg"</span><span class="token punctuation">)</span>
+    the_code <span class="token operator">=</span> captcha_solver<span class="token punctuation">(</span><span class="token string">"1.jpg"</span><span class="token punctuation">)</span>
+    <span class="token keyword">await</span> client<span class="token punctuation">.</span>send_message<span class="token punctuation">(</span>tg_bot<span class="token punctuation">,</span> the_code<span class="token punctuation">)</span>
+    <span class="token keyword">await</span> asyncio<span class="token punctuation">.</span>sleep<span class="token punctuation">(</span><span class="token number">5</span><span class="token punctuation">)</span>
+    messages <span class="token operator">=</span> <span class="token keyword">await</span> client<span class="token punctuation">.</span>get_messages<span class="token punctuation">(</span>tg_bot<span class="token punctuation">)</span>
+    <span class="token keyword">return</span> messages<span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span><span class="token punctuation">.</span>message
+
+api_id <span class="token operator">=</span> <span class="token punctuation">[</span><span class="token punctuation">&#123;</span>api_id<span class="token punctuation">&#125;</span><span class="token punctuation">]</span>  <span class="token comment"># 输入api_id，一个账号一项</span>
+api_hash <span class="token operator">=</span> <span class="token punctuation">[</span><span class="token string">'&#123;api_hash&#125;'</span><span class="token punctuation">]</span>  <span class="token comment"># 输入api_hash，一个账号一项</span>
+session_name <span class="token operator">=</span> api_id<span class="token punctuation">[</span><span class="token punctuation">:</span><span class="token punctuation">]</span>
+bots_commands <span class="token operator">=</span> <span class="token punctuation">[</span><span class="token string">"@&#123;channelname&#125;"</span><span class="token punctuation">,</span> <span class="token string">"/checkin"</span><span class="token punctuation">,</span> <span class="token string">"成功"</span><span class="token punctuation">,</span><span class="token string">"/cancle"</span><span class="token punctuation">]</span>
+
+<span class="token keyword">async</span> <span class="token keyword">def</span> <span class="token function">main</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
+    <span class="token keyword">for</span> num <span class="token keyword">in</span> <span class="token builtin">range</span><span class="token punctuation">(</span><span class="token builtin">len</span><span class="token punctuation">(</span>api_id<span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
+        session_name<span class="token punctuation">[</span>num<span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token string">"id_"</span> <span class="token operator">+</span> <span class="token builtin">str</span><span class="token punctuation">(</span>session_name<span class="token punctuation">[</span>num<span class="token punctuation">]</span><span class="token punctuation">)</span>
+        client <span class="token operator">=</span> TelegramClient<span class="token punctuation">(</span>
+            session_name<span class="token punctuation">[</span>num<span class="token punctuation">]</span><span class="token punctuation">,</span>
+            api_id<span class="token punctuation">[</span>num<span class="token punctuation">]</span><span class="token punctuation">,</span>
+            api_hash<span class="token punctuation">[</span>num<span class="token punctuation">]</span><span class="token punctuation">,</span>
+            proxy<span class="token operator">=</span><span class="token punctuation">(</span><span class="token string">"socks5"</span><span class="token punctuation">,</span> <span class="token string">"127.0.0.1"</span><span class="token punctuation">,</span> <span class="token number">1087</span><span class="token punctuation">)</span><span class="token punctuation">,</span> <span class="token comment">#本地运行开启代理</span>
+        <span class="token punctuation">)</span>
+        <span class="token keyword">try</span><span class="token punctuation">:</span>
+            <span class="token keyword">await</span> client<span class="token punctuation">.</span>start<span class="token punctuation">(</span><span class="token punctuation">)</span>
+            the_result <span class="token operator">=</span> <span class="token keyword">await</span> tg_qd<span class="token punctuation">(</span>client<span class="token punctuation">,</span> bots_commands<span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span><span class="token punctuation">,</span> bots_commands<span class="token punctuation">[</span><span class="token number">1</span><span class="token punctuation">]</span><span class="token punctuation">)</span>
+            <span class="token keyword">print</span><span class="token punctuation">(</span>the_result<span class="token punctuation">)</span>
+            i <span class="token operator">=</span> <span class="token number">0</span>
+            <span class="token keyword">while</span> bots_commands<span class="token punctuation">[</span><span class="token number">2</span><span class="token punctuation">]</span> <span class="token keyword">not</span> <span class="token keyword">in</span> the_result<span class="token punctuation">:</span> 
+                i <span class="token operator">+=</span> <span class="token number">1</span>
+                <span class="token keyword">await</span> client<span class="token punctuation">.</span>send_message<span class="token punctuation">(</span>bots_commands<span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span><span class="token punctuation">,</span> bots_commands<span class="token punctuation">[</span><span class="token number">3</span><span class="token punctuation">]</span><span class="token punctuation">)</span>
+                <span class="token keyword">await</span> asyncio<span class="token punctuation">.</span>sleep<span class="token punctuation">(</span><span class="token number">5</span><span class="token punctuation">)</span>
+                the_result <span class="token operator">=</span> <span class="token keyword">await</span> tg_qd<span class="token punctuation">(</span>client<span class="token punctuation">,</span> bots_commands<span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span><span class="token punctuation">,</span> bots_commands<span class="token punctuation">[</span><span class="token number">1</span><span class="token punctuation">]</span><span class="token punctuation">)</span>
+                <span class="token keyword">if</span> i <span class="token operator">></span> <span class="token number">2</span><span class="token punctuation">:</span> 
+                    <span class="token keyword">break</span>
+            text <span class="token operator">=</span> the_result <span class="token operator">+</span> <span class="token string">"终点站"</span>
+            notice<span class="token punctuation">(</span>text<span class="token punctuation">)</span>
+        <span class="token keyword">except</span> Exception <span class="token keyword">as</span> err<span class="token punctuation">:</span>
+            error_message <span class="token operator">=</span> <span class="token string-interpolation"><span class="token string">f"Error in main(): </span><span class="token interpolation"><span class="token punctuation">&#123;</span><span class="token builtin">str</span><span class="token punctuation">(</span>err<span class="token punctuation">)</span><span class="token punctuation">&#125;</span></span><span class="token string">"</span></span>
+            notice<span class="token punctuation">(</span>error_message<span class="token punctuation">)</span>
+        <span class="token keyword">finally</span><span class="token punctuation">:</span>
+            <span class="token keyword">await</span> client<span class="token punctuation">.</span>disconnect<span class="token punctuation">(</span><span class="token punctuation">)</span>
+
+asyncio<span class="token punctuation">.</span>run<span class="token punctuation">(</span>main<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<h1 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h1><h3 id="Truecaptcha"><a href="#Truecaptcha" class="headerlink" title="Truecaptcha"></a>Truecaptcha</h3><p>本来想通过<a target="_blank" rel="noopener" href="https://truecaptcha.org/code.html">truecaptcha</a>来实现验证码识别</p>
+<pre class="line-numbers language-python" data-language="python"><code class="language-python"><span class="token keyword">import</span> requests
+<span class="token keyword">import</span> base64
+
+<span class="token keyword">def</span> <span class="token function">solve</span><span class="token punctuation">(</span>f<span class="token punctuation">)</span><span class="token punctuation">:</span>
+	<span class="token keyword">with</span> <span class="token builtin">open</span><span class="token punctuation">(</span>f<span class="token punctuation">,</span> <span class="token string">"rb"</span><span class="token punctuation">)</span> <span class="token keyword">as</span> image_file<span class="token punctuation">:</span>
+		encoded_string <span class="token operator">=</span> base64<span class="token punctuation">.</span>b64encode<span class="token punctuation">(</span>image_file<span class="token punctuation">.</span>read<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">.</span>decode<span class="token punctuation">(</span><span class="token string">'ascii'</span><span class="token punctuation">)</span>
+		url <span class="token operator">=</span> <span class="token string">'https://api.apitruecaptcha.org/one/gettext'</span>
+
+		data <span class="token operator">=</span> <span class="token punctuation">&#123;</span> 
+			<span class="token string">'userid'</span><span class="token punctuation">:</span><span class="token string">'&#123;id&#125;'</span><span class="token punctuation">,</span> <span class="token comment">#填入id</span>
+			<span class="token string">'apikey'</span><span class="token punctuation">:</span><span class="token string">'&#123;key&#125;'</span><span class="token punctuation">,</span>  <span class="token comment">#填入key</span>
+			<span class="token string">'data'</span><span class="token punctuation">:</span>encoded_string
+		<span class="token punctuation">&#125;</span>
+		response <span class="token operator">=</span> requests<span class="token punctuation">.</span>post<span class="token punctuation">(</span>url <span class="token operator">=</span> url<span class="token punctuation">,</span> json <span class="token operator">=</span> data<span class="token punctuation">)</span>
+		data <span class="token operator">=</span> response<span class="token punctuation">.</span>json<span class="token punctuation">(</span><span class="token punctuation">)</span>
+		<span class="token keyword">return</span> data<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>但是之前的单日100的限额变成了一次。</p>
+<p>另外试了一下改服务对于中文识别不太行，英文数字还可以</p>
+<h3 id="telegram交互"><a href="#telegram交互" class="headerlink" title="telegram交互"></a>telegram交互</h3><p>后续还需要多研究研究！</p>
+
+    </div>
+  </article>
+</div>
+  </main>
+
+  <footer>
+    <p>
+      &copy; 2025 Shark Blog 
+      <a href="https://github.com/eddiehex/hexo-geek-source" target="_blank">
+        <i class="fab fa-github"></i>
+      </a>
+    </p>
+  </footer>
+
+  <script src="/js/search.js"></script>
+  <script src="/js/main.js"></script>
+  <script src="/js/copy-code.js"></script>
+  <script src="/js/prism.js"></script>
+  <script src="/js/toc-highlight.js"></script>
+  <script src="/js/mobile-menu.js"></script>
+</body>
+</html>

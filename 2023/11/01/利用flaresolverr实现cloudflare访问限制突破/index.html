@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Shark Blog</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/prism-code.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <link rel="icon" href="https://hexo.kygoho.win/upload/uploads/6e7cf36d-8cb2-40c6-831f-80ef7488cca4.png" type="image/x-icon">
+  <link rel="stylesheet" href="/css/toc.css">
+  
+  <!-- MathJax Configuration -->
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']],
+        processEscapes: true,
+        processEnvironments: true,
+        packages: ['base', 'ams', 'noerrors', 'noundefined']
+      },
+      options: {
+        ignoreHtmlClass: 'tex2jax_ignore',
+        processHtmlClass: 'tex2jax_process'
+      },
+      startup: {
+        ready() {
+          MathJax.startup.defaultReady();
+          // Re-render math when content changes
+          document.addEventListener('DOMContentLoaded', function() {
+            if (window.MathJax && window.MathJax.typesetPromise) {
+              window.MathJax.typesetPromise();
+            }
+          });
+        }
+      }
+    };
+  </script>
+  <script async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.min.js"></script>
+<meta name="generator" content="Hexo 6.3.0"></head>
+<body>
+  <header>
+    <nav>
+      <div class="nav-container">
+        <div class="logo"><a href="/">Shark Blog</a></div>
+        <div class="search-container">
+          <input type="text" id="search-input" placeholder="Search...">
+          <div id="search-results"></div>
+        </div>
+        <div class="menu-toggle">
+          <i class="fas fa-bars"></i>
+        </div>
+      </div>
+      <ul class="nav-links">
+        <li><a href="/">Posts</a></li>
+        <li><a href="/services">Services</a></li>
+        <li><a href="/archives">Archive</a></li>
+        <li><a href="/categories">Categories</a></li>
+        <li><a href="/about">About</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <div class="page-container">
+  
+    <div class="toc-card">
+      <div class="toc-content">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%83%8C%E6%99%AF"><span class="toc-text">背景</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88"><span class="toc-text">解决方案</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#flaresolverr-%E9%83%A8%E7%BD%B2"><span class="toc-text">flaresolverr 部署</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#flaresolverr%E4%BD%BF%E7%94%A8"><span class="toc-text">flaresolverr使用</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#request-get"><span class="toc-text">request.get</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#sessions-create"><span class="toc-text">sessions.create</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#session-list"><span class="toc-text">session.list</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9C%BA%E6%99%AF%E5%BA%94%E7%94%A8"><span class="toc-text">场景应用</span></a></li></ol>
+      </div>
+    </div>
+  
+  
+  <article class="page-content">
+    <h1 class="page-title">利用flaresolverr 实现cloudflare访问限制突破</h1>
+    <div class="page-body">
+      <h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>最近使用想通过RSS订阅常用论坛，做到信息统一浏览，但常用的nodeseek论坛因托管于cloudflare平台，直接订阅其RSS会出现因cloudflare保护措施无法访问获取。</p>
+<h2 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h2><p>通过部署flaresolverr绕过cloudflare防范从而对网站进行访问。</p>
+<h3 id="flaresolverr-部署"><a href="#flaresolverr-部署" class="headerlink" title="flaresolverr 部署"></a>flaresolverr 部署</h3><p>通过docker部署</p>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token function">docker</span> run <span class="token parameter variable">-d</span>   <span class="token parameter variable">--name</span><span class="token operator">=</span>flaresolverr   <span class="token parameter variable">-p</span> <span class="token number">8191</span>:8191   <span class="token parameter variable">-e</span> <span class="token assign-left variable">LOG_LEVEL</span><span class="token operator">=</span>info   <span class="token parameter variable">--restart</span> unless-stopped   ghcr.io/flaresolverr/flaresolverr:latest<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<h3 id="flaresolverr使用"><a href="#flaresolverr使用" class="headerlink" title="flaresolverr使用"></a>flaresolverr使用</h3><h4 id="request-get"><a href="#request-get" class="headerlink" title="request.get"></a>request.get</h4><pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token function">curl</span> <span class="token parameter variable">-L</span> <span class="token parameter variable">-X</span> POST <span class="token string">'http://localhost:8191/v1'</span> <span class="token parameter variable">-H</span> <span class="token string">'Content-Type: application/json'</span> --data-raw <span class="token string">'&#123;
+    "cmd": "request.get",
+		"url":"http://www.nodeseek.com/",
+		"maxTimeout": 60000
+ &#125;'</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>返回内容示例</p>
+<pre class="line-numbers language-json" data-language="json"><code class="language-json"><span class="token punctuation">&#123;</span>
+    <span class="token property">"solution"</span><span class="token operator">:</span> <span class="token punctuation">&#123;</span>
+        <span class="token property">"url"</span><span class="token operator">:</span> <span class="token string">"https://www.google.com/?gws_rd=ssl"</span><span class="token punctuation">,</span>
+        <span class="token property">"status"</span><span class="token operator">:</span> <span class="token number">200</span><span class="token punctuation">,</span>
+        <span class="token property">"headers"</span><span class="token operator">:</span> <span class="token punctuation">&#123;</span>
+            <span class="token property">"status"</span><span class="token operator">:</span> <span class="token string">"200"</span><span class="token punctuation">,</span>
+            <span class="token property">"date"</span><span class="token operator">:</span> <span class="token string">"Thu, 16 Jul 2020 04:15:49 GMT"</span><span class="token punctuation">,</span>
+            <span class="token property">"expires"</span><span class="token operator">:</span> <span class="token string">"-1"</span><span class="token punctuation">,</span>
+            <span class="token property">"cache-control"</span><span class="token operator">:</span> <span class="token string">"private, max-age=0"</span><span class="token punctuation">,</span>
+            <span class="token property">"content-type"</span><span class="token operator">:</span> <span class="token string">"text/html; charset=UTF-8"</span><span class="token punctuation">,</span>
+            <span class="token property">"strict-transport-security"</span><span class="token operator">:</span> <span class="token string">"max-age=31536000"</span><span class="token punctuation">,</span>
+            <span class="token property">"p3p"</span><span class="token operator">:</span> <span class="token string">"CP=\"This is not a P3P policy! See g.co/p3phelp for more info.\""</span><span class="token punctuation">,</span>
+            <span class="token property">"content-encoding"</span><span class="token operator">:</span> <span class="token string">"br"</span><span class="token punctuation">,</span>
+            <span class="token property">"server"</span><span class="token operator">:</span> <span class="token string">"gws"</span><span class="token punctuation">,</span>
+            <span class="token property">"content-length"</span><span class="token operator">:</span> <span class="token string">"61587"</span><span class="token punctuation">,</span>
+            <span class="token property">"x-xss-protection"</span><span class="token operator">:</span> <span class="token string">"0"</span><span class="token punctuation">,</span>
+            <span class="token property">"x-frame-options"</span><span class="token operator">:</span> <span class="token string">"SAMEORIGIN"</span><span class="token punctuation">,</span>
+            <span class="token property">"set-cookie"</span><span class="token operator">:</span> <span class="token string">"1P_JAR=2020-07-16-04; expires=Sat..."</span>
+        <span class="token punctuation">&#125;</span><span class="token punctuation">,</span>
+        <span class="token property">"response"</span><span class="token operator">:</span><span class="token string">"&lt;!DOCTYPE html>..."</span><span class="token punctuation">,</span>
+        <span class="token property">"cookies"</span><span class="token operator">:</span> <span class="token punctuation">[</span>
+            <span class="token punctuation">&#123;</span>
+                <span class="token property">"name"</span><span class="token operator">:</span> <span class="token string">"NID"</span><span class="token punctuation">,</span>
+                <span class="token property">"value"</span><span class="token operator">:</span> <span class="token string">"204=QE3Ocq15XalczqjuDy52HeseG3zAZuJzID3R57..."</span><span class="token punctuation">,</span>
+                <span class="token property">"domain"</span><span class="token operator">:</span> <span class="token string">".google.com"</span><span class="token punctuation">,</span>
+                <span class="token property">"path"</span><span class="token operator">:</span> <span class="token string">"/"</span><span class="token punctuation">,</span>
+                <span class="token property">"expires"</span><span class="token operator">:</span> <span class="token number">1610684149.307722</span><span class="token punctuation">,</span>
+                <span class="token property">"size"</span><span class="token operator">:</span> <span class="token number">178</span><span class="token punctuation">,</span>
+                <span class="token property">"httpOnly"</span><span class="token operator">:</span> <span class="token boolean">true</span><span class="token punctuation">,</span>
+                <span class="token property">"secure"</span><span class="token operator">:</span> <span class="token boolean">true</span><span class="token punctuation">,</span>
+                <span class="token property">"session"</span><span class="token operator">:</span> <span class="token boolean">false</span><span class="token punctuation">,</span>
+                <span class="token property">"sameSite"</span><span class="token operator">:</span> <span class="token string">"None"</span>
+            <span class="token punctuation">&#125;</span><span class="token punctuation">,</span>
+            <span class="token punctuation">&#123;</span>
+                <span class="token property">"name"</span><span class="token operator">:</span> <span class="token string">"1P_JAR"</span><span class="token punctuation">,</span>
+                <span class="token property">"value"</span><span class="token operator">:</span> <span class="token string">"2020-07-16-04"</span><span class="token punctuation">,</span>
+                <span class="token property">"domain"</span><span class="token operator">:</span> <span class="token string">".google.com"</span><span class="token punctuation">,</span>
+                <span class="token property">"path"</span><span class="token operator">:</span> <span class="token string">"/"</span><span class="token punctuation">,</span>
+                <span class="token property">"expires"</span><span class="token operator">:</span> <span class="token number">1597464949.307626</span><span class="token punctuation">,</span>
+                <span class="token property">"size"</span><span class="token operator">:</span> <span class="token number">19</span><span class="token punctuation">,</span>
+                <span class="token property">"httpOnly"</span><span class="token operator">:</span> <span class="token boolean">false</span><span class="token punctuation">,</span>
+                <span class="token property">"secure"</span><span class="token operator">:</span> <span class="token boolean">true</span><span class="token punctuation">,</span>
+                <span class="token property">"session"</span><span class="token operator">:</span> <span class="token boolean">false</span><span class="token punctuation">,</span>
+                <span class="token property">"sameSite"</span><span class="token operator">:</span> <span class="token string">"None"</span>
+            <span class="token punctuation">&#125;</span>
+        <span class="token punctuation">]</span><span class="token punctuation">,</span>
+        <span class="token property">"userAgent"</span><span class="token operator">:</span> <span class="token string">"Windows NT 10.0; Win64; x64) AppleWebKit/5..."</span>
+    <span class="token punctuation">&#125;</span><span class="token punctuation">,</span>
+    <span class="token property">"status"</span><span class="token operator">:</span> <span class="token string">"ok"</span><span class="token punctuation">,</span>
+    <span class="token property">"message"</span><span class="token operator">:</span> <span class="token string">""</span><span class="token punctuation">,</span>
+    <span class="token property">"startTimestamp"</span><span class="token operator">:</span> <span class="token number">1594872947467</span><span class="token punctuation">,</span>
+    <span class="token property">"endTimestamp"</span><span class="token operator">:</span> <span class="token number">1594872949617</span><span class="token punctuation">,</span>
+    <span class="token property">"version"</span><span class="token operator">:</span> <span class="token string">"1.0.0"</span>
+<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<h4 id="sessions-create"><a href="#sessions-create" class="headerlink" title="sessions.create"></a>sessions.create</h4><pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token comment"># 创建seesion</span>
+<span class="token function">curl</span> <span class="token parameter variable">-L</span> <span class="token parameter variable">-X</span> POST <span class="token string">'http://localhost:8191/v1'</span> <span class="token parameter variable">-H</span> <span class="token string">'Content-Type: application/json'</span> --data-raw <span class="token string">'&#123;
+    "cmd": "sessions.create",
+    "url":"http://www.nodeseek.com/rss.xml",
+    "maxTimeout": 60000
+  &#125;'</span>
+  
+<span class="token comment"># 应用session</span>
+<span class="token function">curl</span> <span class="token parameter variable">-L</span> <span class="token parameter variable">-X</span> POST <span class="token string">'http://localhost:8191/v1'</span> <span class="token parameter variable">-H</span> <span class="token string">'Content-Type: application/json'</span> --data-raw <span class="token string">'&#123;
+    "cmd": "request.get",
+    "url":"http://www.nodeseek.com/rss.xml",
+    "maxTimeout": 60000,
+    "session": "48554e80-803c-11ee-804f-0242ac110002"
+  &#125;'</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<h4 id="session-list"><a href="#session-list" class="headerlink" title="session.list"></a>session.list</h4><pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token function">curl</span> <span class="token parameter variable">-L</span> <span class="token parameter variable">-X</span> POST <span class="token string">'http://localhost:8191/v1'</span> <span class="token parameter variable">-H</span> <span class="token string">'Content-Type: application/json'</span> --data-raw <span class="token string">'&#123;
+    "cmd": "sessions.list"&#125;'</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+
+
+
+<h2 id="场景应用"><a href="#场景应用" class="headerlink" title="场景应用"></a>场景应用</h2><pre class="line-numbers language-python" data-language="python"><code class="language-python"><span class="token keyword">from</span> http<span class="token punctuation">.</span>server <span class="token keyword">import</span> BaseHTTPRequestHandler<span class="token punctuation">,</span> HTTPServer
+<span class="token keyword">from</span> curl_cffi <span class="token keyword">import</span> requests
+<span class="token keyword">import</span> xml<span class="token punctuation">.</span>dom<span class="token punctuation">.</span>minidom  <span class="token comment"># Library for XML formatting</span>
+<span class="token keyword">import</span> xml<span class="token punctuation">.</span>parsers<span class="token punctuation">.</span>expat
+<span class="token keyword">import</span> subprocess
+<span class="token keyword">import</span> json
+
+
+<span class="token comment"># Define the URL and the user agent</span>
+url <span class="token operator">=</span> <span class="token string">"https://www.nodeseek.com/rss.xml"</span>
+user_agent <span class="token operator">=</span> <span class="token string">"chrome110"</span>
+output_file <span class="token operator">=</span> <span class="token string">"rss.xml"</span>  <span class="token comment"># New file to save the content</span>
+curl_command <span class="token operator">=</span> <span class="token punctuation">(</span>
+    <span class="token string">"curl -L -X POST 'http://localhost:8191/v1' "</span>
+    <span class="token string">"-H 'Content-Type: application/json' "</span>
+    <span class="token string">"--data-raw '&#123;"</span>
+    <span class="token string">"  \"cmd\": \"request.get\","</span>
+    <span class="token string">"  \"url\":\"http://www.nodeseek.com/rss.xml\","</span>
+    <span class="token string">"  \"maxTimeout\": 60000,"</span>
+    <span class="token string">"  \"session\": \"48554e80-803c-11ee-804f-0242ac110002\""</span>
+    <span class="token string">"&#125;'"</span>
+<span class="token punctuation">)</span>
+
+<span class="token keyword">class</span> <span class="token class-name">MyHandler</span><span class="token punctuation">(</span>BaseHTTPRequestHandler<span class="token punctuation">)</span><span class="token punctuation">:</span>
+    <span class="token keyword">def</span> <span class="token function">do_GET</span><span class="token punctuation">(</span>self<span class="token punctuation">)</span><span class="token punctuation">:</span>
+        <span class="token keyword">if</span> self<span class="token punctuation">.</span>path <span class="token operator">==</span> <span class="token string">'/'</span><span class="token punctuation">:</span>
+            <span class="token keyword">try</span><span class="token punctuation">:</span>
+                <span class="token comment"># Send an HTTP GET request</span>
+                <span class="token comment">#response = requests.get(url, impersonate=user_agent)</span>
+                <span class="token comment">#response_text = response.text</span>
+                response <span class="token operator">=</span> subprocess<span class="token punctuation">.</span>run<span class="token punctuation">(</span>curl_command<span class="token punctuation">,</span> shell<span class="token operator">=</span><span class="token boolean">True</span><span class="token punctuation">,</span> check<span class="token operator">=</span><span class="token boolean">True</span><span class="token punctuation">,</span> capture_output<span class="token operator">=</span><span class="token boolean">True</span><span class="token punctuation">,</span> text<span class="token operator">=</span><span class="token boolean">True</span><span class="token punctuation">)</span>
+                json_response <span class="token operator">=</span> json<span class="token punctuation">.</span>loads<span class="token punctuation">(</span>response<span class="token punctuation">.</span>stdout<span class="token punctuation">)</span>
+                response_text <span class="token operator">=</span> json_response<span class="token punctuation">.</span>get<span class="token punctuation">(</span><span class="token string">'solution'</span><span class="token punctuation">,</span> <span class="token punctuation">&#123;</span><span class="token punctuation">&#125;</span><span class="token punctuation">)</span><span class="token punctuation">.</span>get<span class="token punctuation">(</span><span class="token string">'response'</span><span class="token punctuation">,</span> <span class="token string">''</span><span class="token punctuation">)</span>
+
+                <span class="token comment"># Parse the RSS XML</span>
+                dom <span class="token operator">=</span> xml<span class="token punctuation">.</span>dom<span class="token punctuation">.</span>minidom<span class="token punctuation">.</span>parseString<span class="token punctuation">(</span>response_text<span class="token punctuation">)</span>
+                formatted_xml <span class="token operator">=</span> dom<span class="token punctuation">.</span>toprettyxml<span class="token punctuation">(</span><span class="token punctuation">)</span>
+
+                <span class="token comment"># Save the formatted content to 'rss.xml'</span>
+                <span class="token keyword">with</span> <span class="token builtin">open</span><span class="token punctuation">(</span>output_file<span class="token punctuation">,</span> <span class="token string">'w'</span><span class="token punctuation">,</span> encoding<span class="token operator">=</span><span class="token string">'utf-8'</span><span class="token punctuation">)</span> <span class="token keyword">as</span> <span class="token builtin">file</span><span class="token punctuation">:</span>
+                    <span class="token builtin">file</span><span class="token punctuation">.</span>write<span class="token punctuation">(</span>formatted_xml<span class="token punctuation">)</span>
+
+                <span class="token comment"># Set the HTTP response headers</span>
+                self<span class="token punctuation">.</span>send_response<span class="token punctuation">(</span><span class="token number">200</span><span class="token punctuation">)</span>
+                self<span class="token punctuation">.</span>send_header<span class="token punctuation">(</span><span class="token string">'Content-type'</span><span class="token punctuation">,</span> <span class="token string">'application/rss+xml; charset=utf-8'</span><span class="token punctuation">)</span>  <span class="token comment"># Set content type to XML</span>
+                self<span class="token punctuation">.</span>end_headers<span class="token punctuation">(</span><span class="token punctuation">)</span>
+
+                <span class="token comment"># Send the content of 'rss.xml' as the response</span>
+                <span class="token keyword">with</span> <span class="token builtin">open</span><span class="token punctuation">(</span>output_file<span class="token punctuation">,</span> <span class="token string">'rb'</span><span class="token punctuation">)</span> <span class="token keyword">as</span> <span class="token builtin">file</span><span class="token punctuation">:</span>
+                    self<span class="token punctuation">.</span>wfile<span class="token punctuation">.</span>write<span class="token punctuation">(</span><span class="token builtin">file</span><span class="token punctuation">.</span>read<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+            <span class="token keyword">except</span> xml<span class="token punctuation">.</span>parsers<span class="token punctuation">.</span>expat<span class="token punctuation">.</span>ExpatError <span class="token keyword">as</span> e<span class="token punctuation">:</span>
+                <span class="token comment"># Handle XML parsing errors</span>
+                error_message <span class="token operator">=</span> <span class="token string">"Error parsing XML: "</span> <span class="token operator">+</span> <span class="token builtin">str</span><span class="token punctuation">(</span>e<span class="token punctuation">)</span>
+                self<span class="token punctuation">.</span>send_response<span class="token punctuation">(</span><span class="token number">500</span><span class="token punctuation">)</span>
+                self<span class="token punctuation">.</span>send_header<span class="token punctuation">(</span><span class="token string">'Content-type'</span><span class="token punctuation">,</span> <span class="token string">'text/plain; charset=utf-8'</span><span class="token punctuation">)</span>
+                self<span class="token punctuation">.</span>end_headers<span class="token punctuation">(</span><span class="token punctuation">)</span>
+                self<span class="token punctuation">.</span>wfile<span class="token punctuation">.</span>write<span class="token punctuation">(</span>error_message<span class="token punctuation">.</span>encode<span class="token punctuation">(</span><span class="token string">'utf-8'</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+        <span class="token keyword">else</span><span class="token punctuation">:</span>
+            self<span class="token punctuation">.</span>send_response<span class="token punctuation">(</span><span class="token number">404</span><span class="token punctuation">)</span>
+            self<span class="token punctuation">.</span>end_headers<span class="token punctuation">(</span><span class="token punctuation">)</span>
+            self<span class="token punctuation">.</span>wfile<span class="token punctuation">.</span>write<span class="token punctuation">(</span><span class="token string">b'Not Found'</span><span class="token punctuation">)</span>
+
+<span class="token keyword">def</span> <span class="token function">run</span><span class="token punctuation">(</span>server_class<span class="token operator">=</span>HTTPServer<span class="token punctuation">,</span> handler_class<span class="token operator">=</span>MyHandler<span class="token punctuation">,</span> port<span class="token operator">=</span><span class="token number">8123</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
+    server_address <span class="token operator">=</span> <span class="token punctuation">(</span><span class="token string">''</span><span class="token punctuation">,</span> port<span class="token punctuation">)</span>
+    httpd <span class="token operator">=</span> server_class<span class="token punctuation">(</span>server_address<span class="token punctuation">,</span> handler_class<span class="token punctuation">)</span>
+    <span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string-interpolation"><span class="token string">f'Starting HTTP server on port </span><span class="token interpolation"><span class="token punctuation">&#123;</span>port<span class="token punctuation">&#125;</span></span><span class="token string">'</span></span><span class="token punctuation">)</span>
+    httpd<span class="token punctuation">.</span>serve_forever<span class="token punctuation">(</span><span class="token punctuation">)</span>
+
+<span class="token keyword">if</span> __name__ <span class="token operator">==</span> <span class="token string">'__main__'</span><span class="token punctuation">:</span>
+    run<span class="token punctuation">(</span><span class="token punctuation">)</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+
+    </div>
+  </article>
+</div>
+  </main>
+
+  <footer>
+    <p>
+      &copy; 2025 Shark Blog 
+      <a href="https://github.com/eddiehex/hexo-geek-source" target="_blank">
+        <i class="fab fa-github"></i>
+      </a>
+    </p>
+  </footer>
+
+  <script src="/js/search.js"></script>
+  <script src="/js/main.js"></script>
+  <script src="/js/copy-code.js"></script>
+  <script src="/js/prism.js"></script>
+  <script src="/js/toc-highlight.js"></script>
+  <script src="/js/mobile-menu.js"></script>
+</body>
+</html>

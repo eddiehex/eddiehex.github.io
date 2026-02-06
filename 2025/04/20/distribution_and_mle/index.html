@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Shark Blog</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/prism-code.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <link rel="icon" href="https://hexo.kygoho.win/upload/uploads/6e7cf36d-8cb2-40c6-831f-80ef7488cca4.png" type="image/x-icon">
+  <link rel="stylesheet" href="/css/toc.css">
+  
+  <!-- MathJax Configuration -->
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']],
+        processEscapes: true,
+        processEnvironments: true,
+        packages: ['base', 'ams', 'noerrors', 'noundefined']
+      },
+      options: {
+        ignoreHtmlClass: 'tex2jax_ignore',
+        processHtmlClass: 'tex2jax_process'
+      },
+      startup: {
+        ready() {
+          MathJax.startup.defaultReady();
+          // Re-render math when content changes
+          document.addEventListener('DOMContentLoaded', function() {
+            if (window.MathJax && window.MathJax.typesetPromise) {
+              window.MathJax.typesetPromise();
+            }
+          });
+        }
+      }
+    };
+  </script>
+  <script async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.min.js"></script>
+<meta name="generator" content="Hexo 6.3.0"></head>
+<body>
+  <header>
+    <nav>
+      <div class="nav-container">
+        <div class="logo"><a href="/">Shark Blog</a></div>
+        <div class="search-container">
+          <input type="text" id="search-input" placeholder="Search...">
+          <div id="search-results"></div>
+        </div>
+        <div class="menu-toggle">
+          <i class="fas fa-bars"></i>
+        </div>
+      </div>
+      <ul class="nav-links">
+        <li><a href="/">Posts</a></li>
+        <li><a href="/services">Services</a></li>
+        <li><a href="/archives">Archive</a></li>
+        <li><a href="/categories">Categories</a></li>
+        <li><a href="/about">About</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <div class="page-container">
+  
+  
+  <article class="page-content">
+    <h1 class="page-title">各类分布及其MLE推导</h1>
+    <div class="page-body">
+      <p><strong>核心概念：为什么需要概率分布？</strong></p>
+<p>想象一下你想描述一个随机现象的结果，比如：</p>
+<ul>
+<li>抛一次硬币的结果（正面还是反面？）</li>
+<li>明天会不会下雨（是还是否？）</li>
+<li>一个班级学生的身高（具体数值是多少？）</li>
+<li>一小时内某个路口通过的汽车数量（具体数量是多少？）</li>
+</ul>
+<p>概率分布就是用来<strong>数学化地描述这些随机现象（随机变量）可能出现的结果以及每个结果出现的可能性（概率或概率密度）</strong>的工具。它就像一个“蓝图”或“配方”，告诉我们数据大概长什么样。</p>
+<p><strong>关键组成部分：</strong></p>
+<ul>
+<li><strong>随机变量 (Random Variable):</strong> 一个变量，它的值是某个随机过程的结果。通常用大写字母表示，如 X、Y。<ul>
+<li><strong>离散随机变量 (Discrete):</strong> 只能取有限个或可数无限个特定值（如上面例子中的硬币结果、下雨与否、汽车数量）。</li>
+<li><strong>连续随机变量 (Continuous):</strong> 可以取某个区间内的任意值（如上面例子中的身高）。</li>
+</ul>
+</li>
+<li><strong>参数 (Parameters):</strong> 控制分布具体形状和位置的“旋钮”或“设定值”。它们通常是未知的，是我们需要通过数据（比如用 MLE）来估计的对象。用希腊字母表示很常见，如 p, λ, μ, σ。</li>
+<li><strong>概率质量函数 (PMF) 或 概率密度函数 (PDF):</strong><ul>
+<li><strong>PMF (Probability Mass Function):</strong> 用于离散随机变量。它给出了随机变量取某个特定值的概率。通常写作 P(X&#x3D;k)。所有可能值的概率加起来必须等于 1 (∑P(X&#x3D;k)&#x3D;1)。</li>
+<li><strong>PDF (Probability Density Function):</strong> 用于连续随机变量。它本身的值不是概率，但它描述了数据在某个点附近的相对可能性（密度）。某个区间 [a,b] 内的概率是通过对 PDF 在该区间上积分得到的 $P(a \le X \le b) &#x3D; \int_{a}^{b} f(x) dx$。整个定义域上的积分必须等于 1 ($\int_{-\infty}^{\infty} f(x) dx &#x3D; 1$)。通常写作 f(x)。</li>
+</ul>
+</li>
+</ul>
+<p>这个 PMF 或 PDF 的数学表达式，就是我们用来计算“给定参数下，观测到某个数据的可能性”的基础，也是构建 MLE 中似然函数的关键！</p>
+<p><strong>由浅入深看几种常见分布：</strong></p>
+<p><strong>场景一：处理单个“是&#x2F;否”或“成功&#x2F;失败”事件 (离散)</strong></p>
+<ul>
+<li><p><strong>分布：</strong> 伯努利分布 (Bernoulli Distribution)</p>
+</li>
+<li><p><strong>描述：</strong> 单次试验，只有两个可能结果（比如成功&#x2F;失败，正面&#x2F;反面，是&#x2F;否），通常编码为 1 和 0。</p>
+</li>
+<li><p><strong>随机变量 X：</strong> X&#x3D;1 代表“成功”，X&#x3D;0 代表“失败”。</p>
+</li>
+<li><p><strong>参数 θ&#x3D;p：</strong> p 是“成功” (X&#x3D;1) 的概率 (0≤p≤1)。那么“失败” (X&#x3D;0) 的概率就是 1−p。</p>
+</li>
+<li><p><strong>PMF 表达式 (P(X&#x3D;k∣p)):</strong> 这是一个巧妙的写法，能同时表达 X&#x3D;1 和 X&#x3D;0 的情况：</p>
+<p>$P(X&#x3D;k | p) &#x3D; p^k (1-p)^{1-k}$  其中 $k \in {0, 1}$</p>
+<p>验证一下：</p>
+<ul>
+<li>当 k&#x3D;1 (成功)时， $P(X&#x3D;1 | p) &#x3D; p^1 (1-p)^{1-1} &#x3D; p^1 (1-p)^0 &#x3D; p$。</li>
+<li>当 k&#x3D;0 (失败)时， $P(X&#x3D;0 | p) &#x3D; p^0 (1-p)^{1-0} &#x3D; p^0 (1-p)^1 &#x3D; 1-p$。</li>
+</ul>
+</li>
+<li><p><strong>Demo:</strong> 抛掷一枚可能不均匀的硬币一次。假设我们猜测 p&#x3D;0.7（正面概率是 0.7）。</p>
+<ul>
+<li>那么，观察到正面 (k&#x3D;1) 的概率是 $P(X&#x3D;1 | p&#x3D;0.7) &#x3D; 0.7$。</li>
+<li>观察到反面 (k&#x3D;0) 的概率是 $P(X&#x3D;0 | p&#x3D;0.7) &#x3D; 1 - 0.7 &#x3D; 0.3$。</li>
+</ul>
+</li>
+<li><p><strong>MLE 应用：</strong> 如果你观测到一次抛掷结果是 $x_1$ (比如 $x_1 &#x3D; 1$)，那么这次观测的似然度 (Likelihood) 就是 $L(p | x_1) &#x3D; P(X&#x3D;x_1 | p) &#x3D; p^{x_1} (1-p)^{1-x_1}$。如果有多次独立观测 $x_1, x_2, …, x_n$，联合似然函数就是 $L(p) &#x3D; \prod_{i&#x3D;1}^{n} p^{x_i} (1-p)^{1-x_i}$。</p>
+</li>
+</ul>
+<p><strong>场景二：处理多次独立的“是&#x2F;否”试验中，“成功”的总次数 (离散)</strong></p>
+<ul>
+<li><p><strong>分布：</strong> 二项分布 (Binomial Distribution)</p>
+</li>
+<li><p><strong>描述：</strong> 进行 n 次独立的伯努利试验（每次试验成功的概率都是 p），计算总共“成功”了多少次。</p>
+</li>
+<li><p><strong>随机变量 X：</strong> X 代表 n 次试验中成功的总次数。X 可以取 0, 1, 2, …, n 这些整数值。</p>
+</li>
+<li><p><strong>参数 θ&#x3D;(n,p)：</strong> n 是总试验次数（通常是已知的），p 是单次试验成功的概率（通常是需要估计的）。</p>
+</li>
+<li><p><strong>PMF 表达式 (P(X&#x3D;k∣n,p)):</strong></p>
+<p>$P(X&#x3D;k | n, p) &#x3D; \binom{n}{k} p^k (1-p)^{n-k}$  其中 $k &#x3D; 0, 1, …, n$</p>
+<p>$\binom{n}{k} &#x3D; \frac{n!}{k!(n-k)!}$ 是组合数，表示从 n 次试验中选出 k 次成功有多少种组合方式。</p>
+<ul>
+<li>$p^k$ 是 k 次成功发生的概率。</li>
+<li>$(1-p)^{n-k}$ 是 n−k 次失败发生的概率。</li>
+</ul>
+</li>
+<li><p><strong>Demo:</strong> 抛掷一枚硬币 10 次 (n&#x3D;10)，假设 p&#x3D;0.7。想知道恰好观察到 8 次正面 (k&#x3D;8) 的概率是多少？</p>
+<p>$P(X&#x3D;8 | n&#x3D;10, p&#x3D;0.7) &#x3D; \binom{10}{8} (0.7)^8 (1-0.7)^{10-8} &#x3D; 45 \times (0.7)^8 \times (0.3)^2 \approx 0.233$。</p>
+</li>
+<li><p><strong>MLE 应用：</strong></p>
+<ul>
+<li>情况 A (已知 n 次试验，观测到总成功数 k)： 如果你做了 n 次试验，观测到总共有 k 次成功，那么似然函数就是 $L(p | k, n) &#x3D; \binom{n}{k} p^k (1-p)^{n-k}$。然后你寻找使这个 L(p) 最大的 p。</li>
+<li>情况 B (已知 n 次试验的每次结果)： 如果你知道每次试验的结果 $x_1, x_2, …, x_n$（每个 $x_i$ 是 0 或 1），这其实回到了伯努利的情况。你使用 n 个伯努利观测的联合似然函数：$L(p) &#x3D; \prod_{i&#x3D;1}^{n} p^{x_i} (1-p)^{1-x_i}$。最终通过 MLE 估计出的 p 在这两种情况下是相同的，等于样本中成功的比例 $\frac{\sum x_i}{n}$ 或 $\frac{k}{n}$。</li>
+</ul>
+</li>
+</ul>
+<p><strong>场景三：处理单位时间&#x2F;空间内发生某事件的次数 (离散)</strong></p>
+<ul>
+<li><p><strong>分布：</strong> 泊松分布 (Poisson Distribution)</p>
+</li>
+<li><p><strong>描述：</strong> 计算在固定的时间段、区域、体积等内，某个稀有事件发生的次数。假设事件独立发生，且平均发生率恒定。</p>
+</li>
+<li><p><strong>随机变量 X：</strong> X 代表在给定单位内事件发生的次数。X 可以取 0, 1, 2, … 这些非负整数。</p>
+</li>
+<li><p><strong>参数 θ&#x3D;λ (lambda):</strong> λ 是单位时间&#x2F;空间内事件发生的平均次数 (λ&gt;0)。</p>
+</li>
+<li><p><strong>PMF 表达式 (P(X&#x3D;k∣λ)):</strong></p>
+<p>$P(X&#x3D;k | \lambda) &#x3D; \frac{e^{-\lambda} \lambda^k}{k!}$  其中 $k &#x3D; 0, 1, 2, …$</p>
+<ul>
+<li>$e \approx 2.71828$ 是自然常数。</li>
+<li>$k!$ 是 k 的阶乘。</li>
+</ul>
+</li>
+<li><p><strong>Demo:</strong> 某个呼叫中心平均每小时接到 5 个电话 (λ&#x3D;5)。想知道在接下来的一小时内，恰好接到 3 个电话 (k&#x3D;3) 的概率是多少？</p>
+<p>$P(X&#x3D;3 | \lambda&#x3D;5) &#x3D; \frac{e^{-5} 5^3}{3!} &#x3D; \frac{e^{-5} \times 125}{6} \approx 0.14$。</p>
+</li>
+<li><p><strong>MLE 应用：</strong> 如果你观测了 n 个时间段，每个时间段内事件发生的次数分别是 $x_1, x_2, …, x_n$。假设它们都服从参数为 λ 的泊松分布。</p>
+<ul>
+<li>单个观测 $x_i$ 的概率是 $P(X&#x3D;x_i | \lambda) &#x3D; \frac{e^{-\lambda} \lambda^{x_i}}{x_i!}$。</li>
+<li>联合似然函数是 $L(\lambda) &#x3D; \prod_{i&#x3D;1}^{n} \frac{e^{-\lambda} \lambda^{x_i}}{x_i!} &#x3D; \frac{e^{-n\lambda} \lambda^{\sum x_i}}{\prod x_i!}$。</li>
+<li>通过最大化这个 L(λ)（或其对数），可以得到 λ 的 MLE 估计值，结果是样本均值 $\hat{\lambda}<em>{MLE} &#x3D; \frac{1}{n} \sum</em>{i&#x3D;1}^{n} x_i$。</li>
+</ul>
+</li>
+</ul>
+<p><strong>场景四：处理某个区间内均匀随机取值 (连续)</strong></p>
+<ul>
+<li><p><strong>分布：</strong> 均匀分布 (Uniform Distribution)</p>
+</li>
+<li><p><strong>描述：</strong> 在一个指定的区间 [a,b] 内，随机变量取任何值的可能性都是相等的。区间外取值的概率为 0。</p>
+</li>
+<li><p><strong>随机变量 X：</strong> 在 [a,b] 区间内取值。</p>
+</li>
+<li><p><strong>参数 θ&#x3D;(a,b)：</strong> a 是区间的下界，b 是区间的上界 (a&lt;b)。</p>
+</li>
+<li><p><strong>PDF 表达式 (f(x∣a,b)):</strong></p>
+<p>$ f(x | a, b) &#x3D; \begin{cases} \frac{1}{b-a} &amp; \text{如果 } a \le x \le b \ 0 &amp; \text{其他情况} \end{cases} $</p>
+<p>注意 PDF 的值是 $\frac{1}{b-a}$ 这个常数，它不是概率，而是概率密度。整个区间的宽度是 b−a，高度是 $\frac{1}{b-a}$，所以总面积（总概率）是 $(b-a) \times \frac{1}{b-a} &#x3D; 1$。</p>
+</li>
+<li><p><strong>Demo:</strong> 计算机生成 [0,1] 之间的随机数 (a&#x3D;0, b&#x3D;1)。</p>
+<ul>
+<li>PDF 是 $f(x | 0, 1) &#x3D; \frac{1}{1-0} &#x3D; 1$，当 $0 \le x \le 1$ 时。</li>
+<li>取值在 [0.2, 0.3] 之间的概率是 $\int_{0.2}^{0.3} 1 dx &#x3D; [x]_{0.2}^{0.3} &#x3D; 0.3 - 0.2 &#x3D; 0.1$。这正好是区间长度 (0.3−0.2) 乘以 PDF 的值 (1)。</li>
+</ul>
+</li>
+<li><p><strong>MLE 应用：</strong> 如果你观测到数据 $x_1, …, x_n$，假设它们来自 Uniform(a, b) 分布。</p>
+<ul>
+<li>似然函数 $L(a, b) &#x3D; \prod_{i&#x3D;1}^{n} f(x_i | a, b)$。仅当所有的 $x_i$ 都在 [a, b] 区间内时，似然函数才不为零，此时 $L(a, b) &#x3D; (\frac{1}{b-a})^n$。</li>
+<li>为了最大化 L(a, b)，我们需要让区间 [a, b] 尽可能小（这样 $\frac{1}{b-a}$ 就尽可能大），但同时必须包含所有的观测数据 $x_i$。</li>
+<li>所以 a 的 MLE 是样本最小值 $\hat{a}<em>{MLE} &#x3D; \min(x_i)$，b 的 MLE 是样本最大值 $\hat{b}</em>{MLE} &#x3D; \max(x_i)$。</li>
+</ul>
+</li>
+</ul>
+<p><strong>场景五：处理事件发生前的等待时间 (连续)</strong></p>
+<ul>
+<li><p><strong>分布：</strong> 指数分布 (Exponential Distribution)</p>
+</li>
+<li><p><strong>描述：</strong> 用于描述独立事件发生之间所需的时间，或者某个物品的使用寿命（如果损耗率恒定）。它是泊松过程的“姐妹”分布。</p>
+</li>
+<li><p><strong>随机变量 X：</strong> 等待时间或寿命 (X≥0)。</p>
+</li>
+<li><p><strong>参数 θ&#x3D;λ (lambda):</strong> λ 是事件发生的速率 (rate parameter, λ&gt;0)，即单位时间平均发生多少次事件。有时也用 β&#x3D;1&#x2F;λ (scale parameter) 作为参数。我们这里用速率参数 λ。</p>
+</li>
+<li><p><strong>PDF 表达式 (f(x∣λ)):</strong></p>
+<p>$ f(x | \lambda) &#x3D; \begin{cases} \lambda e^{-\lambda x} &amp; \text{如果 } x \ge 0 \ 0 &amp; \text{如果 } x &lt; 0 \end{cases} $</p>
+</li>
+<li><p><strong>Demo:</strong> 假设某个零件的平均寿命是 100 小时。那么失效率 λ&#x3D;1&#x2F;100&#x3D;0.01 次&#x2F;小时。</p>
+<ul>
+<li>该零件恰好在 50 小时 (x&#x3D;50) 时刻的概率密度是 $f(50 | \lambda&#x3D;0.01) &#x3D; 0.01 e^{-0.01 \times 50} &#x3D; 0.01 e^{-0.5} \approx 0.00607$。</li>
+<li>该零件寿命超过 50 小时的概率是 $P(X &gt; 50) &#x3D; \int_{50}^{\infty} 0.01 e^{-0.01x} dx &#x3D; [-e^{-0.01x}]_{50}^{\infty} &#x3D; 0 - (-e^{-0.5}) &#x3D; e^{-0.5} \approx 0.607$。</li>
+</ul>
+</li>
+<li><p><strong>MLE 应用：</strong> 观测到 n 个同类零件的寿命 $x_1, …, x_n$，假设服从参数为 λ 的指数分布。</p>
+<ul>
+<li>似然函数 $L(\lambda) &#x3D; \prod_{i&#x3D;1}^{n} \lambda e^{-\lambda x_i} &#x3D; \lambda^n e^{-\lambda \sum x_i}$ (假设所有 $x_i \ge 0$)。</li>
+<li>最大化对数似然函数 $\ell(\lambda) &#x3D; n \ln \lambda - \lambda \sum x_i$。</li>
+<li>求导并令其为零 $\frac{d\ell}{d\lambda} &#x3D; \frac{n}{\lambda} - \sum x_i &#x3D; 0$。</li>
+<li>解得 λ 的 MLE 是 $\hat{\lambda}_{MLE} &#x3D; \frac{n}{\sum x_i} &#x3D; \frac{1}{\bar{x}}$，即样本均值的倒数。这很直观：平均寿命越长（$\bar{x}$ 大），失效率 λ 就越小。</li>
+</ul>
+</li>
+</ul>
+<p><strong>场景六：处理自然界中常见的测量误差、人群身高体重等 (连续)</strong></p>
+<ul>
+<li><p><strong>分布：</strong> 正态分布 (Normal Distribution) &#x2F; 高斯分布 (Gaussian Distribution)</p>
+</li>
+<li><p><strong>描述：</strong> 自然界和工程中极其常见的分布，形状像一个对称的钟。由中心位置和分散程度决定。</p>
+</li>
+<li><p><strong>随机变量 X：</strong> 可以取任何实数值 (−∞, ∞)。</p>
+</li>
+<li><p><strong>参数 θ&#x3D;(μ, σ²)：</strong> μ (mu) 是分布的均值（决定钟形曲线的中心位置），σ² (sigma squared) 是方差（决定钟形曲线的胖瘦，σ²&gt;0）。σ 是标准差。</p>
+</li>
+<li><p><strong>PDF 表达式 (f(x∣μ,σ²)):</strong></p>
+<p>$f(x | \mu, \sigma^2) &#x3D; \frac{1}{\sqrt{2\pi\sigma^2}} \exp\left(-\frac{(x-\mu)^2}{2\sigma^2}\right)$</p>
+<ul>
+<li>π ≈ 3.14159。</li>
+<li>exp(y) 就是 $e^y$。</li>
+</ul>
+<p>这个公式看起来复杂，但它精确地定义了那个钟形曲线。</p>
+</li>
+<li><p><strong>Demo:</strong> 假设某地成年男性的身高服从正态分布，均值为 175cm (μ&#x3D;175)，方差为 25 (σ²&#x3D;25，即标准差 $\sigma&#x3D;5$cm)。</p>
+<ul>
+<li>身高恰好为 180cm (x&#x3D;180) 的概率密度是 $f(180 | \mu&#x3D;175, \sigma^2&#x3D;25) &#x3D; \frac{1}{\sqrt{2\pi \times 25}} \exp\left(-\frac{(180-175)^2}{2 \times 25}\right) &#x3D; \frac{1}{\sqrt{50\pi}} \exp\left(-\frac{25}{50}\right) \approx \frac{1}{12.53} e^{-0.5} \approx 0.0484$。</li>
+</ul>
+</li>
+<li><p><strong>MLE 应用：</strong> 观测到 n 个样本数据 $x_1, …, x_n$，假设它们来自 $N(\mu, \sigma^2)$。</p>
+<ul>
+<li><p>单个观测 $x_i$ 的概率密度是 $f(x_i | \mu, \sigma^2)$ (上面的公式)。</p>
+</li>
+<li><p>联合似然函数 $L(\mu, \sigma^2) &#x3D; \prod_{i&#x3D;1}^{n} \frac{1}{\sqrt{2\pi\sigma^2}} \exp\left(-\frac{(x_i-\mu)^2}{2\sigma^2}\right)$。</p>
+</li>
+<li><p>对数似然函数 $\ell(\mu, \sigma^2) &#x3D; \sum_{i&#x3D;1}^{n} \left[ \ln\left(\frac{1}{\sqrt{2\pi\sigma^2}}\right) - \frac{(x_i-\mu)^2}{2\sigma^2} \right] &#x3D; \sum_{i&#x3D;1}^{n} \left[ -\frac{1}{2}\ln(2\pi) - \frac{1}{2}\ln(\sigma^2) - \frac{(x_i-\mu)^2}{2\sigma^2} \right] &#x3D; -\frac{n}{2}\ln(2\pi) - \frac{n}{2}\ln(\sigma^2) - \frac{1}{2\sigma^2} \sum_{i&#x3D;1}^{n} (x_i - \mu)^2$</p>
+</li>
+<li><p>分别对 μ 和 σ² 求偏导数，并令它们等于零。</p>
+</li>
+<li><p>解得 MLE 估计值：</p>
+<ul>
+<li>$\hat{\mu}<em>{MLE} &#x3D; \frac{1}{n} \sum</em>{i&#x3D;1}^{n} x_i &#x3D; \bar{x}$ （样本均值）</li>
+<li>$\hat{\sigma}^2_{MLE} &#x3D; \frac{1}{n} \sum_{i&#x3D;1}^{n} (x_i - \bar{x})^2$ （样本方差，注意分母是 n 而不是 n-1）</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p><strong>总结与 MLE 连接</strong></p>
+<p>你看，每种分布都有其适用的场景、需要估计的参数 θ、以及一个核心的数学表达式 P(X&#x3D;k∣θ) (PMF for discrete) 或 f(x∣θ) (PDF for continuous)。</p>
+<p>当你使用 MLE 时，构建联合似然函数的步骤是：</p>
+<ol>
+<li><p>根据你的数据特点和业务场景，选择一个合适的概率分布模型。 这是最关键的一步，需要基于对数据生成过程的理解。</p>
+</li>
+<li><p>写出该分布的 PMF 或 PDF 表达式 P(xi∣θ) 或 f(xi∣θ)。 这是数学基础。</p>
+</li>
+<li><p>假设你的 n 个数据点 x1,…,xn 是独立同分布 (i.i.d.) 的。 这是标准假设。</p>
+</li>
+<li><p>将每个数据点的 PMF&#x2F;PDF 值连乘起来，得到似然函数 L(θ):</p>
+<ul>
+<li>离散: $L(\theta) &#x3D; \prod_{i&#x3D;1}^{n} P(x_i | \theta)$</li>
+<li>连续: $L(\theta) &#x3D; \prod_{i&#x3D;1}^{n} f(x_i | \theta)$</li>
+</ul>
+<p>这就是你问的“构建联合分布函数”在 MLE 语境下的具体操作——构建似然函数。</p>
+</li>
+<li><p>（通常）取对数得到对数似然函数 $ℓ(θ) &#x3D; ∑i&#x3D;1n lnP(xi∣θ)$ 或 $ℓ(θ) &#x3D; ∑i&#x3D;1n lnf(xi∣θ)$。</p>
+</li>
+<li><p>通过优化方法（求导置零或数值优化）找到使 ℓ(θ) 最大的参数 $θ^MLE$。</p>
+</li>
+</ol>
+<p>希望这个由浅入深、结合例子的梳理能帮助你更好地理解概率分布及其在 MLE 中的应用。不用担心一次性全部记住，关键是理解核心思想和流程，需要时再查阅具体的公式。多练习几个例子会更有帮助！</p>
+
+    </div>
+  </article>
+</div>
+  </main>
+
+  <footer>
+    <p>
+      &copy; 2025 Shark Blog 
+      <a href="https://github.com/eddiehex/hexo-geek-source" target="_blank">
+        <i class="fab fa-github"></i>
+      </a>
+    </p>
+  </footer>
+
+  <script src="/js/search.js"></script>
+  <script src="/js/main.js"></script>
+  <script src="/js/copy-code.js"></script>
+  <script src="/js/prism.js"></script>
+  <script src="/js/toc-highlight.js"></script>
+  <script src="/js/mobile-menu.js"></script>
+</body>
+</html>

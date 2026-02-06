@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Shark Blog</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/prism-code.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <link rel="icon" href="https://hexo.kygoho.win/upload/uploads/6e7cf36d-8cb2-40c6-831f-80ef7488cca4.png" type="image/x-icon">
+  <link rel="stylesheet" href="/css/toc.css">
+  
+  <!-- MathJax Configuration -->
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']],
+        processEscapes: true,
+        processEnvironments: true,
+        packages: ['base', 'ams', 'noerrors', 'noundefined']
+      },
+      options: {
+        ignoreHtmlClass: 'tex2jax_ignore',
+        processHtmlClass: 'tex2jax_process'
+      },
+      startup: {
+        ready() {
+          MathJax.startup.defaultReady();
+          // Re-render math when content changes
+          document.addEventListener('DOMContentLoaded', function() {
+            if (window.MathJax && window.MathJax.typesetPromise) {
+              window.MathJax.typesetPromise();
+            }
+          });
+        }
+      }
+    };
+  </script>
+  <script async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.min.js"></script>
+<meta name="generator" content="Hexo 6.3.0"></head>
+<body>
+  <header>
+    <nav>
+      <div class="nav-container">
+        <div class="logo"><a href="/">Shark Blog</a></div>
+        <div class="search-container">
+          <input type="text" id="search-input" placeholder="Search...">
+          <div id="search-results"></div>
+        </div>
+        <div class="menu-toggle">
+          <i class="fas fa-bars"></i>
+        </div>
+      </div>
+      <ul class="nav-links">
+        <li><a href="/">Posts</a></li>
+        <li><a href="/services">Services</a></li>
+        <li><a href="/archives">Archive</a></li>
+        <li><a href="/categories">Categories</a></li>
+        <li><a href="/about">About</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <div class="page-container">
+  
+    <div class="toc-card">
+      <div class="toc-content">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Azure-%E5%BA%94%E7%94%A8%E5%88%9B%E5%BB%BA"><span class="toc-text">Azure 应用创建</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9F%BA%E4%BA%8EFlask-%E5%88%9B%E5%BB%BAAPI"><span class="toc-text">基于Flask 创建API</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#API%E8%B0%83%E7%94%A8"><span class="toc-text">API调用</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%A4%B1%E8%B4%A5"><span class="toc-text">失败</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#requests-%E5%BA%93post-%E5%92%8Cget-%E6%96%B9%E6%B3%95"><span class="toc-text">requests 库post 和get 方法</span></a></li></ol>
+      </div>
+    </div>
+  
+  
+  <article class="page-content">
+    <h1 class="page-title">尝试调用E5-graph API 实现邮箱发送</h1>
+    <div class="page-body">
+      <h2 id="Azure-应用创建"><a href="#Azure-应用创建" class="headerlink" title="Azure 应用创建"></a>Azure 应用创建</h2><ul>
+<li>创建api 获取client_Id, client_secrete</li>
+<li>添加api权限</li>
+</ul>
+<p><img src="https://od.009100.xyz/api/raw/?path=/picture/blog/api_authority.png" alt="img"></p>
+<h2 id="基于Flask-创建API"><a href="#基于Flask-创建API" class="headerlink" title="基于Flask 创建API"></a>基于Flask 创建API</h2><ul>
+<li>创建路由获取post请求的json数据</li>
+<li>通过client_id等信息请求发起token请求</li>
+<li>使用token调用api实现邮件发送</li>
+</ul>
+<pre class="line-numbers language-python" data-language="python"><code class="language-python"><span class="token keyword">from</span> flask <span class="token keyword">import</span> Flask<span class="token punctuation">,</span> request<span class="token punctuation">,</span> jsonify
+<span class="token keyword">import</span> requests
+<span class="token keyword">import</span> json
+
+app <span class="token operator">=</span> Flask<span class="token punctuation">(</span>__name__<span class="token punctuation">)</span>
+
+<span class="token comment"># 应用程序注册时获得的信息</span>
+client_id <span class="token operator">=</span> <span class="token string">"&#123;client_Id&#125;"</span>
+client_secret <span class="token operator">=</span> <span class="token string">"&#123;client_secrete&#125;"</span>
+redirect_uri <span class="token operator">=</span> <span class="token string">"http://localhost"</span>
+
+<span class="token comment"># 租户 ID，通常为 "common"</span>
+tenant_id <span class="token operator">=</span> <span class="token string">"&#123;tenant_Id&#125;"</span>
+
+<span class="token comment"># Microsoft Graph API 的端点</span>
+token_url <span class="token operator">=</span> <span class="token string-interpolation"><span class="token string">f"https://login.microsoftonline.com/</span><span class="token interpolation"><span class="token punctuation">&#123;</span>tenant_id<span class="token punctuation">&#125;</span></span><span class="token string">/oauth2/v2.0/token"</span></span>
+graph_api_url <span class="token operator">=</span> <span class="token string">"https://graph.microsoft.com/v1.0/users/&#123;mail_address&#125;/sendMail"</span>
+
+<span class="token decorator annotation punctuation">@app<span class="token punctuation">.</span>route</span><span class="token punctuation">(</span><span class="token string">'/send_email'</span><span class="token punctuation">,</span> methods<span class="token operator">=</span><span class="token punctuation">[</span><span class="token string">'POST'</span><span class="token punctuation">]</span><span class="token punctuation">)</span>
+<span class="token keyword">def</span> <span class="token function">send_email</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
+    <span class="token comment"># 获取 POST 请求的 JSON 数据</span>
+    data <span class="token operator">=</span> request<span class="token punctuation">.</span>get_json<span class="token punctuation">(</span><span class="token punctuation">)</span>
+
+    <span class="token comment"># 构建获取访问令牌的请求</span>
+    token_payload <span class="token operator">=</span> <span class="token punctuation">&#123;</span>
+        <span class="token string">"grant_type"</span><span class="token punctuation">:</span> <span class="token string">"client_credentials"</span><span class="token punctuation">,</span>
+        <span class="token string">"client_id"</span><span class="token punctuation">:</span> client_id<span class="token punctuation">,</span>
+        <span class="token string">"client_secret"</span><span class="token punctuation">:</span> client_secret<span class="token punctuation">,</span>
+        <span class="token string">"scope"</span><span class="token punctuation">:</span> <span class="token string">"https://graph.microsoft.com/.default"</span>
+    <span class="token punctuation">&#125;</span>
+
+    token_response <span class="token operator">=</span> requests<span class="token punctuation">.</span>post<span class="token punctuation">(</span>token_url<span class="token punctuation">,</span> data<span class="token operator">=</span>token_payload<span class="token punctuation">)</span>
+    token_data <span class="token operator">=</span> token_response<span class="token punctuation">.</span>json<span class="token punctuation">(</span><span class="token punctuation">)</span>
+
+    <span class="token comment"># 提取访问令牌</span>
+    access_token <span class="token operator">=</span> token_data<span class="token punctuation">.</span>get<span class="token punctuation">(</span><span class="token string">"access_token"</span><span class="token punctuation">)</span>
+    <span class="token keyword">print</span><span class="token punctuation">(</span>access_token<span class="token punctuation">)</span>
+
+    <span class="token comment"># 构建发送邮件的请求</span>
+    email_payload <span class="token operator">=</span> <span class="token punctuation">&#123;</span>
+        <span class="token string">"message"</span><span class="token punctuation">:</span> <span class="token punctuation">&#123;</span>
+            <span class="token string">"subject"</span><span class="token punctuation">:</span> data<span class="token punctuation">.</span>get<span class="token punctuation">(</span><span class="token string">"subject"</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+            <span class="token string">"body"</span><span class="token punctuation">:</span> <span class="token punctuation">&#123;</span>
+                <span class="token string">"contentType"</span><span class="token punctuation">:</span> <span class="token string">"Text"</span><span class="token punctuation">,</span>
+                <span class="token string">"content"</span><span class="token punctuation">:</span> data<span class="token punctuation">.</span>get<span class="token punctuation">(</span><span class="token string">"body"</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+            <span class="token punctuation">&#125;</span><span class="token punctuation">,</span>
+            <span class="token string">"toRecipients"</span><span class="token punctuation">:</span> <span class="token punctuation">[</span>
+                <span class="token punctuation">&#123;</span>
+                    <span class="token string">"emailAddress"</span><span class="token punctuation">:</span> <span class="token punctuation">&#123;</span>
+                        <span class="token string">"address"</span><span class="token punctuation">:</span> data<span class="token punctuation">.</span>get<span class="token punctuation">(</span><span class="token string">"recipient"</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+                    <span class="token punctuation">&#125;</span>
+                <span class="token punctuation">&#125;</span>
+            <span class="token punctuation">]</span><span class="token punctuation">,</span>
+        <span class="token punctuation">&#125;</span>
+    <span class="token punctuation">&#125;</span>
+
+    headers <span class="token operator">=</span> <span class="token punctuation">&#123;</span>
+        <span class="token string">"Authorization"</span><span class="token punctuation">:</span> <span class="token string">"Bearer "</span> <span class="token operator">+</span> access_token<span class="token punctuation">,</span>
+        <span class="token string">"Content-Type"</span><span class="token punctuation">:</span> <span class="token string">"application/json"</span><span class="token punctuation">,</span>
+    <span class="token punctuation">&#125;</span>
+
+    <span class="token comment"># 发送邮件</span>
+    email_response <span class="token operator">=</span> requests<span class="token punctuation">.</span>post<span class="token punctuation">(</span>graph_api_url<span class="token punctuation">,</span> headers<span class="token operator">=</span>headers<span class="token punctuation">,</span> json<span class="token operator">=</span>email_payload<span class="token punctuation">)</span>
+
+    <span class="token comment"># 打印 API 响应</span>
+    <span class="token keyword">print</span><span class="token punctuation">(</span>email_response<span class="token punctuation">.</span>text<span class="token punctuation">)</span>
+
+    <span class="token comment"># 检查是否成功发送邮件</span>
+    <span class="token keyword">if</span> email_response<span class="token punctuation">.</span>status_code <span class="token operator">==</span> <span class="token number">202</span><span class="token punctuation">:</span>
+        <span class="token keyword">return</span> jsonify<span class="token punctuation">(</span><span class="token punctuation">&#123;</span><span class="token string">"status"</span><span class="token punctuation">:</span> <span class="token string">"success"</span><span class="token punctuation">,</span> <span class="token string">"message"</span><span class="token punctuation">:</span> <span class="token string">"邮件发送成功！"</span><span class="token punctuation">&#125;</span><span class="token punctuation">)</span>
+    <span class="token keyword">else</span><span class="token punctuation">:</span>
+        <span class="token keyword">return</span> jsonify<span class="token punctuation">(</span><span class="token punctuation">&#123;</span><span class="token string">"status"</span><span class="token punctuation">:</span> <span class="token string">"error"</span><span class="token punctuation">,</span> <span class="token string">"message"</span><span class="token punctuation">:</span> <span class="token string-interpolation"><span class="token string">f"邮件发送失败，状态码：</span><span class="token interpolation"><span class="token punctuation">&#123;</span>email_response<span class="token punctuation">.</span>status_code<span class="token punctuation">&#125;</span></span><span class="token string">, 内容：</span><span class="token interpolation"><span class="token punctuation">&#123;</span>email_response<span class="token punctuation">.</span>text<span class="token punctuation">&#125;</span></span><span class="token string">"</span></span><span class="token punctuation">&#125;</span><span class="token punctuation">)</span>
+
+
+<span class="token keyword">if</span> __name__ <span class="token operator">==</span> <span class="token string">'__main__'</span><span class="token punctuation">:</span>
+    app<span class="token punctuation">.</span>run<span class="token punctuation">(</span>debug<span class="token operator">=</span><span class="token boolean">True</span><span class="token punctuation">,</span>port<span class="token operator">=</span><span class="token number">8444</span><span class="token punctuation">)</span>
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<h2 id="API调用"><a href="#API调用" class="headerlink" title="API调用"></a>API调用</h2><ul>
+<li>创建待发邮件数据json数据</li>
+<li>发起post请求</li>
+</ul>
+<pre class="line-numbers language-python" data-language="python"><code class="language-python"><span class="token keyword">import</span> requests
+<span class="token keyword">import</span> json
+
+<span class="token comment"># API 的完整 URL，包括协议、域名和端口</span>
+api_url <span class="token operator">=</span> <span class="token string">"https://domain.com/s/send_email"</span>
+
+<span class="token comment"># 要发送的邮件数据</span>
+email_data <span class="token operator">=</span> <span class="token punctuation">&#123;</span>
+    <span class="token string">"subject"</span><span class="token punctuation">:</span> <span class="token string">"Test Subject"</span><span class="token punctuation">,</span>
+    <span class="token string">"body"</span><span class="token punctuation">:</span> <span class="token string">"This is the email body."</span><span class="token punctuation">,</span>
+    <span class="token string">"recipient"</span><span class="token punctuation">:</span> <span class="token string">"xxxxx@icloud.com"</span>
+<span class="token punctuation">&#125;</span>
+
+<span class="token keyword">try</span><span class="token punctuation">:</span>
+    <span class="token comment"># 发送 POST 请求给 API</span>
+    response <span class="token operator">=</span> requests<span class="token punctuation">.</span>post<span class="token punctuation">(</span>api_url<span class="token punctuation">,</span> json<span class="token operator">=</span>email_data<span class="token punctuation">)</span>
+
+    <span class="token comment"># 尝试解析 JSON</span>
+    result <span class="token operator">=</span> response<span class="token punctuation">.</span>json<span class="token punctuation">(</span><span class="token punctuation">)</span>
+
+    <span class="token comment"># 检查响应状态码</span>
+    <span class="token keyword">if</span> response<span class="token punctuation">.</span>status_code <span class="token operator">==</span> <span class="token number">200</span><span class="token punctuation">:</span>
+        <span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string">"API 响应成功:"</span><span class="token punctuation">,</span> result<span class="token punctuation">)</span>
+    <span class="token keyword">else</span><span class="token punctuation">:</span>
+        <span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string">"API 响应错误:"</span><span class="token punctuation">,</span> result<span class="token punctuation">)</span>
+
+<span class="token keyword">except</span> requests<span class="token punctuation">.</span>exceptions<span class="token punctuation">.</span>RequestException <span class="token keyword">as</span> e<span class="token punctuation">:</span>
+    <span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string">"请求异常:"</span><span class="token punctuation">,</span> e<span class="token punctuation">)</span>
+<span class="token keyword">except</span> json<span class="token punctuation">.</span>JSONDecodeError <span class="token keyword">as</span> e<span class="token punctuation">:</span>
+    <span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string">"JSON 解码错误:"</span><span class="token punctuation">,</span> e<span class="token punctuation">)</span>
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<h2 id="失败"><a href="#失败" class="headerlink" title="失败"></a>失败</h2><p>因微软限制邮件滥发等原因，调用成功后邮件被退回</p>
+<p><img src="https://od.009100.xyz/api/raw/?path=/picture/blog/fail.png" alt="fail"></p>
+<h2 id="requests-库post-和get-方法"><a href="#requests-库post-和get-方法" class="headerlink" title="requests 库post 和get 方法"></a>requests 库post 和get 方法</h2><p>后续需完成这两个方法的总结，非常常用。</p>
+
+    </div>
+  </article>
+</div>
+  </main>
+
+  <footer>
+    <p>
+      &copy; 2025 Shark Blog 
+      <a href="https://github.com/eddiehex/hexo-geek-source" target="_blank">
+        <i class="fab fa-github"></i>
+      </a>
+    </p>
+  </footer>
+
+  <script src="/js/search.js"></script>
+  <script src="/js/main.js"></script>
+  <script src="/js/copy-code.js"></script>
+  <script src="/js/prism.js"></script>
+  <script src="/js/toc-highlight.js"></script>
+  <script src="/js/mobile-menu.js"></script>
+</body>
+</html>
